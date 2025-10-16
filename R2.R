@@ -2,16 +2,16 @@ library(dplyr)
 library(stringr)
 library(ape)
 
-setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred")
-filename <- "ogt_Cimen2020_bac_ran.csv"
+setwd("/home/huangr/projects/dailywork")
+filename <- "2025_09_obs_vs_pred/get_obs_pred/ogt_Cimen2020_bac_ran.csv"
 
 df <- read.csv(filename)
-tree <- read.tree("D:/pine/paper_redo/GTDB_tree/bac120_r226.tree")
+tree <- read.tree("/home/huangr/projects/dailywork/GTDB_tree/bac120_r226.tree")
 # 读取元数据，只保留需要的列
 cols_to_keep <- c("accession", "ncbi_organism_name", "gtdb_taxonomy", 
                   "gtdb_representative", "gtdb_genome_representative",
                   "ncbi_refseq_category", "ncbi_assembly_level")
-gtdb_meta <- read.delim("D:/pine/paper_redo/GTDB_tree/bac120_metadata_r226.tsv", 
+gtdb_meta <- read.delim("/home/huangr/projects/dailywork/GTDB_tree/bac120_metadata_r226.tsv", 
                         sep = "\t", 
                         header = TRUE)[, cols_to_keep]
 df$search_name <- gsub("_", " ", df$species)
@@ -159,50 +159,70 @@ calculate_r2_resid <- function(final_data, tree_subset) {
 
 # 应用计算
 r2_resid_result <- calculate_r2_resid(final_data, tree_subset)
-cat("R²_resid:", round(r2_resid_result$r2, 4), "\n")
 
+#--------收集p值-------
+# 1. 原始OLS模型的p值
+raw_model_summary <- summary(raw_model)
+raw_p_value <- raw_model_summary$coefficients["predicted_OGT", "Pr(>|t|)"]
+# 2. PIC模型的p值
+pic_model_summary <- summary(pic_model)
+pic_p_value <- pic_model_summary$coefficients["pic_predicted", "Pr(>|t|)"]
+
+# 用formatC代替一般的format
+format_p_value <- function(p) {
+  if (p < 0.001) {
+    # 使用 formatC 确保正确显示极小值
+    return(formatC(p, format = "e", digits = 2))
+  } else {
+    return(sprintf("%.3f", p))
+  }
+}
 #--------画图---------
 library(ggplot2)
 library(gridExtra)
 
-# 计算原始数据OLS回归的R²
-raw_model <- lm(OGT ~ predicted_OGT, data = final_data)
-raw_r_squared <- summary(raw_model)$r.squared
-
 # 1. 原始数据图（带OLS回归）
 raw_plot <- ggplot(final_data, aes(x = predicted_OGT, y = OGT)) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  geom_smooth(method = "lm", se = TRUE, color = "#E41A1C") +  # 红色回归线
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") +  # y=x参考线
+  geom_point(alpha = 0.7, size = 0.5) +
+  geom_smooth(method = "lm", se = TRUE, color = "#E41A9C", size = 0.5) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") +
   labs(x = "Predicted OGT (°C)", 
        y = "Observed OGT (°C)",
        title = "A. Raw data (OLS regression)") +
   annotate("text", x = min(final_data$predicted_OGT), y = max(final_data$OGT),
-           label = sprintf("R² = %.2f", raw_r_squared),
-           hjust = 0, vjust = 1, size = 5) +
+           label = sprintf("p = %s\nR² = %.2f", 
+                           format_p_value(raw_p_value),
+                           raw_r_squared),
+           hjust = 0, vjust = 1, size = 5, lineheight = 0.8) +
   theme_bw(base_size = 12) +
   theme(panel.grid.minor = element_blank(),
         plot.title = element_text(face = "bold"))
 
 # 2. PIC图（带强制通过原点的回归）
-# 构建包含两个R²值的文本标签
-pic_labels <- sprintf("PIC R² = %.2f\nR²_resid = %.2f", 
-                      r_squared, r2_resid_result$r2_2)
+# 构建包含PIC模型和PGLS模型的文本标签
+pic_labels <- sprintf("p = %s\nPIC R² = %.2f\nR²_resid = %.2f", 
+                      format_p_value(pic_p_value),r_squared, 
+                      r2_resid_result$r2_2)
 
 pic_plot <- ggplot(pic_df, aes(x = pic_predicted, y = pic_OGT)) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  geom_smooth(method = "lm", formula = y ~ x - 1, se = TRUE, color = "#377EB8") +  # 蓝色回归线
-  geom_abline(slope = 1, linetype = "dashed", color = "black") +  # y=x参考线
+  geom_point(alpha = 0.7, size = 0.5) +
+  geom_smooth(method = "lm", formula = y ~ x - 1, se = TRUE, color = "#377EB8", size = 0.5) +
+  geom_abline(slope = 1, linetype = "dashed", color = "black") +
   labs(x = "PIC of Predicted OGT", 
        y = "PIC of Observed OGT",
        title = "B. Phylogenetic Independent Contrasts") +
   annotate("text", x = min(pic_df$pic_predicted), y = max(pic_df$pic_OGT),
            label = pic_labels,
-           hjust = 0, vjust = 1, size = 5, lineheight = 0.8) +  # 添加lineheight调整行距
+           hjust = 0, vjust = 1, size = 5, lineheight = 0.8) +
   theme_bw(base_size = 12) +
   theme(panel.grid.minor = element_blank(),
         plot.title = element_text(face = "bold"))
 
 # 组合两个子图
 combined_plot <- grid.arrange(raw_plot, pic_plot, ncol = 2)
-
+ggsave(filename = "OGT_prediction_comparison.png", 
+       plot = combined_plot,
+       width = 10,         # 宽度（英寸）
+       height = 6,         # 高度（英寸）
+       dpi = 500,          # 分辨率（每英寸点数）
+       bg = "white")       # 背景颜色
