@@ -3,8 +3,20 @@ library(stringr)
 library(ape)
 
 setwd("/home/huangr/projects/dailywork")
-filename <- "2025_09_obs_vs_pred/get_obs_pred/ogt_Cimen2020_bac_ran.csv"
 
+result_file <- "r2_comparison_results.csv"
+if (!file.exists(result_file)) {
+  result_header <- data.frame(
+    filename = character(),
+    raw_r2 = numeric(),
+    pic_r2 = numeric(),
+    stringsAsFactors = FALSE
+  )
+  write.csv(result_header, result_file, row.names = FALSE)
+  cat("已创建新的结果文件:", result_file, "\n")
+}
+
+filename <- "2025_09_obs_vs_pred/get_obs_pred/ogt_Cimen2020_bac_ran.csv"
 df <- read.csv(filename)
 tree <- read.tree("/home/huangr/projects/dailywork/GTDB_tree/bac120_r226.tree")
 # 读取元数据，只保留需要的列
@@ -89,7 +101,9 @@ summary(pgls_model_opt)
 
 plot(final_data$predicted_OGT,final_data$OGT)
 final_data <- final_data[tree_subset$tip.label, ]
-
+# 计算原始数据OLS回归的R²
+raw_model <- lm(OGT ~ predicted_OGT, data = final_data)
+raw_r_squared <- summary(raw_model)$r.squared
 # 计算系统发育独立对比 (PIC)
 pic_OGT <- pic(final_data$OGT, tree_subset)
 pic_predicted <- pic(final_data$predicted_OGT, tree_subset)
@@ -220,9 +234,38 @@ pic_plot <- ggplot(pic_df, aes(x = pic_predicted, y = pic_OGT)) +
 
 # 组合两个子图
 combined_plot <- grid.arrange(raw_plot, pic_plot, ncol = 2)
-ggsave(filename = "OGT_prediction_comparison.png", 
-       plot = combined_plot,
-       width = 10,         # 宽度（英寸）
-       height = 6,         # 高度（英寸）
-       dpi = 500,          # 分辨率（每英寸点数）
-       bg = "white")       # 背景颜色
+#运行前慎重！确认文件名！别把之前的覆盖了！
+# ggsave(filename = "ogt_Cimen2020_arc_ran.png", 
+#        plot = combined_plot,
+#        width = 10,         # 宽度（英寸）
+#        height = 6,         # 高度（英寸）
+#        dpi = 500,          # 分辨率（每英寸点数）
+#        bg = "white")       # 背景颜色
+raw_r2 <- summary(raw_model)$r.squared
+pic_r2 <- summary(pic_model)$r.squared
+
+new_result <- data.frame(
+  filename = basename(filename),
+  raw_r2 = raw_r2,
+  pic_r2 = pic_r2
+)
+write.table(new_result, result_file, 
+            append = TRUE, 
+            sep = ",", 
+            col.names = FALSE, 
+            row.names = FALSE)
+
+#--------读取最终结果画图----------
+all_results <- read.csv(result_file)
+r2_plot <- ggplot(all_results,aes(x=raw_r2,y=pic_r2))+
+  geom_point(size=4,alpha=0.7,color="#4DAF4A")+
+  geom_abline(slopt=1,intercept=0,linetype="dashed",color="red")+
+  geom_text(aes(label=filename),vjust=-0.8,size=3,check_overlap = TRUE)+
+  labs(x="Raw ",
+       y="",
+       title="")+
+  theme_bw(base_size=14)+
+  theme(panel.grid.major = element_line(color="gray90"),
+        plot.title = element_text(hjust=0.5,face="bold"))+
+  coored_fixed(ratio=1,xlim=c(0,1),ylim=c(0,1))
+
