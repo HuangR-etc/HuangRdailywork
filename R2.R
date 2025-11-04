@@ -1,8 +1,9 @@
 library(dplyr)
 library(stringr)
 library(ape)
-
-setwd("/home/huangr/projects/dailywork")
+# library(reticulate)
+# use_condaenv("r-ggtree", required = TRUE)
+setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred")
 #每次分析读取特定数据文件
 filename <- "ogt_Cimen2020_bac_dis.csv"
 
@@ -22,12 +23,12 @@ if (!file.exists(result_file)) {
 }
 
 df <- read.csv(filename)
-tree <- read.tree("GTDB_tree/bac120_r226.tree")
+tree <- read.tree("D:/pine/paper_redo/GTDB_tree/bac120_r226.tree")
 # 读取元数据，只保留需要的列
 cols_to_keep <- c("accession", "ncbi_organism_name", "gtdb_taxonomy", 
                   "gtdb_representative", "gtdb_genome_representative",
                   "ncbi_refseq_category", "ncbi_assembly_level")
-gtdb_meta <- read.delim("GTDB_tree/bac120_metadata_r226.tsv", 
+gtdb_meta <- read.delim("D:/pine/paper_redo/GTDB_tree/bac120_metadata_r226.tsv", 
                         sep = "\t", 
                         header = TRUE)[, cols_to_keep]
 
@@ -162,10 +163,7 @@ cat("被丢弃的数据:", comp_data$dropped$unmatched.rows, "\n")
 print(comp_data$dropped)
 
 #-------完成数据和树的组合，开始模型----------
-# 运行PGLS模型
-pgls_model <- pgls(OGT ~ predicted_OGT, data = comp_data)
-summary(pgls_model)
-# 让PGLS自动估计lambda
+# PGLS:自动估计lambda的模型
 pgls_model_opt <- pgls(OGT ~ predicted_OGT, data = comp_data, 
                        lambda = "ML")
 summary(pgls_model_opt)
@@ -246,7 +244,31 @@ calculate_r2_resid <- function(final_data, tree_subset) {
 r2_resid_result <- calculate_r2_resid(final_data, tree_subset)
 
 #--------在画图部分之前加入系统发育R2的计算----------
-
+#增加：计算系统发育信号lambda值
+calculate_phylogenetic_signal <- function(data, tree, tip_labels_col = "GCF") {
+  # 确保数据顺序与树梢一致
+  data_ordered <- data[tree$tip.label, ]
+  
+  # 提取观测值和预测值向量
+  obs_ogt <- data_ordered$OGT
+  pred_ogt <- data_ordered$predicted_OGT
+  names(obs_ogt) <- names(pred_ogt) <- data_ordered[[tip_labels_col]]
+  
+  # 计算观测OGT的Pagel's lambda
+  obs_lambda_result <- phylosig(tree, obs_ogt, method = "lambda", test = FALSE)
+  obs_lambda <- ifelse(is.numeric(obs_lambda_result$lambda), 
+                       obs_lambda_result$lambda, NA)
+  
+  # 计算预测OGT的Pagel's lambda
+  pred_lambda_result <- phylosig(tree, pred_ogt, method = "lambda", test = FALSE)
+  pred_lambda <- ifelse(is.numeric(pred_lambda_result$lambda), 
+                        pred_lambda_result$lambda, NA)
+  
+  return(list(
+    obs_lambda = obs_lambda,
+    pred_lambda = pred_lambda
+  ))
+}
 # 使用白化方法计算系统发育R2
 calculate_phylo_r2 <- function(y, yhat, tip_labels, tree, model = "BM") {
   stopifnot(length(y) == length(yhat))
@@ -296,32 +318,33 @@ phylo_r2 <- calculate_phylo_r2(
 cat("系统发育R2 (白化方法):", round(phylo_r2, 4), "\n")
 
 #--------计算PGLS模型的R2----------
-# 方法1: 使用残差计算R2
-pgls_predicted <- predict(pgls_model_opt)
-pgls_actual <- final_data_ordered$OGT
-
-# 计算PGLS的R2 (残差方法)
-pgls_residuals <- pgls_actual - pgls_predicted
-pgls_r2_residual <- 1 - sum(pgls_residuals^2) / sum((pgls_actual - mean(pgls_actual))^2)
-
-# 方法2: 使用白化方法计算PGLS的R2
-pgls_phylo_r2 <- calculate_phylo_r2(
-  y = final_data_ordered$OGT,
-  yhat = pgls_predicted,
-  tip_labels = final_data_ordered$GCF,
-  tree = tree_subset,
-  model = "BM"
-)
-
-cat("PGLS R2 (残差方法):", round(pgls_r2_residual, 4), "\n")
-cat("PGLS R2 (白化方法):", round(pgls_phylo_r2, 4), "\n")
-
 pgls_summary <- summary(pgls_model_opt)
 
 # 提取PGLS模型的R²值
-# 注意：caper包的pgls函数可能不直接提供R²，我们需要计算
-pgls_r2 <- 1 - (pgls_summary$sigma^2) / var(final_data_ordered$OGT)
-pgls_r2
+# pgls_r2 <- 1 - (pgls_summary$sigma^2) / var(final_data_ordered$OGT)
+pgls_r2 <-pgls_summary$r.squared
+#--------计算系统发育信号lambda值----------
+# 计算观测和预测OGT的lambda值
+signal_results <- calculate_phylogenetic_signal(final_data_ordered, tree_subset)
+
+# 从PGLS模型中提取最优lambda值
+pgls_opt_lambda <- pgls_model_opt$param["lambda"]
+
+cat("系统发育信号评估:\n")
+cat("观测OGT的lambda值:", round(signal_results$obs_lambda, 4), "\n")
+cat("预测OGT的lambda值:", round(signal_results$pred_lambda, 4), "\n")
+cat("PGLS最优lambda值:", round(pgls_opt_lambda, 4), "\n")
+
+# 进行显著性检验
+cat("\n系统发育信号显著性检验:\n")
+obs_signal_test <- phylosig(tree_subset, setNames(final_data_ordered$OGT, final_data_ordered$GCF), 
+                            method = "lambda", test = TRUE)
+pred_signal_test <- phylosig(tree_subset, setNames(final_data_ordered$predicted_OGT, final_data_ordered$GCF), 
+                             method = "lambda", test = TRUE)
+
+cat("观测OGT lambda显著性: p =", format.pval(obs_signal_test$P, digits = 3), "\n")
+cat("预测OGT lambda显著性: p =", format.pval(pred_signal_test$P, digits = 3), "\n")
+
 #--------收集p值-------
 # 1. 原始OLS模型的p值
 raw_model_summary <- summary(raw_model)
@@ -421,17 +444,20 @@ r2_plot <- ggplot(all_results, aes(x = raw_r2, y = pic_r2)) +
   coord_fixed(ratio = 1, xlim = c(0, 1), ylim = c(0, 1))
 r2_plot
 
-
-#-----------抽取子集试运行-------------
+#-----------抽取子集比较-------------
 # 函数：根据系统发育距离抽取子集
-get_phylogenetic_subsets <- function(tree, data, n_species = 30) {
+get_phylogenetic_subsets <- function(tree, data, n_species = 30, seed = NULL) {
+  # 如果提供了种子，设置随机种子
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+  
   # 计算系统发育距离矩阵
   phylo_dist <- cophenetic(tree)
   
   # 子集A：系统发育关系近的物种
-  # 找到距离最近的一对物种，然后扩展
-  min_pair <- which(phylo_dist == min(phylo_dist[phylo_dist > 0]), arr.ind = TRUE)[1, ]
-  start_species <- rownames(phylo_dist)[min_pair[1]]
+  # 随机选取一个物种
+  start_species <- sample(rownames(phylo_dist), 1)
   
   # 获取与起始物种最近的n_species个物种
   dist_to_start <- phylo_dist[start_species, ]
@@ -476,8 +502,8 @@ get_phylogenetic_subsets <- function(tree, data, n_species = 30) {
   ))
 }
 
-# 函数：计算各种R²指标
-calculate_all_r2 <- function(data, tree) {
+# 函数：计算各种R²指标和lambda值
+calculate_all_r2_and_lambda <- function(data, tree) {
   results <- list()
   
   # 确保数据顺序与树梢一致
@@ -508,57 +534,25 @@ calculate_all_r2 <- function(data, tree) {
   pgls_model <- pgls(OGT ~ predicted_OGT, data = comp_data, lambda = "ML")
   pgls_predicted <- predict(pgls_model)
   pgls_actual <- data_ordered$OGT
-  pgls_r2 <- 1 - sum((pgls_actual - pgls_predicted)^2) / 
-    sum((pgls_actual - mean(pgls_actual))^2)
+  pgls_r2 <- summary(pgls_model)$r.squared
+  
+  # 5. 计算系统发育信号lambda值
+  lambda_results <- calculate_phylogenetic_signal(data_ordered, tree)
   
   return(list(
     ols_r2 = ols_r2,
     pic_r2 = pic_r2,
     phylo_r2 = phylo_r2,
     pgls_r2 = pgls_r2,
+    obs_lambda = lambda_results$obs_lambda,
+    pred_lambda = lambda_results$pred_lambda,
+    pgls_opt_lambda = pgls_model$param["lambda"],
     n_species = nrow(data_ordered)
   ))
 }
 
-# 执行比较分析
-run_phylogenetic_comparison <- function(tree, data, n_species = 30, n_repeats = 10) {
-  all_results <- list()
-  
-  # 完整数据集的基准结果
-  full_result <- calculate_all_r2(data, tree)
-  full_result$type <- "完整数据集"
-  all_results[["full"]] <- full_result
-  
-  # 多次重复抽样以减少随机性
-  for (i in 1:n_repeats) {
-    subsets <- get_phylogenetic_subsets(tree, data, n_species)
-    
-    for (subset_name in c("subset_A", "subset_B")) {
-      subset_data <- subsets[[subset_name]]$data
-      subset_tree <- subsets[[subset_name]]$tree
-      subset_type <- subsets[[subset_name]]$type
-      
-      # 只有当有足够数据时才计算
-      if (nrow(subset_data) >= 10) {
-        result <- calculate_all_r2(subset_data, subset_tree)
-        result$type <- subset_type
-        result$replicate <- i
-        
-        key <- paste0(subset_name, "_rep", i)
-        all_results[[key]] <- result
-      }
-    }
-  }
-  
-  return(all_results)
-}
-
-# 运行分析
-comparison_results <- run_phylogenetic_comparison(tree_subset, final_data, 
-                                                  n_species = 30, n_repeats = 10)
-
-# 结果汇总和可视化
-summarize_results <- function(results) {
+# 函数：结果汇总和可视化
+summarize_results_with_lambda <- function(results) {
   library(dplyr)
   library(tidyr)
   
@@ -572,7 +566,12 @@ summarize_results <- function(results) {
       pic_r2 = result$pic_r2,
       phylo_r2 = result$phylo_r2,
       pgls_r2 = result$pgls_r2,
+      obs_lambda = result$obs_lambda,
+      pred_lambda = result$pred_lambda,
+      pgls_opt_lambda = result$pgls_opt_lambda,
       n_species = result$n_species,
+      seed = result$seed,  # 新增种子列
+      replicate = result$replicate,
       stringsAsFactors = FALSE
     )
   }))
@@ -582,6 +581,7 @@ summarize_results <- function(results) {
     filter(dataset != "full") %>%
     group_by(type) %>%
     summarise(
+      # R²统计
       mean_ols_r2 = mean(ols_r2, na.rm = TRUE),
       sd_ols_r2 = sd(ols_r2, na.rm = TRUE),
       mean_pic_r2 = mean(pic_r2, na.rm = TRUE),
@@ -590,17 +590,159 @@ summarize_results <- function(results) {
       sd_phylo_r2 = sd(phylo_r2, na.rm = TRUE),
       mean_pgls_r2 = mean(pgls_r2, na.rm = TRUE),
       sd_pgls_r2 = sd(pgls_r2, na.rm = TRUE),
+      
+      # Lambda统计
+      mean_obs_lambda = mean(obs_lambda, na.rm = TRUE),
+      sd_obs_lambda = sd(obs_lambda, na.rm = TRUE),
+      mean_pred_lambda = mean(pred_lambda, na.rm = TRUE),
+      sd_pred_lambda = sd(pred_lambda, na.rm = TRUE),
+      mean_pgls_lambda = mean(pgls_opt_lambda, na.rm = TRUE),
+      sd_pgls_lambda = sd(pgls_opt_lambda, na.rm = TRUE),
+      
       n = n()
     )
   
   return(list(detailed = results_df, summary = summary))
 }
 
-# 汇总结果
-final_summary <- summarize_results(comparison_results)
-print(final_summary$summary)
+# 函数：执行比较分析
+run_phylogenetic_comparison_with_lambda <- function(tree, data, n_species = 30, n_repeats = 10) {
+  
+  all_results <- list()
+  
+  # 生成固定的种子序列，确保可复现性
+  seeds <- sample(1:100000, n_repeats)
+  
+  for (i in 1:n_repeats) {
+    cat("正在进行第", i, "次重复抽样，种子:", seeds[i], "...\n")
+    
+    tryCatch({
+      # 使用特定的种子进行抽样
+      subsets <- get_phylogenetic_subsets(tree, data, n_species, seed = seeds[i])
+      
+      for (subset_name in c("subset_A", "subset_B")) {
+        subset_data <- subsets[[subset_name]]$data
+        subset_tree <- subsets[[subset_name]]$tree
+        
+        # 检查数据量
+        if (nrow(subset_data) < 10) {
+          message("子集", subset_name, "第", i, "次重复数据量不足，种子:", seeds[i])
+          next
+        }
+        
+        # 使用新的函数计算R²和lambda
+        result <- calculate_all_r2_and_lambda(subset_data, subset_tree)
+        result$replicate <- i
+        result$type <- subsets[[subset_name]]$type
+        result$seed <- seeds[i]  # 记录使用的种子
+        
+        key <- paste0(subset_name, "_rep", i, "_seed", seeds[i])
+        all_results[[key]] <- result
+      }
+    }, error = function(e) {
+      message("第", i, "次重复失败，种子:", seeds[i], "错误信息: ", e$message)
+      # 即使失败也记录种子信息
+      all_results[[paste0("failed_rep", i, "_seed", seeds[i])]] <- list(
+        replicate = i,
+        seed = seeds[i],
+        error = e$message,
+        type = "失败"
+      )
+    })
+  }
+  
+  return(all_results)
+}
 
-# 可视化比较
+# 运行分析
+comparison_results_with_lambda <- run_phylogenetic_comparison_with_lambda(
+  tree_subset, final_data, n_species = 30, n_repeats = 500
+)
+# 提取结果和抽样数据
+# all_results <- comparison_results_with_subsets$results
+# all_subsets <- comparison_results_with_subsets$subsets
+# 汇总结果
+final_summary_with_lambda <- summarize_results_with_lambda(comparison_results_with_lambda)
+print(final_summary_with_lambda$summary)
+# write.csv(final_summary_with_lambda$detailed,"300_sample+lambda.csv")
+
+#---------统计检验：比较近缘vs远缘物种的R²差异-------------
+# 对每种R²方法进行t检验
+# 筛选数据：只保留pgls_opt_lambda > 0.95的结果
+filtered_data <- final_summary_with_lambda$detailed
+original_n <- nrow(filtered_data)
+# 筛选条件
+filtered_data <- filtered_data %>%
+  filter(
+    pgls_opt_lambda > 0.9999,
+    is.finite(ols_r2),
+    is.finite(pic_r2), 
+    is.finite(phylo_r2),
+    is.finite(pgls_r2),
+    is.finite(obs_lambda),
+    is.finite(pred_lambda),
+    is.finite(pgls_opt_lambda)
+  )
+cat("\n=== 去除重复子集 ===\n")
+before_deduplication <- nrow(filtered_data)
+
+# 对近缘和远缘子集分别去重
+filtered_data_dedup <- filtered_data %>%
+  group_by(type) %>%
+  distinct(pic_r2, .keep_all = TRUE) %>%
+  ungroup()
+
+after_deduplication <- nrow(filtered_data_dedup)
+removed_duplicates <- before_deduplication - after_deduplication
+
+cat("去重前样本数:", before_deduplication, "\n")
+cat("去重后样本数:", after_deduplication, "\n")
+cat("移除的重复子集数:", removed_duplicates, "\n")
+
+# 使用去重后的数据
+filtered_data <- as.data.frame(filtered_data_dedup)
+# 统计筛选后数据集的情况
+cat("=== 数据筛选结果 ===\n")
+cat("原始数据集样本数:", original_n, "\n")
+cat("筛选后数据集样本数:", nrow(filtered_data), "\n\n")
+
+# 统计近缘和远缘子集的个数
+subset_counts <- table(filtered_data$type)
+cat("=== 筛选后各子集样本数 ===\n")
+cat("近缘物种子集数:", subset_counts["近缘物种"], "\n")
+cat("远缘物种子集数:", subset_counts["远缘物种"], "\n\n")
+
+# 进行统计检验
+cat("=== 统计检验结果 (pgls_opt_lambda = 1) ===\n")
+
+# 定义要检验的R²指标
+r2_metrics <- c("ols_r2", "pic_r2", "phylo_r2", "pgls_r2")
+results_list <- list()
+
+for (metric in r2_metrics) {
+  cat("\n---", metric, "的t检验结果 ---\n")
+  
+  # 提取近缘和远缘子集的数据
+  close_data <- filtered_data[filtered_data$type == "近缘物种", metric]
+  far_data <- filtered_data[filtered_data$type == "远缘物种", metric]
+  
+  # 基本统计信息
+  cat("近缘子集 (n =", length(close_data), "): 均值 =", round(mean(close_data, na.rm = TRUE), 4), 
+      ", 标准差 =", round(sd(close_data, na.rm = TRUE), 4), "\n")
+  cat("远缘子集 (n =", length(far_data), "): 均值 =", round(mean(far_data, na.rm = TRUE), 4),
+      ", 标准差 =", round(sd(far_data, na.rm = TRUE), 4), "\n")
+  
+  # 进行t检验
+  t_test <- t.test(close_data, far_data)
+  
+  # 输出结果
+  cat("t值 =", round(t_test$statistic, 4), "\n")
+  cat("自由度 =", round(t_test$parameter, 2), "\n")
+  cat("p值 =", format.pval(t_test$p.value, digits = 4), "\n")
+}
+
+#-------可视化----------
+# 可视化比较不同抽样方法的R2均值
 library(ggplot2)
 library(reshape2)
 
@@ -622,39 +764,64 @@ ggplot(plot_data, aes(x = type, y = r2, fill = method)) +
   theme_bw() +
   theme(legend.position = "bottom")
 
-# 统计检验：比较近缘vs远缘物种的R²差异
-# 对每种R²方法进行t检验
-r2_methods <- c("ols_r2", "pic_r2", "phylo_r2", "pgls_r2")
-for (method in r2_methods) {
-  near_data <- final_summary$detailed %>% 
-    filter(type == "近缘物种") %>% pull(method)
-  far_data <- final_summary$detailed %>% 
-    filter(type == "远缘物种") %>% pull(method)
+# 抽样物种点可视化
+visualize_original_sampling_clean <- function(tree, data, n_species = 30, n_clusters = 5) {
+  # 使用原始抽样方法进行一次抽样
+  subsets <- get_phylogenetic_subsets(tree, data, n_species)
   
-  t_test <- t.test(near_data, far_data)
-  cat(sprintf("\n%s方法的t检验结果:\n", method))
-  cat(sprintf("近缘物种均值: %.3f, 远缘物种均值: %.3f\n", 
-              mean(near_data), mean(far_data)))
-  cat(sprintf("t = %.3f, p = %.3f\n", t_test$statistic, t_test$p.value))
-}
-
-# 可视化两个子集的系统发育关系
-plot_phylogenetic_structure_ape <- function(tree, subset_A, subset_B) {
-  # 设置颜色
-  tip_colors <- ifelse(tree$tip.label %in% subset_A$data$GCF, "red",
-                       ifelse(tree$tip.label %in% subset_B$data$GCF, "blue", "gray"))
+  # 计算簇群信息（用于可视化）
+  phylo_dist <- cophenetic(tree)
+  clusters <- cutree(hclust(as.dist(phylo_dist)), k = n_clusters)
+  
+  # 创建簇群颜色映射
+  cluster_colors <- rainbow(length(unique(clusters)))
+  names(cluster_colors) <- unique(clusters)
+  
+  # 为每个物种分配颜色
+  tip_colors <- cluster_colors[as.character(clusters[tree$tip.label])]
+  
+  # 只标记选中的物种，未选中的物种不显示点
+  selected_tips <- tree$tip.label %in% c(subsets$subset_A$data$GCF, subsets$subset_B$data$GCF)
+  
+  # 设置点的形状和大小：近缘物种用实心圆，远缘物种用三角形，未选中的不显示
+  tip_pch <- rep(NA, length(tree$tip.label))  # 默认不显示
+  tip_pch[tree$tip.label %in% subsets$subset_A$data$GCF] <- 16  # 实心圆
+  tip_pch[tree$tip.label %in% subsets$subset_B$data$GCF] <- 17  # 三角形
+  
+  tip_cex <- rep(0, length(tree$tip.label))  # 默认大小为0（不显示）
+  tip_cex[selected_tips] <- 1.2  # 选中的物种点大小为1.2
   
   # 绘制系统发育树
-  par(mar = c(2, 0, 2, 0))
-  plot(tree, show.tip.label = TRUE, cex = 0.6, tip.color = tip_colors)
-  title("物种在系统发育树中的分布")
+  par(mar = c(1, 1, 3, 1))
+  plot(tree, show.tip.label = FALSE, tip.color = tip_colors, 
+       edge.color = "gray70", edge.width = 0.6)
+  
+  # 只添加选中的物种点（未选中的不会显示）
+  tiplabels(pch = tip_pch, cex = tip_cex, col = "black")
+  
+  title("原始抽样方法示意图\n(实心点:近缘子集, 三角:远缘子集)")
   
   # 添加图例
   legend("topright", 
-         legend = c("近缘子集", "远缘子集", "其他"),
-         fill = c("red", "blue", "gray"),
+         legend = c("近缘子集", "远缘子集"),
+         pch = c(16, 17),
          cex = 0.8, bty = "n")
+  
+  # 显示簇群信息
+  cluster_info <- table(clusters[subsets$subset_A$data$GCF])
+  cat("近缘子集在各簇群的分布:\n")
+  print(cluster_info)
+  
+  cluster_info_far <- table(clusters[subsets$subset_B$data$GCF])
+  cat("\n远缘子集在各簇群的分布:\n")
+  print(cluster_info_far)
+  
+  # 返回抽样信息用于后续分析
+  return(list(
+    subsets = subsets,
+    clusters = clusters,
+    cluster_colors = cluster_colors
+  ))
 }
-
-# 绘制
-plot_phylogenetic_structure_ape(tree_subset, subsets$subset_A, subsets$subset_B)
+# 可视化随机一次原始抽样
+original_sampling_clean <- visualize_original_sampling_clean(tree_subset, final_data, n_species = 30, n_clusters = 5)
