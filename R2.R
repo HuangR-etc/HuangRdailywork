@@ -825,3 +825,74 @@ visualize_original_sampling_clean <- function(tree, data, n_species = 30, n_clus
 }
 # 可视化随机一次原始抽样
 original_sampling_clean <- visualize_original_sampling_clean(tree_subset, final_data, n_species = 30, n_clusters = 5)
+
+#----------转化为超度量树，并绘制热图------------
+library(ape)
+
+# 使用chronopl函数进行转换
+ultrametric_tree <- chronopl(tree_subset, lambda = 1)
+
+y_obs = final_data_ordered$OGT
+names(y_obs) <- final_data_ordered$GCF
+y_pred = final_data_ordered$predicted_OGT
+names(y_pred) <- final_data_ordered$GCF
+residuals <- y_obs - y_pred
+
+# 创建数据框
+residual_df <- data.frame(
+  species = names(residuals),
+  residual = as.numeric(residuals)
+)
+
+# 为residual_df增加一列随机抽样数据,表示独立同分布热图
+residual_df$random <- rnorm(nrow(residual_df), mean = 0, sd = sd(residual_df$residual))
+
+# 确保残差数据与树中的物种顺序匹配
+tip_order <- ultrametric_tree$tip.label
+residuals_ordered <- residuals[match(tip_order, names(residuals))]
+random_ordered <- residual_df$random[match(tip_order, residual_df$species)]
+
+# 设置颜色梯度
+col_palette <- colorRampPalette(c("blue", "white", "red"))(100)
+residual_range <- range(c(residuals_ordered, random_ordered), na.rm = TRUE)
+residual_colors <- col_palette[cut(residuals_ordered, 100, labels = FALSE)]
+random_colors <- col_palette[cut(random_ordered, 100, labels = FALSE)]
+
+# 设置图形布局：树 + 热图1 + 热图2
+layout(matrix(1:3, 1, 3), widths = c(10, 1, 1))
+
+# 绘制系统发育树
+par(mar = c(2, 0, 2, 0))
+plot(ultrametric_tree, show.tip.label = FALSE, cex = 0.8)
+
+# 绘制残差热图 - 修正后的版本
+par(mar = c(2, 0, 2, 1))
+# 创建一个空图，设置合适的坐标轴范围
+plot(0, 0, type = "n", 
+     xlim = c(0, 1), 
+     ylim = c(0.5, length(tip_order) + 0.5),
+     axes = FALSE, 
+     xlab = "", 
+     ylab = "",
+     main = "Residuals")
+
+# 添加热图条 - 确保顺序与树匹配
+for(i in 1:length(tip_order)) {
+  rect(0, i-0.5, 1, i+0.5, col = residual_colors[i], border = NA)
+}
+
+# 绘制随机热图 - 修正后的版本
+par(mar = c(2, 0, 2, 1))
+# 创建一个空图，设置合适的坐标轴范围
+plot(0, 0, type = "n", 
+     xlim = c(0, 1), 
+     ylim = c(0.5, length(tip_order) + 0.5),
+     axes = FALSE, 
+     xlab = "", 
+     ylab = "",
+     main = "Random")
+
+# 添加热图条 - 确保顺序与树匹配
+for(i in 1:length(tip_order)) {
+  rect(0, i-0.5, 1, i+0.5, col = random_colors[i], border = NA)
+}
