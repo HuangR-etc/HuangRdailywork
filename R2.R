@@ -1,11 +1,12 @@
 library(dplyr)
 library(stringr)
 library(ape)
+library(caper)
 # library(reticulate)
 # use_condaenv("r-ggtree", required = TRUE)
 setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred")
 #每次分析读取特定数据文件
-filename <- "ogt_Cimen2020_bac_dis.csv"
+filename <- "Barnum2024_temperature_clean.csv"
 
 #------通用数据读取和分析代码----------
 result_file <- "r2_comparison_results.csv"
@@ -81,6 +82,33 @@ final_data <- as.data.frame(final_data)
 # 设置行名为GCF编号（这样comparative.data可以正确匹配）
 rownames(final_data) <- final_data$GCF
 #-------数据集2：Barnum2024---------
+# 提取数据集中的GCA编号（去掉"GCA_"前缀）
+df$GCA_number <- gsub("GCA_", "", df$genbank_accession)
+
+# 提取树tip.label中的GCF编号（去掉"RS_GCF_"前缀和".1"后缀）
+tree_tip_numbers <- gsub("RS_GCF_", "", tree$tip.label)
+tree_tip_numbers <- gsub("\\.\\d+$", "", tree_tip_numbers)  # 移除末尾的版本号
+
+# 创建匹配的数据框
+tree_tip_df <- data.frame(
+  tip_label = tree$tip.label,
+  GCF_number = tree_tip_numbers
+)
+
+# 将数据集与树tip进行匹配
+matched_data <- merge(df, tree_tip_df, 
+                      by.x = "GCA_number", by.y = "GCF_number", 
+                      all.x = FALSE, all.y = FALSE)
+
+# 重命名列以符合后续代码要求
+final_data <- matched_data
+final_data$GCF <- final_data$tip_label
+
+# 检查匹配结果
+cat("原始数据集物种数:", nrow(df), "\n")
+cat("匹配成功的物种数:", nrow(final_data), "\n")
+cat("匹配的物种:", final_data$genbank_accession, "\n")
+
 #-------数据集3：Sauer2019---------
 # 创建搜索名称：将下划线替换为空格（匹配GTDB格式）
 df$search_name <- gsub("_", " ", df$species)
@@ -688,8 +716,8 @@ before_deduplication <- nrow(filtered_data)
 
 # 对近缘和远缘子集分别去重
 filtered_data_dedup <- filtered_data %>%
-  group_by(type) %>%
-  distinct(pic_r2, .keep_all = TRUE) %>%
+  group_by(type) %>%9
+distinct(pic_r2, .keep_all = TRUE) %>%
   ungroup()
 
 after_deduplication <- nrow(filtered_data_dedup)
@@ -896,3 +924,281 @@ plot(0, 0, type = "n",
 for(i in 1:length(tip_order)) {
   rect(0, i-0.5, 1, i+0.5, col = random_colors[i], border = NA)
 }
+#----------绘制ols R2和pic R2差距最大时的散点图------------
+# 1. 将指定列转换为小数表示（避免科学计数法）
+library(dplyr)
+detailed_data <- final_summary_with_lambda$detailed
+# 筛选条件
+detailed_data <- detailed_data %>%
+  filter(
+    is.finite(pgls_r2),
+  )
+# 指定需要转换的列
+numeric_cols <- c("ols_r2", "pic_r2", "phylo_r2", "pgls_r2", 
+                  "obs_lambda", "pred_lambda", "pgls_opt_lambda")
+
+# 将这些列转换为数值型并保留足够的小数位数
+detailed_data[numeric_cols] <- lapply(detailed_data[numeric_cols], function(x) {
+  as.numeric(format(round(x, 6), scientific = FALSE))
+})
+
+# 2. 新增差值列
+detailed_data$ols_pic_diff <- detailed_data$ols_r2 - detailed_data$pic_r2
+
+# 3. 找出四种极端情况
+# 近缘物种中差值最大（正数绝对值最大）
+close_max_diff <- detailed_data %>%
+  filter(type == "近缘物种") %>%
+  filter(ols_pic_diff == max(ols_pic_diff, na.rm = TRUE)) %>%
+  slice(1)  # 如果有多个相同值，取第一个
+
+# 近缘物种中差值最小（负数绝对值最大）
+close_min_diff <- detailed_data %>%
+  filter(type == "近缘物种") %>%
+  filter(ols_pic_diff == min(ols_pic_diff, na.rm = TRUE)) %>%
+  slice(1)
+
+# 远缘物种中差值最大（正数绝对值最大）
+far_max_diff <- detailed_data %>%
+  filter(type == "远缘物种") %>%
+  filter(ols_pic_diff == max(ols_pic_diff, na.rm = TRUE)) %>%
+  slice(1)
+
+# 远缘物种中差值最小（负数绝对值最大）
+far_min_diff <- detailed_data %>%
+  filter(type == "远缘物种") %>%
+  filter(ols_pic_diff == min(ols_pic_diff, na.rm = TRUE)) %>%
+  slice(1)
+
+# 4. 重新抽样获取这四个数据集
+extreme_cases <- list(
+  close_max = close_max_diff,
+  close_min = close_min_diff,
+  far_max = far_max_diff,
+  far_min = far_min_diff
+)
+
+# 函数：重新抽样并获取指定子集
+get_specific_subset <- function(tree, data, seed, subset_type) {
+  subsets <- get_phylogenetic_subsets(tree, data, n_species = 30, seed = seed)
+  
+  if (subset_type == "近缘物种") {
+    return(subsets$subset_A)
+  } else {
+    return(subsets$subset_B)
+  }
+}
+
+# 获取四个极端情况的数据集
+extreme_datasets <- list()
+
+for (case_name in names(extreme_cases)) {
+  case_data <- extreme_cases[[case_name]]
+  seed <- case_data$seed
+  subset_type <- case_data$type
+  
+  cat("正在获取案例:", case_name, "种子:", seed, "类型:", subset_type, "\n")
+  
+  dataset <- get_specific_subset(tree_subset, final_data, seed, subset_type)
+  extreme_datasets[[case_name]] <- list(
+    data = dataset$data,
+    tree = dataset$tree,
+    type = dataset$type,
+    seed = seed,
+    case_name = case_name,
+    ols_pic_diff = case_data$ols_pic_diff
+  )
+}
+
+# 5. 优化后的绘制散点图函数
+plot_extreme_cases_optimized <- function(extreme_datasets, 
+                                         point_size = 2,           # 点大小
+                                         title_size = 12,          # 标题字体大小
+                                         axis_title_size = 11,     # 坐标轴标题字体大小
+                                         axis_text_size = 10,      # 坐标轴标签字体大小
+                                         case_title_size = 14) {   # 案例标题字体大小
+  
+  library(ggplot2)
+  library(patchwork)
+  
+  # 存储每个案例的图形
+  case_plots <- list()
+  
+  # 遍历四个极端案例
+  for (case_name in names(extreme_datasets)) {
+    dataset_info <- extreme_datasets[[case_name]]
+    data <- dataset_info$data
+    tree <- dataset_info$tree
+    type <- dataset_info$type
+    seed <- dataset_info$seed
+    diff_value <- dataset_info$ols_pic_diff
+    
+    # 确保数据顺序与树梢一致
+    data_ordered <- data[tree$tip.label, ]
+    
+    # 计算PIC值
+    pic_OGT <- pic(data_ordered$OGT, tree)
+    pic_predicted <- pic(data_ordered$predicted_OGT, tree)
+    
+    # 创建数据框用于绘图
+    orig_data <- data.frame(
+      OGT = data_ordered$OGT,
+      predicted_OGT = data_ordered$predicted_OGT
+    )
+    
+    pic_data <- data.frame(
+      pic_OGT = pic_OGT,
+      pic_predicted = pic_predicted
+    )
+    
+    # 计算线性回归模型用于显示R²
+    lm_orig <- lm(OGT ~ predicted_OGT, data = orig_data)
+    lm_pic <- lm(pic_OGT ~ pic_predicted, data = pic_data)
+    
+    r2_orig <- round(summary(lm_orig)$r.squared, 3)
+    r2_pic <- round(summary(lm_pic)$r.squared, 3)
+    
+    # 自定义主题：白色背景，黑色边框，无网格线
+    custom_theme <- function(base_size = 10) {
+      theme(
+        # 设置白色背景
+        panel.background = element_rect(fill = "white", colour = "black", linewidth = 0.5),
+        # 去除网格线
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        # 设置坐标轴
+        axis.line = element_line(colour = "black", linewidth = 0.5),
+        # 设置文本大小
+        axis.title = element_text(size = axis_title_size, colour = "black"),
+        axis.text = element_text(size = axis_text_size, colour = "black"),
+        plot.title = element_text(size = title_size, hjust = 0.5, face = "bold"),
+        # 设置图例（如果有的话）
+        legend.position = "none"
+      )
+    }
+    
+    # 绘制原始数据散点图
+    p_orig <- ggplot(orig_data, aes(x = predicted_OGT, y = OGT)) +
+      # 添加散点
+      geom_point(color = "blue", alpha = 0.7, size = point_size) +
+      # 添加线性拟合线
+      geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "solid", 
+                  fill = "lightpink", alpha = 0.3) +
+      # 添加R²标注
+      annotate("text", x = min(orig_data$predicted_OGT), 
+               y = max(orig_data$OGT), 
+               label = paste0("R² = ", r2_orig),
+               hjust = 0, vjust = 1, size = 4, color = "darkred") +
+      # 设置坐标轴标签和标题
+      labs(title = paste0(type, " - 原始数据"),
+           x = "origin_pred_OGT(°C)", y = "origin_obs_OGT(°C)") +
+      # 应用自定义主题
+      custom_theme() +
+      # 添加全包围边框
+      theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+    
+    # 绘制PIC数据散点图
+    p_pic <- ggplot(pic_data, aes(x = pic_predicted, y = pic_OGT)) +
+      # 添加散点
+      geom_point(color = "darkgreen", alpha = 0.7, size = point_size) +
+      # 添加线性拟合线
+      geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "solid",
+                  fill = "lightpink", alpha = 0.3) +
+      # 添加通过原点的对角线（PIC理论线）
+      geom_abline(slope = 1, intercept = 0, linetype = "dashed", 
+                  color = "gray", linewidth = 0.8) +
+      # 添加R²标注
+      annotate("text", x = min(pic_data$pic_predicted), 
+               y = max(pic_data$pic_OGT), 
+               label = paste0("R² = ", r2_pic),
+               hjust = 0, vjust = 1, size = 4, color = "darkred") +
+      # 设置坐标轴标签和标题
+      labs(title = "PIC数据",
+           x = "PIC_pred_OGT(°C)", y = "PIC_obs_OGT(°C)") +
+      # 应用自定义主题
+      custom_theme() +
+      # 添加全包围边框
+      theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+    
+    # 合并两个子图，并添加案例信息
+    combined_plot <- p_orig + p_pic + 
+      plot_annotation(
+        title = paste0("案例: ", case_name, 
+                       " (种子: ", seed, 
+                       ", 差值: ", round(diff_value, 4), ")"),
+        theme = theme(plot.title = element_text(size = case_title_size, 
+                                                hjust = 0.5, 
+                                                face = "bold"))
+      )
+    
+    case_plots[[case_name]] <- combined_plot
+  }
+  
+  # 6. 将所有八个子图组合成一个整体图形
+  
+  # 使用patchwork将四个案例垂直排列
+  # 每个案例包含两个水平排列的子图
+  final_plot <- (case_plots[["close_max"]] | case_plots[["close_min"]]) / 
+    (case_plots[["far_max"]] | case_plots[["far_min"]]) +
+    plot_layout(heights = c(1, 1), widths = c(1, 1)) +  # 设置行高和列宽比例
+    plot_annotation(
+      title = "极端案例系统发育比较分析",
+      theme = theme(
+        plot.title = element_text(size = 18, hjust = 0.5, face = "bold", margin = margin(b = 10)),
+        plot.subtitle = element_text(size = 14, hjust = 0.5, lineheight = 1.2)
+      )
+    )
+  
+  return(list(
+    individual_plots = case_plots,  # 保留单个案例的图形
+    combined_plot = final_plot      # 返回2x2网格组合图形
+  ))
+  
+}
+
+# 7. 使用优化函数绘制图形
+# 可根据实际情况调整参数
+optimized_plots <- plot_extreme_cases_optimized(
+  extreme_datasets,
+  point_size = 2.5,        # 点大小
+  title_size = 11,         # 子标题字体大小
+  axis_title_size = 10,    # 坐标轴标题字体大小
+  axis_text_size = 9,      # 坐标轴标签字体大小
+  case_title_size = 12     # 案例标题字体大小
+)
+
+# 8. 显示组合图形
+cat("显示组合图形...\n")
+print(optimized_plots$combined_plot)
+
+
+# 9. 输出极端案例的详细信息
+cat("=== 极端案例详细信息 ===\n")
+for (case_name in names(extreme_cases)) {
+  case <- extreme_cases[[case_name]]
+  cat("案例:", case_name, "\n")
+  cat("类型:", case$type, "\n")
+  cat("种子:", case$seed, "\n")
+  cat("重复次数:", case$replicate, "\n")
+  cat("OLS R²:", round(case$ols_r2, 4), "\n")
+  cat("PIC R²:", round(case$pic_r2, 4), "\n")
+  cat("差值 (OLS-PIC):", round(case$ols_pic_diff, 4), "\n")
+  cat("物种数量:", case$n_species, "\n")
+  cat("------------------------\n")
+}
+
+#----转换final_summary数据框-------
+library(tidyr)
+library(dplyr)
+
+# 方法1：使用pivot_wider
+wide_df <- final_summary_with_lambda$detailed %>%
+  pivot_wider(
+    id_cols = c(replicate, seed, n_species),  # 保持不变的标识列
+    names_from = type,                         # 根据type列的值创建新列名
+    values_from = c(ols_r2, pic_r2, phylo_r2, pgls_r2, obs_lambda, pred_lambda, pgls_opt_lambda)
+  )
+
+# 查看结果
+head(wide_df)
+write.csv(wide_df,"500sampleResult.csv")
