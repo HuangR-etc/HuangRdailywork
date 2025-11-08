@@ -1,0 +1,1665 @@
+"OGT group abbrevations: E:Eukaryotes,BM:Bacterial mesophilic, THP:Thermophilic, and AM:Archaea mesophilic",,,,,,,,,,
+species,Observed OGT group,Predicted_probability of OGT group,,,,Predicted OGT group,Methods,Obseved Species Kingdom,Observed OGT,Observed OGT group
+,,AM,BM,E,THP,PC,,,,
+Absidia repens,E,0.002501079,0.000333176,0.996598811,0.000566935,E,RLR,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0.022821198,0.75053535,0.00588347,0.220759981,BM,RLR,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0.495152192,0.013425723,0.000528951,0.490893134,AM,RLR,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0.186268876,0.006941669,0.000176483,0.806612971,THP,RLR,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0.03438179,0.000876455,0.82787566,0.136866095,E,RLR,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,0.000420645,0.705200052,8.07E-05,0.29429862,BM,RLR,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0.001820901,0.062069105,0.000555772,0.935554222,THP,RLR,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0.002336335,0.385804342,0.003565842,0.608293481,THP,RLR,Bacteria,50,Thermophiles
+Alternaria alternata,E,0.008646531,0.000107227,0.990827551,0.000418692,E,RLR,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,0.000545069,0.758611589,3.57E-05,0.240807637,BM,RLR,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,0.000551018,0.757272757,3.59E-05,0.24214032,BM,RLR,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0.000659002,0.733227575,0.000116822,0.265996601,BM,RLR,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0.00988419,0.044313203,0.007229585,0.938573023,THP,RLR,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0.025208527,0.088343725,0.01440309,0.872044658,THP,RLR,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0.051467189,0.008010415,0.005061075,0.935461321,THP,RLR,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0.001221982,0.218145282,4.44E-05,0.780588361,THP,RLR,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0.000750849,0.000128247,0.999012915,0.000107989,E,RLR,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0.000354171,0.000131889,0.99944615,6.78E-05,E,RLR,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0.000348268,0.000115843,0.999473201,6.27E-05,E,RLR,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0.013304953,0.004176579,0.939199303,0.043319164,E,RLR,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0.004743483,5.80E-06,0.994952828,0.000297889,E,RLR,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0.001197447,0.753852524,0.000307053,0.244642976,BM,RLR,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0.024505829,0.187564588,0.044931503,0.742998079,THP,RLR,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0.033519275,0.531289142,0.111204645,0.323986938,BM,RLR,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0.000926959,0.75850793,0.000407645,0.240157465,BM,RLR,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0.001135478,0.797018365,0.000424459,0.201421697,BM,RLR,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0.012078434,0.798481425,0.007224974,0.182215167,BM,RLR,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0.005135875,3.78E-06,0.994718959,0.000141386,E,RLR,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0.079077755,0.001242124,0.915128231,0.00455189,E,RLR,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,0.000770324,0.892444866,0.000301093,0.106483717,BM,RLR,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,0.000794089,0.888166111,0.000292931,0.110746868,BM,RLR,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0.004502187,0.781900702,0.020751579,0.192845531,BM,RLR,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0.000738196,0.034847932,0.000280281,0.964133591,THP,RLR,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,0.010785697,0.875220873,0.003672133,0.110321298,BM,RLR,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0.038084706,0.796096109,0.008097559,0.157721627,BM,RLR,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0.038092596,0.792736888,0.007868273,0.161302243,BM,RLR,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0.010572775,0.869537619,0.003468501,0.116421105,BM,RLR,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,0.011532255,0.878715236,0.003797157,0.105955353,BM,RLR,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0.0372478,0.79437138,0.00787637,0.160504449,BM,RLR,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0.005140673,0.26666016,0.00276403,0.725435138,THP,RLR,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0.000910896,0.089706266,0.000134361,0.909248476,THP,RLR,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0.000448936,0.142363561,0.000211438,0.856976065,THP,RLR,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0.000544958,0.670058352,0.000408577,0.328988113,BM,RLR,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0.000118996,0.847258199,4.67E-05,0.152576087,BM,RLR,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0.012107496,0.719096103,0.006457662,0.262338739,BM,RLR,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0.001454385,0.714411038,0.013449436,0.270685141,BM,RLR,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0.016874672,0.137970233,0.002620027,0.842535068,THP,RLR,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0.016992575,0.2389167,0.003367601,0.740723124,THP,RLR,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0.015440808,0.000459576,0.982077699,0.002021917,E,RLR,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,0.000965441,0.920418069,0.005968273,0.072648218,BM,RLR,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0.009429577,0.230187762,0.006186613,0.754196048,THP,RLR,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0.001410694,0.73624638,0.0004885,0.261854426,BM,RLR,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,0.000225774,0.856747724,6.57E-05,0.142960823,BM,RLR,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0.000239162,0.833658511,6.31E-05,0.166039239,BM,RLR,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0.002287822,0.32090258,0.038671218,0.63813838,THP,RLR,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0.003400262,0.400748131,0.001905116,0.593946491,THP,RLR,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0.001229458,0.244882995,0.00108143,0.752806118,THP,RLR,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0.0027309,0.570882627,0.000455448,0.425931026,BM,RLR,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0.029437769,0.816048868,0.010077852,0.144435512,BM,RLR,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0.013983935,0.392123397,0.003430307,0.590462361,THP,RLR,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0.004434528,0.675038696,0.004947497,0.31557928,BM,RLR,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0.004724941,0.478636831,0.006325957,0.510312271,THP,RLR,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0.006911861,0.161239509,0.00137469,0.830473939,THP,RLR,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0.223417427,0.00818793,0.000197285,0.768197359,THP,RLR,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,4.80E-05,8.80E-05,0.999275112,0.000588903,E,RLR,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0.012472138,0.146386184,0.006587891,0.834553788,THP,RLR,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0.011939443,0.091665389,0.004621626,0.891773542,THP,RLR,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,0.004140377,0.613936246,0.144629563,0.237293814,BM,RLR,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,0.001029393,0.872805482,0.002429612,0.123735513,BM,RLR,Bacteria,34,Mesophiles
+Fusarium poae,E,0.004513071,0.000292028,0.994876231,0.00031867,E,RLR,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0.03384567,0.157400886,0.02380565,0.784947794,THP,RLR,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0.013378499,0.235608702,0.035314367,0.715698433,THP,RLR,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0.013006874,0.269074058,0.037682159,0.680236908,THP,RLR,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0.01117942,0.062658296,0.008211037,0.917951247,THP,RLR,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0.012722424,0.239908515,0.033898238,0.713470822,THP,RLR,Bacteria,50,Thermophiles
+Gimesia alba,BM,0.002040198,0.664799352,0.026539756,0.306620694,BM,RLR,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0.002001514,0.660812328,0.026945688,0.310240471,BM,RLR,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0.00017227,0.753723629,6.03E-05,0.246043794,BM,RLR,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,0.984886061,3.96E-05,0.001718552,0.013355741,AM,RLR,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,0.963780942,0.000153999,0.00275402,0.03331104,AM,RLR,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,0.946162064,0.000140519,0.004750423,0.048946994,AM,RLR,Archaea,37,Mesophiles
+Halobellus rufus,AM,0.953851834,0.000130231,0.004359753,0.041658182,AM,RLR,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,0.985643627,4.11E-05,0.00098955,0.013325673,AM,RLR,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,0.963914917,0.000183483,0.003640694,0.032260906,AM,RLR,Archaea,37,Mesophiles
+Halogranum rubrum,AM,0.986257076,5.02E-05,0.001120949,0.012571758,AM,RLR,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,0.960605912,0.000115913,0.004410753,0.034867422,AM,RLR,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,0.985633683,6.61E-05,0.002167697,0.012132557,AM,RLR,Archaea,37,Mesophiles
+Halopelagius longus,AM,0.99060783,5.70E-05,0.000835585,0.008499543,AM,RLR,Archaea,37,Mesophiles
+Halopenitus persicus,AM,0.966878176,0.000124263,0.004393048,0.028604512,AM,RLR,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,0.916285438,0.000182385,0.004434959,0.079097218,AM,RLR,Archaea,38,Mesophiles
+Halorubrum depositum,AM,0.798744733,0.00032283,0.003601988,0.197330448,AM,RLR,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,0.942988106,0.000122575,0.004629247,0.052260071,AM,RLR,Archaea,37,Mesophiles
+Halorubrum persicum,AM,0.935875137,0.000250241,0.005649908,0.058224714,AM,RLR,Archaea,37,Mesophiles
+Halorussus salinus,AM,0.941363521,0.000147226,0.004687121,0.053802133,AM,RLR,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,0.964985069,6.93E-05,0.001522213,0.033423424,AM,RLR,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,0.93085722,0.000187024,0.004249654,0.064706101,AM,RLR,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,0.940690336,0.00016172,0.004453515,0.054694429,AM,RLR,Archaea,37,Mesophiles
+Haloterrigena longa,AM,0.969431114,5.35E-05,0.00388079,0.026634548,AM,RLR,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,0.960486705,6.27E-05,0.004961472,0.034489084,AM,RLR,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0.003436399,3.13E-05,0.995971373,0.000560952,E,RLR,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,0.000714438,0.113727933,0.012587234,0.872970396,THP,RLR,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0.001654924,0.18413286,0.020787608,0.793424608,THP,RLR,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0.042685878,0.001690713,4.70E-05,0.955576392,THP,RLR,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0.020275816,0.884380825,0.009730568,0.085612791,BM,RLR,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,0.001206197,0.705986771,9.10E-05,0.292716,BM,RLR,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0.015953023,0.143566742,0.006677565,0.83380267,THP,RLR,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,0.000989382,0.906525044,0.000222769,0.092262805,BM,RLR,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0.000811117,0.622252023,5.21E-05,0.376884808,BM,RLR,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,0.001098213,0.863421003,0.000251158,0.135229625,BM,RLR,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0.003555962,0.148234659,0.001983597,0.846225782,THP,RLR,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0.03787195,0.003717888,0.950824514,0.007585648,E,RLR,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0.000208661,0.352845091,0.000722103,0.646224146,THP,RLR,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0.064434515,0.127974404,0.007098358,0.800492723,THP,RLR,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,0.000356466,0.935306968,0.000760183,0.063576384,BM,RLR,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0.044239496,0.611446672,0.005860849,0.338452983,BM,RLR,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0.006876654,0.224153127,0.001187702,0.767782517,THP,RLR,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0.003015901,0.165991708,0.001162123,0.829830268,THP,RLR,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0.001292537,0.715711993,0.000462486,0.282532984,BM,RLR,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0.000842932,0.784255591,0.000389051,0.214512426,BM,RLR,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0.456336102,0.013993654,0.000457268,0.529212976,THP,RLR,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.804208735,0.017778556,0.014462814,0.163549895,AM,RLR,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,0.847903863,0.008580752,0.027716905,0.11579848,AM,RLR,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,0.727196408,0.014993371,0.019153674,0.238656547,AM,RLR,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,0.854045367,0.007151609,0.026312915,0.112490109,AM,RLR,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,0.825324273,0.008687715,0.042023749,0.123964262,AM,RLR,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0.2343205,0.001381272,0.001681631,0.762616597,THP,RLR,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,0.855090841,0.000306872,0.005688788,0.1389135,AM,RLR,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,0.789215141,0.000605475,0.004457001,0.205722383,AM,RLR,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,0.845123192,0.01654999,0.012478105,0.125848713,AM,RLR,Archaea,21,Mesophiles
+Methanococcus voltae,AM,0.772726768,0.00500116,0.005881791,0.216390281,AM,RLR,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,0.831752671,0.022053763,0.018379026,0.12781454,AM,RLR,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,0.848968699,0.004388863,0.007161146,0.139481292,AM,RLR,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,0.866735033,0.007455455,0.012498235,0.113311276,AM,RLR,Archaea,37,Mesophiles
+Methanolobus profundi,AM,0.894423852,0.01011878,0.00952187,0.085935498,AM,RLR,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,0.913668895,0.006589077,0.006242093,0.073499934,AM,RLR,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,0.839080787,0.020847604,0.016536594,0.123535015,AM,RLR,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.806163296,0.020929888,0.016064663,0.156842152,AM,RLR,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,0.835642497,0.020774661,0.016673617,0.126909225,AM,RLR,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.798673024,0.019384434,0.016416125,0.165526417,AM,RLR,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.823666542,0.021505344,0.017429841,0.137398273,AM,RLR,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,0.866062964,0.010738982,0.012484119,0.110713935,AM,RLR,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,0.827407789,0.02211423,0.013151903,0.137326077,AM,RLR,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,0.724004172,0.0056763,0.007517778,0.262801749,AM,RLR,Archaea,55,Thermophiles
+Microlunatus soli,BM,0.000446132,0.735849755,2.05E-05,0.263683657,BM,RLR,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0.000983725,0.545681019,8.15E-05,0.453253778,BM,RLR,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0.001041712,0.552378798,9.28E-05,0.446486661,BM,RLR,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0.000975337,0.542287107,8.31E-05,0.456654467,BM,RLR,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0.004913179,0.622241564,0.007244854,0.365600403,BM,RLR,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,0.002950636,0.354654161,7.72E-05,0.642317996,THP,RLR,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,0.002563839,0.336903124,8.01E-05,0.660452964,THP,RLR,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0.002089865,0.297251935,6.76E-05,0.700590581,THP,RLR,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0.006706427,0.587094961,0.000359852,0.40583876,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,0.000330594,0.80345566,0.010699868,0.185513877,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,0.000156947,0.812898327,0.028592783,0.158351943,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,0.000436927,0.860560037,0.013903674,0.125099362,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,0.000489041,0.870641668,0.014517265,0.114352027,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,0.000473674,0.869263669,0.014094771,0.116167886,BM,RLR,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,0.000452388,0.75633734,0.007756243,0.235454029,BM,RLR,Bacteria,37,Mesophiles
+Myroides profundi,BM,0.004172762,0.641860192,0.181335629,0.172631417,BM,RLR,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0.014414894,0.000907934,0.969343785,0.015333387,E,RLR,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,0.949359507,8.28E-05,0.004939656,0.045618028,AM,RLR,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,0.99260649,1.53E-05,0.001002528,0.00637565,AM,RLR,Archaea,37,Mesophiles
+Natrinema salaciae,AM,0.98445977,1.60E-05,0.000988591,0.014535615,AM,RLR,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0.003314802,0.609662671,0.067099036,0.319923491,BM,RLR,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0.012232649,0.742203109,0.005898594,0.239665648,BM,RLR,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,0.000776845,0.62579629,4.24E-05,0.373384428,BM,RLR,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,0.001029042,0.361679762,2.89E-05,0.637262264,THP,RLR,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,0.000116032,0.866502479,3.58E-05,0.13334567,BM,RLR,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0.000248262,0.392671641,0.000794543,0.606285553,THP,RLR,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0.008390986,0.000168831,0.991053319,0.000386864,E,RLR,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0.360460659,0.00219838,0.630429358,0.006911603,E,RLR,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0.002592692,0.39138867,0.010164996,0.595853642,THP,RLR,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0.003933694,0.702613677,0.016794371,0.276658258,BM,RLR,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0.002012333,0.647272294,0.00089691,0.349818464,BM,RLR,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,0.00910865,0.878372472,0.004866638,0.10765224,BM,RLR,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,0.00848192,0.880109066,0.005079028,0.106329985,BM,RLR,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0.03020632,0.753054668,0.010543039,0.206195974,BM,RLR,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0.016809515,0.304128673,0.049891342,0.629170471,THP,RLR,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,0.000460191,0.908595607,0.001244184,0.089700018,BM,RLR,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0.003422566,0.541070573,0.056940615,0.398566246,BM,RLR,Bacteria,16,Mesophiles
+Penicillium expansum,E,0.005616633,4.76E-06,0.994191799,0.000186806,E,RLR,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0.003777765,0.000154537,0.995923815,0.000143884,E,RLR,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0.102589399,0.248240561,0.017670622,0.631499418,THP,RLR,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0.089974964,0.205904085,0.012111375,0.692009576,THP,RLR,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0.070489838,0.212151443,0.01254687,0.704811849,THP,RLR,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0.000979815,0.503245966,8.71E-05,0.495687073,BM,RLR,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0.008055713,0.18515247,0.002144383,0.804647434,THP,RLR,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0.004363723,0.000231807,0.995087715,0.000316755,E,RLR,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0.004100289,0.489257433,0.088518771,0.418123506,BM,RLR,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0.015542852,0.000186245,0.98269969,0.001571213,E,RLR,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,8.11E-05,0.980156323,0.000352713,0.019409828,BM,RLR,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,4.89E-05,0.983887961,0.0002519,0.015811193,BM,RLR,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,6.62E-05,0.983209755,0.000322432,0.016401607,BM,RLR,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,5.51E-05,0.983022022,0.000260939,0.016661935,BM,RLR,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,0.000732315,0.879213328,0.000290693,0.119763663,BM,RLR,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0.01059099,0.178253332,0.007341131,0.803814547,THP,RLR,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0.039936319,0.123935781,0.021280526,0.814847374,THP,RLR,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,0.000290301,0.962474278,0.000978403,0.036257018,BM,RLR,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0.000993475,3.59E-05,0.99869517,0.000275504,E,RLR,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0.10186819,0.004582947,0.000121309,0.893427553,THP,RLR,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0.060676646,0.002123825,5.97E-05,0.937139854,THP,RLR,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0.023736814,0.756334778,0.007499201,0.212429207,BM,RLR,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,0.001558934,0.775832362,0.000394529,0.222214174,BM,RLR,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,0.001499418,0.771493954,0.000385351,0.226621277,BM,RLR,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,0.000870214,0.736494319,4.60E-05,0.262589471,BM,RLR,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0.003156243,0.589535984,0.000192987,0.407114785,BM,RLR,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0.001120774,0.000214275,0.994018302,0.004646649,E,RLR,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0.001030577,0.77502962,0.000539569,0.223400235,BM,RLR,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0.00027926,0.000869756,0.843482792,0.155368192,E,RLR,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0.000877205,0.666588064,6.79E-05,0.332466828,BM,RLR,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,0.936850071,0.000147533,0.004367939,0.058634457,AM,RLR,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0.000801695,0.864889251,0.000348124,0.13396093,BM,RLR,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0.00048407,0.54939998,6.40E-05,0.450051932,BM,RLR,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0.00742172,0.001447263,0.99066188,0.000469137,E,RLR,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0.004623735,0.00120357,0.993742652,0.000430044,E,RLR,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,0.000187978,0.977453756,0.001863237,0.020495029,BM,RLR,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0.019683041,0.059866831,0.01259502,0.907855108,THP,RLR,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0.001058605,0.780900125,0.000335129,0.217706141,BM,RLR,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0.00023123,0.835151448,6.36E-05,0.164553713,BM,RLR,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,0.000187477,0.874646414,0.027847058,0.09731905,BM,RLR,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,0.000174772,0.862538341,0.026429021,0.110857866,BM,RLR,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0.002045739,0.513190614,0.044509633,0.440254014,BM,RLR,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0.000962557,0.353349919,0.014609145,0.631078379,THP,RLR,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,0.002012581,0.67990193,0.033171491,0.284913997,BM,RLR,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0.000877616,0.806812339,0.003457567,0.188852478,BM,RLR,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,6.31E-05,0.917188762,1.88E-05,0.082729274,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,0.000150019,0.812203108,8.09E-06,0.18763878,BM,RLR,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,5.17E-05,0.894630633,1.43E-05,0.10530337,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,0.000106986,0.777738172,1.11E-05,0.22214377,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,3.51E-05,0.87995324,9.48E-06,0.120002228,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,4.89E-05,0.917937171,1.55E-05,0.081998441,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,5.37E-05,0.888503881,1.53E-05,0.111427143,BM,RLR,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,3.83E-05,0.907467631,7.92E-06,0.092486098,BM,RLR,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0.009698784,0.370780683,0.011311654,0.608208879,THP,RLR,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0.008503415,0.598792005,0.002918181,0.389786399,BM,RLR,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0.116022746,0.216802145,0.002611774,0.664563334,THP,RLR,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,0.000596287,0.81507974,0.001428668,0.182895305,BM,RLR,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0.010837599,0.377462064,0.009201156,0.60249918,THP,RLR,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0.000621085,0.33464508,0.000105211,0.664628625,THP,RLR,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0.005525497,0.594686793,0.007368743,0.392418966,BM,RLR,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0.001800261,0.512789846,0.003973607,0.481436286,BM,RLR,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0.003434104,0.309827872,0.002455531,0.684282493,THP,RLR,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0.002488141,0.300466873,0.001347627,0.695697359,THP,RLR,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0.261166109,0.005249155,0.000243186,0.73334155,THP,RLR,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0.002683034,0.607717821,0.004059692,0.385539453,BM,RLR,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0.001682262,0.655052401,0.004090252,0.339175085,BM,RLR,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0.00268695,0.053594445,0.001745181,0.941973424,THP,RLR,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0.007121362,0.088170758,0.002564594,0.902143286,THP,RLR,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0.00728177,0.526659375,0.005502541,0.460556315,BM,RLR,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0.004367915,0.558246704,0.00294309,0.434442291,BM,RLR,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,0.794762937,0.003588266,0.006016342,0.195632455,AM,RLR,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0.000813768,0.611511745,0.00011702,0.387557467,BM,RLR,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0.011319027,0.76154166,0.00043165,0.226707663,BM,RLR,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0.0086583,0.080475153,0.004341937,0.906524611,THP,RLR,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0.001812918,0.051387451,0.001378426,0.945421205,THP,RLR,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0.000160342,0.944971145,0.000176992,0.054691521,BM,RLR,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0.004197377,0.070609518,0.002895816,0.922297288,THP,RLR,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0.004783006,0.19488725,0.002074125,0.798255619,THP,RLR,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0.00037022,0.379964047,0.000703149,0.618962584,THP,RLR,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0.00036356,0.243317631,0.000484787,0.755834023,THP,RLR,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0.000856831,0.915874794,0.002128128,0.081140247,BM,RLR,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0.039082242,0.003740993,0.947552479,0.009624286,E,RLR,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0.035539899,0.003813858,0.949276007,0.011370235,E,RLR,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0.006935161,0.00084006,0.979785666,0.012439113,E,RLR,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0.006219118,7.27E-06,0.993676423,9.72E-05,E,RLR,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0.007013893,0.000718494,0.989885785,0.002381828,E,RLR,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0.045068717,0.188753048,0.034804147,0.731374089,THP,RLR,Bacteria,50,Thermophiles
+Ustilago hordei,E,0.002714746,0.000507358,0.996672623,0.000105273,E,RLR,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0.001162192,0.000158399,0.998235647,0.000443761,E,RLR,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,0.001423624,0.863272295,0.001844891,0.13345919,BM,RLR,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0.005502398,0.000632396,0.991222351,0.002642855,E,RLR,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,0.008652142,0.609616601,0.031093112,0.350638145,BM,RLR,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0.003398163,0.000156547,0.995723372,0.000721917,E,RLR,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0.012014461,8.36E-06,0.98785326,0.000123923,E,RLR,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0.003300722,0.00010335,0.985004752,0.011591175,E,RLR,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0.001318808,0.000238326,0.998272658,0.000170208,E,RLR,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0.013174602,0.002011358,0.981759366,0.003054675,E,RLR,Eukaryota,25,Mesophiles
+Absidia repens,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0,0.928,0,0.072,BM,RF,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0.01,0.03,0,0.96,THP,RF,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0,0.002,0,0.998,THP,RF,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0.002,0.014,0.974,0.01,E,RF,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,0.002,0.796,0,0.202,BM,RF,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0,0.102,0,0.898,THP,RF,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0.006,0.082,0.002,0.91,THP,RF,Bacteria,50,Thermophiles
+Alternaria alternata,E,0,0,1,0,E,RF,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,0,0.962,0,0.038,BM,RF,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,0,0.984,0,0.016,BM,RF,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0.002,0.396,0,0.602,THP,RF,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0,0.064,0,0.936,THP,RF,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0,0.054,0.002,0.944,THP,RF,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0.008,0.018,0,0.974,THP,RF,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0,0.22,0,0.78,THP,RF,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0,0.002,0.998,0,E,RF,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0,0.868,0,0.132,BM,RF,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0.014,0.82,0.002,0.164,BM,RF,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0.002,0.978,0.002,0.018,BM,RF,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0,0.962,0,0.038,BM,RF,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0,0.94,0,0.06,BM,RF,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0.048,0.48,0.016,0.456,BM,RF,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0.004,0.016,0.974,0.006,E,RF,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,0,0.986,0,0.014,BM,RF,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,0,0.992,0,0.008,BM,RF,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0,0.28,0.038,0.682,THP,RF,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0,0.036,0,0.964,THP,RF,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,0,0.954,0,0.046,BM,RF,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0,0.98,0,0.02,BM,RF,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0,0.994,0,0.006,BM,RF,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0,0.908,0,0.092,BM,RF,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,0.002,0.964,0,0.034,BM,RF,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0,0.988,0,0.012,BM,RF,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0,0.024,0,0.976,THP,RF,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0.01,0.078,0,0.912,THP,RF,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0,0.01,0,0.99,THP,RF,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0,0.5,0,0.5,BM,RF,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0,0.364,0,0.636,THP,RF,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0,0.31,0,0.69,THP,RF,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0.014,0.966,0,0.02,BM,RF,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0,0.008,0,0.992,THP,RF,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0,0.006,0,0.994,THP,RF,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0,0.002,0.998,0,E,RF,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,0,0.872,0.002,0.126,BM,RF,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0,0.026,0,0.974,THP,RF,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0,0.706,0,0.294,BM,RF,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,0,0.888,0,0.112,BM,RF,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0,0.902,0,0.098,BM,RF,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0.006,0.952,0.002,0.04,BM,RF,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0.002,0.042,0,0.956,THP,RF,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0,0.08,0,0.92,THP,RF,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0,0.754,0.004,0.242,BM,RF,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0,0.936,0.002,0.062,BM,RF,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0,0.116,0,0.884,THP,RF,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0,0.562,0,0.438,BM,RF,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0,0.114,0.004,0.882,THP,RF,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0,0.048,0,0.952,THP,RF,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0,0.008,0,0.992,THP,RF,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,0,0.002,0.994,0.004,E,RF,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0,0.04,0,0.96,THP,RF,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0,0.006,0,0.994,THP,RF,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,0.01,0.964,0.004,0.022,BM,RF,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,0.01,0.83,0.002,0.158,BM,RF,Bacteria,34,Mesophiles
+Fusarium poae,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0.004,0.102,0.004,0.89,THP,RF,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0,0.038,0.002,0.96,THP,RF,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0,0.058,0,0.942,THP,RF,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0,0.056,0,0.944,THP,RF,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0,0.028,0,0.972,THP,RF,Bacteria,50,Thermophiles
+Gimesia alba,BM,0.006,0.99,0,0.004,BM,RF,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0.016,0.934,0.004,0.046,BM,RF,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0.002,0.674,0,0.324,BM,RF,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,0.998,0,0,0.002,AM,RF,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,1,0,0,0,AM,RF,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,0.992,0.008,0,0,AM,RF,Archaea,37,Mesophiles
+Halobellus rufus,AM,0.98,0.006,0.002,0.012,AM,RF,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,0.968,0,0,0.032,AM,RF,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,0.768,0.038,0.006,0.188,AM,RF,Archaea,37,Mesophiles
+Halogranum rubrum,AM,0.986,0.01,0,0.004,AM,RF,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,0.996,0,0,0.004,AM,RF,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,0.968,0.024,0,0.008,AM,RF,Archaea,37,Mesophiles
+Halopelagius longus,AM,0.996,0,0,0.004,AM,RF,Archaea,37,Mesophiles
+Halopenitus persicus,AM,0.994,0.004,0,0.002,AM,RF,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,0.996,0,0,0.004,AM,RF,Archaea,38,Mesophiles
+Halorubrum depositum,AM,0.924,0.002,0,0.074,AM,RF,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,0.982,0,0,0.018,AM,RF,Archaea,37,Mesophiles
+Halorubrum persicum,AM,0.998,0,0,0.002,AM,RF,Archaea,37,Mesophiles
+Halorussus salinus,AM,1,0,0,0,AM,RF,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,0.992,0,0,0.008,AM,RF,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,0.996,0,0,0.004,AM,RF,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,0.988,0.006,0,0.006,AM,RF,Archaea,37,Mesophiles
+Haloterrigena longa,AM,1,0,0,0,AM,RF,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,0.982,0,0,0.018,AM,RF,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,0.026,0.838,0.006,0.13,BM,RF,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0.018,0.866,0.004,0.112,BM,RF,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0.012,0.008,0,0.98,THP,RF,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0,0.958,0,0.042,BM,RF,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,0.002,0.98,0,0.018,BM,RF,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0.002,0.004,0,0.994,THP,RF,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,0.002,0.732,0,0.266,BM,RF,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0,0.962,0,0.038,BM,RF,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,0.002,0.69,0.002,0.306,BM,RF,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0,0.034,0,0.966,THP,RF,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0.002,0.004,0.994,0,E,RF,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0,0.022,0,0.978,THP,RF,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0,0.012,0,0.988,THP,RF,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,0,0.786,0,0.214,BM,RF,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0,0.912,0,0.088,BM,RF,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0,0.106,0.006,0.888,THP,RF,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0,0.012,0,0.988,THP,RF,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0.002,0.676,0,0.322,BM,RF,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0,0.976,0,0.024,BM,RF,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0.004,0.018,0,0.978,THP,RF,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.692,0.014,0,0.294,AM,RF,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,0.946,0.002,0.002,0.05,AM,RF,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,0.572,0.076,0,0.352,AM,RF,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,0.972,0,0,0.028,AM,RF,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,0.914,0.014,0,0.072,AM,RF,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0,0.002,0,0.998,THP,RF,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,0.986,0,0,0.014,AM,RF,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,0.988,0.008,0,0.004,AM,RF,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,0.89,0.046,0.002,0.062,AM,RF,Archaea,21,Mesophiles
+Methanococcus voltae,AM,0.856,0.014,0.002,0.128,AM,RF,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,0.942,0.004,0,0.054,AM,RF,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,0.976,0.002,0.002,0.02,AM,RF,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,0.97,0,0,0.03,AM,RF,Archaea,37,Mesophiles
+Methanolobus profundi,AM,0.95,0.002,0,0.048,AM,RF,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,0.958,0.002,0,0.04,AM,RF,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,0.912,0,0,0.088,AM,RF,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.734,0.004,0,0.262,AM,RF,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,0.826,0.002,0,0.172,AM,RF,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.854,0.008,0,0.138,AM,RF,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.762,0.006,0,0.232,AM,RF,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,0.944,0.004,0.002,0.05,AM,RF,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,0.844,0.01,0,0.146,AM,RF,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,0.618,0.08,0,0.302,AM,RF,Archaea,55,Thermophiles
+Microlunatus soli,BM,0.002,0.912,0,0.086,BM,RF,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0,0.984,0,0.016,BM,RF,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0,0.974,0,0.026,BM,RF,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0.022,0.51,0,0.468,BM,RF,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,0,0.982,0,0.018,BM,RF,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,0.006,0.978,0,0.016,BM,RF,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0,0.94,0,0.06,BM,RF,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0,0.966,0,0.034,BM,RF,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,0.002,0.954,0.022,0.022,BM,RF,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,0.002,0.98,0,0.018,BM,RF,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,0.002,0.994,0.004,0,BM,RF,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,0,0.998,0,0.002,BM,RF,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,0,0.998,0,0.002,BM,RF,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,0.004,0.95,0.002,0.044,BM,RF,Bacteria,37,Mesophiles
+Myroides profundi,BM,0.01,0.912,0.044,0.034,BM,RF,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0.002,0.004,0.994,0,E,RF,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,0.98,0,0,0.02,AM,RF,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,0.984,0,0,0.016,AM,RF,Archaea,37,Mesophiles
+Natrinema salaciae,AM,0.994,0,0,0.006,AM,RF,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0,0.996,0,0.004,BM,RF,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0.014,0.95,0,0.036,BM,RF,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,0,1,0,0,BM,RF,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,0.014,0.87,0,0.116,BM,RF,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,0.004,0.844,0,0.152,BM,RF,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0,0.062,0,0.938,THP,RF,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0.006,0.046,0.93,0.018,E,RF,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0.018,0.762,0,0.22,BM,RF,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0,1,0,0,BM,RF,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0,0.614,0,0.386,BM,RF,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,0,0.974,0,0.026,BM,RF,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,0,0.944,0,0.056,BM,RF,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0,0.992,0,0.008,BM,RF,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0,0.082,0,0.918,THP,RF,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,0,0.808,0,0.192,BM,RF,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0.008,0.962,0,0.03,BM,RF,Bacteria,16,Mesophiles
+Penicillium expansum,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0.014,0.13,0.002,0.854,THP,RF,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0.004,0.034,0,0.962,THP,RF,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0,0.004,0,0.996,THP,RF,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0,0.98,0,0.02,BM,RF,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0,0.01,0,0.99,THP,RF,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0,0,1,0,E,RF,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0.008,0.966,0,0.026,BM,RF,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0,0.002,0.998,0,E,RF,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,0,0.996,0,0.004,BM,RF,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,0,0.996,0,0.004,BM,RF,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,0,1,0,0,BM,RF,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,0,0.986,0,0.014,BM,RF,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0.002,0.012,0,0.986,THP,RF,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0,0.106,0.002,0.892,THP,RF,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,0,0.94,0,0.06,BM,RF,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0,0,0,1,THP,RF,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0.014,0.004,0,0.982,THP,RF,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0.002,0.79,0,0.208,BM,RF,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,0,0.998,0,0.002,BM,RF,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,0,0.99,0,0.01,BM,RF,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0.004,0.172,0,0.824,THP,RF,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0,0.664,0,0.336,BM,RF,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0.006,0.036,0.92,0.038,E,RF,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0,0.958,0,0.042,BM,RF,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,0.996,0,0,0.004,AM,RF,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0,0.822,0,0.178,BM,RF,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0.006,0.842,0,0.152,BM,RF,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0,0.006,0.992,0.002,E,RF,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0,0.004,0.996,0,E,RF,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,0,0.99,0.006,0.004,BM,RF,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0,0.026,0,0.974,THP,RF,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0,0.996,0,0.004,BM,RF,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0.002,0.438,0,0.56,THP,RF,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,0.002,0.988,0.002,0.008,BM,RF,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,0.002,0.992,0,0.006,BM,RF,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0.008,0.87,0,0.122,BM,RF,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0.01,0.9,0,0.09,BM,RF,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,0.05,0.878,0.018,0.054,BM,RF,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0,0.886,0,0.114,BM,RF,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,0.004,0.96,0,0.036,BM,RF,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,0.008,0.92,0.006,0.066,BM,RF,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,0,0.996,0,0.004,BM,RF,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,0,0.99,0,0.01,BM,RF,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,0,1,0,0,BM,RF,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0,0.178,0.022,0.8,THP,RF,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0.002,0.126,0.004,0.868,THP,RF,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0,0.056,0,0.944,THP,RF,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,0,0.86,0.002,0.138,BM,RF,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0.002,0.042,0,0.956,THP,RF,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0,0.16,0,0.84,THP,RF,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0.002,0.128,0,0.87,THP,RF,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0,0.07,0.006,0.924,THP,RF,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0.002,0.036,0,0.962,THP,RF,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0,0.04,0,0.96,THP,RF,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0,0.002,0,0.998,THP,RF,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0,0.154,0,0.846,THP,RF,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0,0.17,0.002,0.828,THP,RF,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0,0.004,0,0.996,THP,RF,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0.004,0.008,0.002,0.986,THP,RF,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0.002,0.324,0,0.674,THP,RF,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0.002,0.062,0,0.936,THP,RF,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,0.346,0.032,0.006,0.616,THP,RF,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0.002,0.904,0.002,0.092,BM,RF,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0.012,0.432,0.004,0.552,THP,RF,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0.002,0.006,0,0.992,THP,RF,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0,0.004,0,0.996,THP,RF,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0.016,0.438,0.008,0.538,THP,RF,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0,0.012,0,0.988,THP,RF,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0,0.008,0,0.992,THP,RF,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0,0,0,1,THP,RF,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0,0.012,0,0.988,THP,RF,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0.014,0.738,0.002,0.246,BM,RF,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0,0.014,0.986,0,E,RF,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0.004,0.004,0.99,0.002,E,RF,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0.002,0.026,0.954,0.018,E,RF,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0,0,1,0,E,RF,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0.008,0.488,0.002,0.502,THP,RF,Bacteria,50,Thermophiles
+Ustilago hordei,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,0.004,0.868,0,0.128,BM,RF,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0,0,1,0,E,RF,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,0.014,0.788,0.01,0.188,BM,RF,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0,0,1,0,E,RF,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0,0.002,0.998,0,E,RF,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0.002,0.008,0.99,0,E,RF,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0,0,1,0,E,RF,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0.002,0.002,0.984,0.012,E,RF,Eukaryota,25,Mesophiles
+Absidia repens,E,0.004026402,0.053144063,0.939063672,0.003765862,E,SVM,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0.007100995,0.908880815,0.009627405,0.074390785,BM,SVM,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0.313294285,0.155699146,0.138543669,0.3924629,THP,SVM,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0.232077949,0.093499584,0.132476618,0.541945849,THP,SVM,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0.003234295,0.030799207,0.957183082,0.008783416,E,SVM,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,0.004036458,0.921880883,0.009365076,0.064717583,BM,SVM,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0.090489039,0.377030508,0.251223708,0.281256745,BM,SVM,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0.15156851,0.286592092,0.276220462,0.285618937,BM,SVM,Bacteria,50,Thermophiles
+Alternaria alternata,E,0.005127781,0.057549071,0.931796317,0.005526831,E,SVM,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,0.000556559,0.993725462,0.000903562,0.004814417,BM,SVM,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,0.000574221,0.993865983,0.000942634,0.004617162,BM,SVM,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0.013279507,0.847566831,0.026660566,0.112493095,BM,SVM,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0.127167131,0.294430487,0.291990373,0.28641201,BM,SVM,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0.124343823,0.29371888,0.294211705,0.287725592,E,SVM,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0.318780234,0.192164181,0.155476638,0.333578946,THP,SVM,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0.03390775,0.675952674,0.094465232,0.195674345,BM,SVM,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0.002616137,0.036260071,0.957313156,0.003810636,E,SVM,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0.002291774,0.029493571,0.964056892,0.004157763,E,SVM,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0.002333273,0.030464789,0.963119469,0.004082469,E,SVM,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0.000936109,0.021453897,0.974321854,0.003288139,E,SVM,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0.002332831,0.030899713,0.962624181,0.004143275,E,SVM,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0.003467838,0.933693789,0.006605107,0.056233266,BM,SVM,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0.093894815,0.470022963,0.179408314,0.256673908,BM,SVM,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0.001932429,0.973780182,0.004468381,0.019819008,BM,SVM,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0.00138085,0.960477679,0.002805149,0.035336323,BM,SVM,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0.000503493,0.985038856,0.000692976,0.013764676,BM,SVM,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0.029945872,0.771255188,0.043692809,0.155106131,BM,SVM,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0.002341123,0.031648605,0.961902135,0.004108138,E,SVM,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0.019001954,0.117012871,0.850830762,0.013154413,E,SVM,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,0.00035512,0.988126884,0.000595326,0.010922669,BM,SVM,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,0.000373637,0.986814566,0.000593117,0.01221868,BM,SVM,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0.001956268,0.948788691,0.005836336,0.043418705,BM,SVM,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0.123882247,0.293842819,0.294319378,0.287955557,E,SVM,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,0.002514103,0.956252322,0.005472034,0.035761541,BM,SVM,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0.002981748,0.970533459,0.001571447,0.024913346,BM,SVM,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0.003072133,0.96885889,0.001641584,0.026427393,BM,SVM,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0.003599034,0.938282191,0.008306357,0.049812418,BM,SVM,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,0.002438235,0.960767249,0.005176191,0.031618326,BM,SVM,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0.002965363,0.96932454,0.001656134,0.026053964,BM,SVM,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0.164620314,0.301444498,0.236555904,0.297379284,BM,SVM,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0.113457844,0.298087891,0.297298201,0.291156065,BM,SVM,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0.112292704,0.309327332,0.288838717,0.289541247,BM,SVM,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0.083590216,0.4538928,0.199275365,0.263241619,BM,SVM,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0.007602203,0.877502647,0.019702057,0.095193092,BM,SVM,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0.106011475,0.373007491,0.244160311,0.276820723,BM,SVM,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0.000520966,0.975758412,0.00116965,0.022550972,BM,SVM,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0.174610663,0.307798569,0.215016053,0.302574715,BM,SVM,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0.166933642,0.299514114,0.23650357,0.297048674,BM,SVM,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0.015773378,0.114688612,0.858116549,0.011421461,E,SVM,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,9.30E-05,0.998680481,8.02E-05,0.001146322,BM,SVM,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0.169808696,0.312281076,0.207506692,0.310403536,BM,SVM,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0.068515926,0.587167528,0.117364926,0.22695162,BM,SVM,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,0.000714478,0.970560025,0.001670855,0.027054641,BM,SVM,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0.001122675,0.961615097,0.002655068,0.03460716,BM,SVM,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0.001662954,0.949806824,0.005399821,0.0431304,BM,SVM,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0.157419035,0.30446206,0.247037403,0.291081502,BM,SVM,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0.148761045,0.28680703,0.278392801,0.286039125,BM,SVM,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0.071801616,0.488656598,0.182575544,0.256966243,BM,SVM,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0.002078665,0.983888542,0.000725523,0.01330727,BM,SVM,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0.149484214,0.291476931,0.273134692,0.285904163,BM,SVM,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0.118507345,0.425763078,0.182539029,0.273190548,BM,SVM,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0.142875072,0.308720945,0.264047339,0.284356643,BM,SVM,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0.130269566,0.296454815,0.287689384,0.285586235,BM,SVM,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0.209951306,0.085613275,0.126468451,0.577966967,THP,SVM,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,0.004043199,0.03262874,0.950543427,0.012784634,E,SVM,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0.172688809,0.317506932,0.194697016,0.315107243,BM,SVM,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0.173127441,0.319731339,0.191402056,0.315739164,BM,SVM,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,0.000325434,0.997420461,0.001335512,0.000918593,BM,SVM,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,0.000847039,0.968219566,0.001830937,0.029102458,BM,SVM,Bacteria,34,Mesophiles
+Fusarium poae,E,0.004297567,0.050782135,0.940280733,0.004639565,E,SVM,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0.143621962,0.293450433,0.278378235,0.28454937,BM,SVM,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0.123528342,0.304171072,0.28609318,0.286207407,BM,SVM,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0.112365924,0.321502109,0.279423864,0.286708103,BM,SVM,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0.132584859,0.289377074,0.292268366,0.285769701,E,SVM,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0.122064441,0.307446292,0.284401717,0.28608755,BM,SVM,Bacteria,50,Thermophiles
+Gimesia alba,BM,0.001326674,0.956273801,0.003482849,0.038916676,BM,SVM,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0.001460796,0.95329585,0.003895857,0.041347497,BM,SVM,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0.01875163,0.785662897,0.04828052,0.147304954,BM,SVM,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,0.952224102,0,0,0.047775898,AM,SVM,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,0.951982523,0,0,0.048017477,AM,SVM,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,0.901103489,0,0,0.098896511,AM,SVM,Archaea,37,Mesophiles
+Halobellus rufus,AM,0.912652133,0,0,0.087347867,AM,SVM,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,0.862716339,0,0,0.137283661,AM,SVM,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,0.940432357,0,0,0.059567643,AM,SVM,Archaea,37,Mesophiles
+Halogranum rubrum,AM,0.905209673,0,0,0.094790327,AM,SVM,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,0.955243888,0,0,0.044756112,AM,SVM,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,0.962914109,0,0,0.037085891,AM,SVM,Archaea,37,Mesophiles
+Halopelagius longus,AM,0.894341985,0,0,0.105658015,AM,SVM,Archaea,37,Mesophiles
+Halopenitus persicus,AM,0.938357802,0,0,0.061642198,AM,SVM,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,0.839490916,0,0,0.160509084,AM,SVM,Archaea,38,Mesophiles
+Halorubrum depositum,AM,0.867782746,0,0,0.132217254,AM,SVM,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,0.889166963,0,0,0.110833037,AM,SVM,Archaea,37,Mesophiles
+Halorubrum persicum,AM,0.934272076,0,0,0.065727924,AM,SVM,Archaea,37,Mesophiles
+Halorussus salinus,AM,0.903338166,0,0,0.096661834,AM,SVM,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,0.833418115,0,0,0.166581885,AM,SVM,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,0.851685074,0,0,0.148314926,AM,SVM,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,0.865676991,0,0,0.134323009,AM,SVM,Archaea,37,Mesophiles
+Haloterrigena longa,AM,0.947981581,0,0,0.052018419,AM,SVM,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,0.932148606,0,0.000134544,0.06771685,AM,SVM,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0.002504598,0.032241742,0.960796372,0.004457289,E,SVM,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,0.046548332,0.569453893,0.154050008,0.229947767,BM,SVM,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0.036254297,0.650622974,0.10715274,0.205969989,BM,SVM,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0.114644934,0.070580445,0.088923149,0.725851472,THP,SVM,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0.000787331,0.996687808,0.000373719,0.002151143,BM,SVM,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,0.000793582,0.990013476,0.000863492,0.00832945,BM,SVM,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0.172128095,0.322755654,0.185280805,0.319835445,BM,SVM,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,0.001297531,0.963599291,0.002153861,0.032949318,BM,SVM,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0.001180923,0.970628645,0.002129086,0.026061345,BM,SVM,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,0.004573417,0.923768276,0.007838164,0.063820143,BM,SVM,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0.105592655,0.322522763,0.281823228,0.290061355,BM,SVM,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0.022023481,0.126830512,0.835645006,0.015501001,E,SVM,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0.106978046,0.311017285,0.289751465,0.292253205,BM,SVM,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0.188762209,0.327531915,0.169927221,0.313778655,BM,SVM,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,0.000230006,0.98646445,0.000498146,0.012807398,BM,SVM,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0.004692851,0.925592243,0.00844869,0.061266217,BM,SVM,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0.164342228,0.297096931,0.243569925,0.294990917,BM,SVM,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0.163627072,0.29735262,0.244307934,0.294712374,BM,SVM,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0.068256015,0.578670253,0.124552712,0.22852102,BM,SVM,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0.001200713,0.963128213,0.002480167,0.033190907,BM,SVM,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0.311080195,0.149467969,0.137311816,0.40214002,THP,SVM,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.936933335,0,0,0.063066665,AM,SVM,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,0.915750416,0,0,0.084249584,AM,SVM,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,0.757414265,0.00223681,0.001008137,0.239340788,AM,SVM,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,0.962733234,0,0,0.037266766,AM,SVM,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,0.947518074,0,0,0.052481926,AM,SVM,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0.303428885,0.087256496,0.102965113,0.506349507,THP,SVM,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,0.849977954,0,0,0.150022046,AM,SVM,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,0.815312109,0,0,0.184687891,AM,SVM,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,0.953708472,0.001550253,0,0.044741275,AM,SVM,Archaea,21,Mesophiles
+Methanococcus voltae,AM,0.883208481,0,0,0.116791519,AM,SVM,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,0.937604091,0,0,0.062395909,AM,SVM,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,0.969579301,0,0,0.030420699,AM,SVM,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,0.972969811,0,0,0.027030189,AM,SVM,Archaea,37,Mesophiles
+Methanolobus profundi,AM,0.970266742,0,0,0.029733258,AM,SVM,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,0.959779928,0,0,0.040220072,AM,SVM,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,0.947287723,0,0,0.052712277,AM,SVM,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.921971288,0,0,0.078028712,AM,SVM,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,0.944688637,0,0,0.055311363,AM,SVM,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.928973534,0,0,0.071026466,AM,SVM,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.940087855,0,0,0.059912145,AM,SVM,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,0.954149513,0,0,0.045850487,AM,SVM,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,0.917825838,0,0,0.082174162,AM,SVM,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,0.566385764,0.045316829,0.031497828,0.356799579,AM,SVM,Archaea,55,Thermophiles
+Microlunatus soli,BM,0.001137034,0.993406899,0.003199594,0.002256474,BM,SVM,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0.005718184,0.909468136,0.011680374,0.073133305,BM,SVM,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0.003960356,0.928685137,0.007848483,0.059506024,BM,SVM,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0.006097861,0.905609201,0.012521888,0.075771049,BM,SVM,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0.10612058,0.459195638,0.170884831,0.263798951,BM,SVM,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,0.002713763,0.967387649,0.004378404,0.025520184,BM,SVM,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,0.002386699,0.96632487,0.004115432,0.027172998,BM,SVM,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0.003134142,0.951339655,0.006091225,0.039434978,BM,SVM,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0.002861676,0.955210145,0.003445102,0.038483077,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,0.000111947,0.995951815,0.00023429,0.003701949,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,0.000428938,0.996212604,0.00292771,0.000430749,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,0.000123437,0.99843415,0.000218258,0.001224154,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,0.00016153,0.998690986,0.000297786,0.000849699,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,0.000155598,0.998688514,0.000282661,0.000873227,BM,SVM,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,9.54E-05,0.994975903,0.000247381,0.004681296,BM,SVM,Bacteria,37,Mesophiles
+Myroides profundi,BM,0.000391401,0.996502202,0.002485276,0.000621121,BM,SVM,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0.00263386,0.038649187,0.952212399,0.006504555,E,SVM,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,0.912638073,0,0,0.087361927,AM,SVM,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,0.840078426,0.001096892,0.00162857,0.157196112,AM,SVM,Archaea,37,Mesophiles
+Natrinema salaciae,AM,0.840993737,0.000266568,0,0.158739694,AM,SVM,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0.000262285,0.992526675,0.000542266,0.006668773,BM,SVM,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0.003489015,0.942031536,0.005041761,0.049437688,BM,SVM,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,0.000671305,0.989000539,0.001225318,0.009102839,BM,SVM,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,0.006717469,0.901014617,0.014145802,0.078122111,BM,SVM,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,0.000247019,0.988064371,0.000609088,0.011079523,BM,SVM,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0.107278449,0.314445463,0.287060501,0.291215586,BM,SVM,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0.004099083,0.052273225,0.93852911,0.005098582,E,SVM,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0.034012473,0.136004708,0.805371862,0.024610958,E,SVM,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0.125559717,0.32301849,0.268765638,0.282656155,BM,SVM,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0.003387466,0.924689294,0.00857668,0.06334656,BM,SVM,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0.136843952,0.369207287,0.210151978,0.283796784,BM,SVM,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,0.001571079,0.973724427,0.003426045,0.021278449,BM,SVM,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,0.001682895,0.971964402,0.004057862,0.022294842,BM,SVM,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0.003292514,0.951488013,0.003339546,0.041879927,BM,SVM,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0.123283002,0.317812665,0.275309909,0.283594424,BM,SVM,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,0.000626447,0.972162431,0.001492146,0.025718976,BM,SVM,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0.000495562,0.985294025,0.001096598,0.013113814,BM,SVM,Bacteria,16,Mesophiles
+Penicillium expansum,E,0.002340514,0.031110313,0.962406754,0.004142419,E,SVM,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0.003495804,0.048006992,0.944277993,0.004219212,E,SVM,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0.170832964,0.347197869,0.162342972,0.319626195,BM,SVM,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0.176543436,0.335759614,0.166416008,0.321280943,BM,SVM,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0.174199213,0.335426272,0.167068993,0.323305523,BM,SVM,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0.010966984,0.864356423,0.022507896,0.102168697,BM,SVM,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0.140658868,0.287917613,0.286577094,0.284846425,BM,SVM,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0.004091553,0.05009364,0.940973182,0.004841625,E,SVM,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0.000580049,0.990516377,0.001912277,0.006991297,BM,SVM,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0.005933424,0.064096941,0.923791105,0.006178529,E,SVM,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,8.35E-05,0.998842624,0.000148409,0.000925448,BM,SVM,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,0.000116907,0.998536417,0.000249287,0.001097389,BM,SVM,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,9.37E-05,0.999024831,0.000153166,0.000728306,BM,SVM,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,0.000108365,0.998636574,0.000233148,0.001021913,BM,SVM,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,0.000475113,0.981487415,0.000875843,0.017161629,BM,SVM,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0.172596957,0.312294018,0.205017111,0.310091914,BM,SVM,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0.111405597,0.309765075,0.288657977,0.29017135,BM,SVM,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,6.90E-05,0.996653708,9.81E-05,0.003179247,BM,SVM,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0.003020821,0.039010181,0.952991147,0.004977851,E,SVM,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0.137788092,0.063696092,0.09743057,0.701085246,THP,SVM,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0.131801129,0.067175681,0.093243704,0.707779487,THP,SVM,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0.010185336,0.890775914,0.011773069,0.087265681,BM,SVM,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,0.001618425,0.958608481,0.002856498,0.036916596,BM,SVM,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,0.001825853,0.955211054,0.003282874,0.039680218,BM,SVM,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,0.00061749,0.994150132,0.000989432,0.004242946,BM,SVM,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0.014339313,0.854720849,0.021862459,0.109077379,BM,SVM,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0.004627014,0.056181795,0.933283267,0.005907924,E,SVM,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0.016850948,0.826120461,0.032589204,0.124439387,BM,SVM,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0.004982728,0.034652901,0.941122143,0.019242228,E,SVM,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0.000832942,0.97875689,0.001302793,0.019107375,BM,SVM,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,0.891299815,0,0,0.108700185,AM,SVM,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0.000884245,0.969811686,0.001780689,0.02752338,BM,SVM,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0.008357805,0.876798529,0.019964606,0.09487906,BM,SVM,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0.002864957,0.030589057,0.960440214,0.006105772,E,SVM,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0.002653236,0.030375585,0.961769677,0.005201503,E,SVM,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,0.000114056,0.999490846,0.000144868,0.000250231,BM,SVM,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0.144243127,0.289827419,0.28251181,0.283417643,BM,SVM,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0.001496942,0.959028889,0.002881527,0.036592642,BM,SVM,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0.004384213,0.915208244,0.010563394,0.069844149,BM,SVM,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,0.00042948,0.996662774,0.00263695,0.000270796,BM,SVM,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,0.000458255,0.996084395,0.003092622,0.000364728,BM,SVM,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0.000645185,0.971573099,0.001848525,0.025933191,BM,SVM,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0.034744158,0.664302563,0.097475523,0.203477756,BM,SVM,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,0.000721179,0.969758499,0.001906386,0.027613936,BM,SVM,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0.017048402,0.796585855,0.044306625,0.142059118,BM,SVM,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,0.000271644,0.997562614,0.00069327,0.001472472,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,0.002035201,0.954422073,0.005768594,0.037774133,BM,SVM,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,0.000472259,0.996755124,0.001735809,0.001036807,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,0.001907885,0.949414749,0.005438326,0.04323904,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,0.000554454,0.995531553,0.002628871,0.001285123,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,0.000302371,0.997460173,0.000905634,0.001331823,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,0.000439978,0.996624883,0.001554412,0.001380727,BM,SVM,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,0.000715538,0.994843934,0.003848528,0.000592,BM,SVM,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0.148573716,0.315123164,0.250100797,0.286202324,BM,SVM,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0.110824297,0.31071888,0.288138534,0.290318289,BM,SVM,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0.192389705,0.334474625,0.161762838,0.311372832,BM,SVM,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,0.015323415,0.804832551,0.041625359,0.138218675,BM,SVM,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0.167753373,0.311357201,0.214614148,0.306275278,BM,SVM,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0.087290694,0.437835411,0.208119212,0.266754683,BM,SVM,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0.122173785,0.375992003,0.226161042,0.27567317,BM,SVM,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0.129930899,0.30632398,0.279283638,0.284461484,BM,SVM,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0.13481646,0.289828384,0.289524663,0.285830493,BM,SVM,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0.160983154,0.296330728,0.250404375,0.292281744,BM,SVM,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0.299705495,0.120727588,0.129195351,0.450371567,THP,SVM,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0.09767338,0.44232955,0.196880551,0.263116518,BM,SVM,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0.110007037,0.388028741,0.228612204,0.273352019,BM,SVM,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0.164027029,0.292673089,0.251243228,0.292056654,BM,SVM,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0.171587337,0.311521035,0.207724059,0.30916757,BM,SVM,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0.151189455,0.352705289,0.19771576,0.298389496,BM,SVM,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0.156716985,0.329730593,0.216356685,0.297195738,BM,SVM,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,0.524916876,0,0,0.475083124,AM,SVM,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0.001541798,0.960567576,0.003056377,0.034834249,BM,SVM,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0.080642755,0.545221605,0.135028832,0.239106808,BM,SVM,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0.173584999,0.31264536,0.203668183,0.310101458,BM,SVM,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0.155188759,0.287006795,0.270676218,0.287128228,THP,SVM,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0.075229292,0.483831281,0.185135512,0.255803915,BM,SVM,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0.166749229,0.294318266,0.245086053,0.293846452,BM,SVM,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0.142780036,0.288348671,0.28374476,0.285126532,BM,SVM,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0.108327002,0.315216681,0.285998119,0.290458198,BM,SVM,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0.11027647,0.302036396,0.295047795,0.292639339,BM,SVM,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0.012201619,0.855857846,0.024464597,0.107475939,BM,SVM,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0.027830808,0.147731967,0.804281403,0.020155823,E,SVM,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0.024441536,0.130591195,0.827066152,0.017901117,E,SVM,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0.003010779,0.036136166,0.952222279,0.008630775,E,SVM,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0.00243459,0.031189048,0.961985264,0.004391098,E,SVM,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0.003968075,0.043707973,0.947423329,0.004900623,E,SVM,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0.11884935,0.361639615,0.242641832,0.276869203,BM,SVM,Bacteria,50,Thermophiles
+Ustilago hordei,E,0.003018457,0.031506678,0.959043064,0.006431801,E,SVM,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0.003249471,0.045076449,0.947404526,0.004269555,E,SVM,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,0.011056458,0.842035143,0.029659599,0.1172488,BM,SVM,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0.003491914,0.033719073,0.956265221,0.006523792,E,SVM,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,0.024054911,0.73094105,0.070009983,0.174994056,BM,SVM,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0.003112514,0.036386854,0.955268995,0.005231637,E,SVM,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0.00260133,0.031760971,0.960826642,0.004811057,E,SVM,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0.003810049,0.035571878,0.951369105,0.009248967,E,SVM,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0.002621162,0.033515696,0.959018173,0.004844969,E,SVM,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0.007256042,0.068232492,0.917521926,0.00698954,E,SVM,Eukaryota,25,Mesophiles
+Absidia repens,E,0.000169337,0.00149761,0.998333052,9.85E-10,E,NN,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0.000178224,0.764341939,3.26E-06,0.235476581,BM,NN,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0.001509499,0.177060797,1.77E-05,0.821412036,THP,NN,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0.000265303,0.000219141,6.78E-07,0.999514878,THP,NN,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0.005337685,0.001674529,0.992987666,1.21E-07,E,NN,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,9.92E-05,0.916858275,2.38E-06,0.083040158,BM,NN,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0.000364138,0.001703549,3.02E-06,0.997929297,THP,NN,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0.000272,0.079913773,1.72E-06,0.919812507,THP,NN,Bacteria,50,Thermophiles
+Alternaria alternata,E,0.000177596,0.001506046,0.998316358,1.09E-09,E,NN,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,5.76E-05,0.970807332,2.05E-06,0.029133056,BM,NN,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,5.63E-05,0.972291224,2.05E-06,0.027650454,BM,NN,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0.000126329,0.839177435,2.30E-06,0.160693934,BM,NN,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0.001311904,0.001203917,1.01E-05,0.997474088,THP,NN,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0.00591741,0.023987917,0.000150804,0.969943869,THP,NN,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0.000174332,1.54E-05,2.32E-07,0.999809992,THP,NN,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0.000199954,0.158725962,1.66E-06,0.841072427,THP,NN,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0.000169189,0.001493132,0.998337678,9.83E-10,E,NN,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0.000168891,0.00149342,0.998337688,9.81E-10,E,NN,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0.000168481,0.001491292,0.998340226,9.77E-10,E,NN,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0.000180988,0.001577934,0.998241077,1.15E-09,E,NN,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0.00224186,0.001623423,0.996134174,5.43E-07,E,NN,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0.000106456,0.903624419,2.43E-06,0.096266692,BM,NN,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0.005374994,0.656347762,0.002146021,0.336131224,BM,NN,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0.000535568,0.98810903,0.003480868,0.007874534,BM,NN,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0.000161734,0.851436582,3.59E-06,0.14839809,BM,NN,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0.000153144,0.901449048,4.31E-06,0.098393493,BM,NN,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0.000311889,0.56323102,1.55E-05,0.436441623,BM,NN,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0.000857074,0.001003953,0.998138927,4.56E-08,E,NN,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0.000966469,0.000929238,0.99810425,4.35E-08,E,NN,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,8.21E-05,0.92697487,2.05E-06,0.072941012,BM,NN,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,8.15E-05,0.931363022,2.12E-06,0.068553311,BM,NN,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0.005561654,0.782586132,0.006393382,0.205458832,BM,NN,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0.000181971,0.000291867,4.81E-07,0.999525681,THP,NN,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,8.51E-05,0.933026374,2.43E-06,0.066886074,BM,NN,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0.000115014,0.955100332,5.26E-06,0.044779394,BM,NN,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0.000119165,0.952572593,5.25E-06,0.047302996,BM,NN,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0.000120995,0.844566354,2.38E-06,0.155310269,BM,NN,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,8.95E-05,0.925197151,2.40E-06,0.074710951,BM,NN,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0.000120505,0.949402662,5.19E-06,0.050471644,BM,NN,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0.000421429,0.003928842,1.84E-06,0.995647888,THP,NN,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0.002555531,0.006614491,2.40E-05,0.99080599,THP,NN,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0.001655137,0.006568491,1.30E-05,0.991763327,THP,NN,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0.000249251,0.282421461,2.27E-06,0.717327018,THP,NN,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0.000160492,0.559969813,1.74E-06,0.439867956,BM,NN,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0.004887313,0.324421228,0.000474475,0.670216983,THP,NN,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0.000258102,0.932875209,0.000938896,0.065927794,BM,NN,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0.000700962,0.000471698,2.86E-06,0.998824483,THP,NN,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0.00103501,0.001078542,6.14E-06,0.997880307,THP,NN,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0.000306228,0.001327928,0.998365842,2.55E-09,E,NN,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,6.35E-05,0.997284731,0.001467367,0.001184378,BM,NN,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0.000223146,0.000462978,7.81E-07,0.999313094,THP,NN,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0.000139949,0.860178473,3.25E-06,0.139678329,BM,NN,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,9.57E-05,0.921597969,2.38E-06,0.078303983,BM,NN,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0.000103973,0.904266751,2.37E-06,0.095626904,BM,NN,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0.000199837,0.966579698,0.008156504,0.025063961,BM,NN,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0.000339159,0.006223508,1.62E-06,0.99343571,THP,NN,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0.000182773,0.00576149,6.30E-07,0.994055107,THP,NN,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0.000107596,0.951186124,3.66E-06,0.048702624,BM,NN,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0.000134951,0.966584401,5.72E-06,0.033274926,BM,NN,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0.002536884,0.014142856,2.87E-05,0.983291528,THP,NN,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0.000986089,0.149322841,1.45E-05,0.849676615,THP,NN,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0.002201509,0.023998554,3.38E-05,0.973766134,THP,NN,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0.000693356,0.000744546,3.09E-06,0.998559006,THP,NN,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0.000279462,0.000125978,7.29E-07,0.999593831,THP,NN,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,0.000171723,0.001753563,0.998074712,1.21E-09,E,NN,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0.000208091,0.002222071,9.47E-07,0.99756889,THP,NN,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0.000225104,0.003025077,1.30E-06,0.996748515,THP,NN,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,7.64E-05,0.934107871,0.064543307,0.001272426,BM,NN,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,2.37E-05,0.975329762,7.62E-06,0.024638891,BM,NN,Bacteria,34,Mesophiles
+Fusarium poae,E,0.000188674,0.001475004,0.998336321,1.15E-09,E,NN,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0.014497716,0.126039405,0.000789346,0.858673532,THP,NN,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0.007653214,0.10804994,0.000500345,0.883796501,THP,NN,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0.008169189,0.160900933,0.000734586,0.830195291,THP,NN,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0.002318921,0.004251819,2.91E-05,0.993400119,THP,NN,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0.007497478,0.117792572,0.000532009,0.874177941,THP,NN,Bacteria,50,Thermophiles
+Gimesia alba,BM,0.000238981,0.970164997,0.002355508,0.027240514,BM,NN,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0.000222065,0.974304071,0.002645505,0.022828359,BM,NN,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0.000162568,0.669710541,2.10E-06,0.330124795,BM,NN,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,0.995180624,2.06E-05,0.000603071,0.004195729,AM,NN,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,0.992263653,1.38E-05,0.000530145,0.007192369,AM,NN,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,0.99392626,1.89E-05,0.000815863,0.005239026,AM,NN,Archaea,37,Mesophiles
+Halobellus rufus,AM,0.991321729,1.20E-05,0.000585176,0.008081123,AM,NN,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,0.996198555,3.30E-05,0.001026425,0.002742048,AM,NN,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,0.992337118,1.45E-05,0.000509954,0.007138465,AM,NN,Archaea,37,Mesophiles
+Halogranum rubrum,AM,0.996177162,4.02E-05,0.001461895,0.002320735,AM,NN,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,0.992355076,1.35E-05,0.000907516,0.006723947,AM,NN,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,0.996323094,3.08E-05,0.000750979,0.00289514,AM,NN,Archaea,37,Mesophiles
+Halopelagius longus,AM,0.996291885,3.07E-05,0.000765482,0.002911952,AM,NN,Archaea,37,Mesophiles
+Halopenitus persicus,AM,0.994489937,2.12E-05,0.000948843,0.004540062,AM,NN,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,0.981249647,5.19E-06,0.000268437,0.018476725,AM,NN,Archaea,38,Mesophiles
+Halorubrum depositum,AM,0.964088156,6.20E-06,0.000341067,0.03556458,AM,NN,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,0.985973484,7.72E-06,0.000765995,0.013252805,AM,NN,Archaea,37,Mesophiles
+Halorubrum persicum,AM,0.985472933,7.21E-06,0.000445757,0.014074096,AM,NN,Archaea,37,Mesophiles
+Halorussus salinus,AM,0.985501959,6.40E-06,0.000332962,0.014158678,AM,NN,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,0.994469813,1.94E-05,0.000819043,0.004691701,AM,NN,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,0.986014631,7.47E-06,0.000344528,0.013633367,AM,NN,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,0.993752244,1.84E-05,0.000667309,0.005562015,AM,NN,Archaea,37,Mesophiles
+Haloterrigena longa,AM,0.993528342,1.43E-05,0.000478098,0.005979218,AM,NN,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,0.982233565,4.61E-06,0.000239907,0.017521922,AM,NN,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0.000487259,0.001024815,0.998487914,1.16E-08,E,NN,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,9.69E-05,0.837170074,0.159130684,0.003602332,BM,NN,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0.00015309,0.880996245,0.111889005,0.00696166,BM,NN,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0.000224612,0.000486163,2.01E-06,0.99928721,THP,NN,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0.000322025,0.94327188,2.11E-05,0.056385003,BM,NN,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,7.06E-05,0.974170386,2.95E-06,0.025756036,BM,NN,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0.000227729,0.001917562,9.45E-07,0.997853765,THP,NN,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,6.85E-05,0.955638906,2.22E-06,0.04429038,BM,NN,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0.00012685,0.858603798,2.47E-06,0.141266878,BM,NN,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,9.02E-05,0.938800571,2.76E-06,0.061106482,BM,NN,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0.001778106,0.004536358,4.02E-05,0.993645298,THP,NN,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0.000308383,0.001482914,0.998208701,2.38E-09,E,NN,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0.000250034,0.000680145,1.39E-06,0.999068432,THP,NN,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0.001946578,0.001579258,8.84E-06,0.996465321,THP,NN,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,8.90E-06,0.993213061,2.51E-06,0.006775535,BM,NN,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0.000401947,0.848060876,1.60E-05,0.151521162,BM,NN,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0.000955852,0.040854411,8.26E-06,0.958181478,THP,NN,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0.000268117,0.007560503,1.11E-06,0.992170267,THP,NN,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0.000156099,0.842538815,3.82E-06,0.157301268,BM,NN,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0.000126996,0.909971426,3.48E-06,0.089898095,BM,NN,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0.001111003,0.037796541,1.00E-05,0.961082423,THP,NN,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.943174637,0.001241259,0.000649822,0.054934282,AM,NN,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,0.889299337,3.48E-05,0.000496007,0.110169829,AM,NN,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,0.29607473,0.000364041,0.000232061,0.703329167,THP,NN,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,0.941975252,1.19E-05,0.000350253,0.057662553,AM,NN,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,0.976824833,3.72E-05,0.001920898,0.021217036,AM,NN,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0.00042143,2.70E-05,5.21E-07,0.999551064,THP,NN,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,0.980570712,9.89E-06,0.003155659,0.016263742,AM,NN,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,0.965223011,9.37E-06,0.000295604,0.034472014,AM,NN,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,0.989169746,0.000262586,0.001034931,0.009532737,AM,NN,Archaea,21,Mesophiles
+Methanococcus voltae,AM,0.825453605,7.69E-05,0.000304271,0.174165217,AM,NN,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,0.961989728,0.000582548,0.001253007,0.036174716,AM,NN,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,0.984328424,3.18E-05,0.000490297,0.015149508,AM,NN,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,0.985776055,5.34E-05,0.000524062,0.013646491,AM,NN,Archaea,37,Mesophiles
+Methanolobus profundi,AM,0.992101038,0.00012623,0.000897579,0.006875153,AM,NN,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,0.993272126,7.73E-05,0.000830147,0.005820416,AM,NN,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,0.979340644,0.000813368,0.001406582,0.018439406,AM,NN,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.958275346,0.001164396,0.001310954,0.039249304,AM,NN,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,0.978807795,0.000757532,0.001403535,0.019031137,AM,NN,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.966175209,0.002380625,0.001148514,0.030295652,AM,NN,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.98043423,0.001197741,0.00164837,0.016719659,AM,NN,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,0.987761049,9.54E-05,0.000824237,0.011319342,AM,NN,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,0.867304781,0.001141585,0.000970397,0.130583237,AM,NN,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,0.967311131,5.99E-05,0.000699365,0.031929557,AM,NN,Archaea,55,Thermophiles
+Microlunatus soli,BM,5.10E-05,0.973402375,1.81E-06,0.026544851,BM,NN,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0.000173668,0.753286666,2.78E-06,0.246536885,BM,NN,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0.00014037,0.867726041,3.03E-06,0.132130562,BM,NN,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0.000178573,0.746922354,2.85E-06,0.252896219,BM,NN,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0.000764243,0.021716199,1.29E-05,0.977506692,THP,NN,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,9.19E-05,0.921590454,2.22E-06,0.078315451,BM,NN,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,9.38E-05,0.920127931,2.28E-06,0.079775957,BM,NN,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0.000138672,0.817947726,2.42E-06,0.181911182,BM,NN,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0.000141136,0.756357298,4.07E-06,0.243497497,BM,NN,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,4.89E-06,0.998506934,4.53E-05,0.001442917,BM,NN,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,4.86E-05,0.990569735,0.002187088,0.00719455,BM,NN,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,4.84E-06,0.998851013,9.52E-05,0.001048944,BM,NN,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,7.04E-06,0.998239972,8.96E-05,0.001663365,BM,NN,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,8.01E-06,0.997973778,9.89E-05,0.001919334,BM,NN,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,8.04E-05,0.976320017,0.000432292,0.023167299,BM,NN,Bacteria,37,Mesophiles
+Myroides profundi,BM,1.29E-05,0.960878656,0.039079165,2.93E-05,BM,NN,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0.000274595,0.001910169,0.997815234,1.90E-09,E,NN,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,0.989395323,8.35E-06,0.000321081,0.010275244,AM,NN,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,0.996324252,3.06E-05,0.000796165,0.002848965,AM,NN,Archaea,37,Mesophiles
+Natrinema salaciae,AM,0.995706168,2.41E-05,0.000684921,0.003584819,AM,NN,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0.000271273,0.966587824,0.009343435,0.023797468,BM,NN,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0.000231403,0.959901705,0.000552721,0.039314171,BM,NN,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,7.39E-05,0.94715471,2.07E-06,0.052769287,BM,NN,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,8.60E-05,0.935144627,2.33E-06,0.064767003,BM,NN,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,8.57E-05,0.941272993,2.54E-06,0.058638752,BM,NN,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0.00025785,0.000859956,1.41E-06,0.998880781,THP,NN,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0.000172744,0.001481882,0.998345373,1.03E-09,E,NN,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0.001435594,0.00246452,0.996099854,3.11E-08,E,NN,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0.00179916,0.115712766,0.000127268,0.882360806,THP,NN,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0.001386695,0.952177547,0.003013806,0.043421952,BM,NN,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0.00024845,0.570541937,3.23E-06,0.429206378,BM,NN,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,8.86E-05,0.94855185,3.53E-06,0.051356064,BM,NN,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,6.99E-05,0.964002659,3.06E-06,0.035924374,BM,NN,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0.000198471,0.898360874,7.06E-06,0.101433596,BM,NN,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0.009007372,0.231340888,0.000957733,0.758694007,THP,NN,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,2.19E-05,0.972403557,2.60E-06,0.027571982,BM,NN,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0.00047377,0.902072859,0.003059452,0.094393919,BM,NN,Bacteria,16,Mesophiles
+Penicillium expansum,E,0.000969793,0.001416018,0.997614121,6.76E-08,E,NN,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0.000169296,0.001488158,0.998342546,9.84E-10,E,NN,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0.016991682,0.036894577,0.000128508,0.945985232,THP,NN,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0.003470755,0.00508053,1.45E-05,0.991434194,THP,NN,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0.001693835,0.004620131,7.22E-06,0.993678818,THP,NN,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0.0001663,0.740570391,2.52E-06,0.259260793,BM,NN,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0.001441615,0.00223618,9.93E-06,0.99631228,THP,NN,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0.000172678,0.001487977,0.998339344,1.01E-09,E,NN,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0.000543503,0.906096767,0.00784704,0.08551269,BM,NN,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0.000901226,0.000795085,0.998303642,4.69E-08,E,NN,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,9.49E-08,0.999993692,1.41E-06,4.80E-06,BM,NN,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,4.74E-08,0.999996769,1.15E-06,2.03E-06,BM,NN,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,8.83E-08,0.999994271,1.44E-06,4.21E-06,BM,NN,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,5.42E-08,0.999996427,1.19E-06,2.33E-06,BM,NN,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,9.21E-05,0.909222574,2.12E-06,0.090683236,BM,NN,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0.000168561,0.002931631,6.97E-07,0.996899111,THP,NN,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0.009550931,0.061259264,0.000433576,0.92875623,THP,NN,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,3.31E-06,0.998466555,2.37E-06,0.001527765,BM,NN,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0.00020045,0.001422253,0.998377296,1.47E-09,E,NN,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0.00018432,0.000165798,3.98E-07,0.999649484,THP,NN,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0.000221142,0.000233775,1.39E-06,0.999543692,THP,NN,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0.000225643,0.652461867,3.34E-06,0.347309154,BM,NN,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,9.48E-05,0.944845523,2.88E-06,0.055056768,BM,NN,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,9.81E-05,0.942282375,2.94E-06,0.057616558,BM,NN,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,5.01E-05,0.977818793,1.99E-06,0.022129155,BM,NN,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0.000159479,0.670539219,2.11E-06,0.329299191,BM,NN,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0.000653912,0.000937752,0.998408316,2.06E-08,E,NN,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0.00014573,0.761014576,2.22E-06,0.238837478,BM,NN,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0.00421036,0.731062315,0.163106084,0.101621241,BM,NN,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0.000106002,0.931091425,2.98E-06,0.068799595,BM,NN,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,0.991962518,1.28E-05,0.000421915,0.007602724,AM,NN,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0.000128906,0.813882684,2.30E-06,0.185986114,BM,NN,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0.000131559,0.796786898,2.08E-06,0.20307946,BM,NN,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0.000169176,0.001488259,0.998342565,9.85E-10,E,NN,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0.00016954,0.001488885,0.998341574,9.89E-10,E,NN,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,3.75E-07,0.99995833,3.68E-05,4.50E-06,BM,NN,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0.002292542,0.002508586,2.25E-05,0.995176345,THP,NN,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0.000111124,0.936274944,3.35E-06,0.063610587,BM,NN,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0.000160911,0.592192227,1.90E-06,0.407644966,BM,NN,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,4.25E-05,0.991699853,0.001403472,0.006854165,BM,NN,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,2.75E-05,0.994228037,0.000842596,0.004901838,BM,NN,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0.00034625,0.945899877,0.00981219,0.043941683,BM,NN,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0.000798823,0.77671471,0.002141175,0.220345292,BM,NN,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,6.71E-05,0.994758853,0.00366841,0.001505624,BM,NN,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0.000150344,0.706113481,1.71E-05,0.293719057,BM,NN,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,5.99E-05,0.977402429,2.55E-06,0.022535115,BM,NN,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,4.84E-05,0.983112539,2.21E-06,0.016836862,BM,NN,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,5.64E-05,0.980276996,2.51E-06,0.019664138,BM,NN,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,5.97E-05,0.97281039,2.25E-06,0.027127687,BM,NN,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,5.77E-05,0.977138257,2.38E-06,0.022801705,BM,NN,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,6.28E-05,0.976583438,2.68E-06,0.023351093,BM,NN,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,5.43E-05,0.980305791,2.38E-06,0.019637537,BM,NN,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,4.94E-05,0.983299271,2.29E-06,0.016649034,BM,NN,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0.005645204,0.057761555,0.000264544,0.936328697,THP,NN,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0.002128642,0.007592864,7.38E-05,0.99020467,THP,NN,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0.007516901,0.246778105,9.79E-05,0.74560714,THP,NN,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,2.72E-05,0.980052086,7.19E-06,0.019913502,BM,NN,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0.000481073,0.006550049,2.95E-06,0.992965932,THP,NN,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0.000136646,0.161895029,1.21E-06,0.837967112,THP,NN,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0.003952662,0.029205407,7.86E-05,0.966763352,THP,NN,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0.000561329,0.033998657,7.97E-06,0.96543205,THP,NN,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0.000629334,0.00381847,4.50E-06,0.995547699,THP,NN,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0.000239225,0.002572397,7.93E-07,0.997187585,THP,NN,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0.000548038,0.024682445,3.33E-06,0.97476619,THP,NN,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0.00042978,0.057173989,5.76E-06,0.942390467,THP,NN,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0.000500837,0.061340544,8.84E-06,0.938149779,THP,NN,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0.000153218,5.26E-05,2.56E-07,0.999793888,THP,NN,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0.000253376,6.00E-05,4.63E-07,0.999686206,THP,NN,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0.0005008,0.03378215,3.64E-06,0.965713406,THP,NN,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0.000385084,0.043814154,2.61E-06,0.955798148,THP,NN,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,0.048593718,0.000279093,4.52E-05,0.951082025,THP,NN,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0.000112662,0.947636443,3.99E-06,0.052246906,BM,NN,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0.000151619,0.67535645,5.82E-06,0.324486109,BM,NN,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0.000168065,0.005740144,1.11E-06,0.994090683,THP,NN,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0.000154667,4.93E-05,2.98E-07,0.999795698,THP,NN,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0.000112203,0.14084586,7.39E-07,0.859041198,THP,NN,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0.000223035,0.005000848,3.89E-06,0.994772228,THP,NN,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0.000751665,0.001341591,6.12E-06,0.997900622,THP,NN,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0.000381801,0.000500412,2.54E-06,0.999115251,THP,NN,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0.000315409,0.000205903,1.75E-06,0.999476942,THP,NN,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0.000107692,0.78008175,3.26E-06,0.219807294,BM,NN,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0.000442335,0.001381081,0.99817658,3.93E-09,E,NN,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0.000466617,0.001426496,0.998106882,4.32E-09,E,NN,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0.000264028,0.001892517,0.997843453,1.80E-09,E,NN,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0.00020406,0.001547464,0.998248474,1.57E-09,E,NN,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0.000385045,0.001178256,0.998436692,6.34E-09,E,NN,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0.026880999,0.248239796,0.002432857,0.722446348,THP,NN,Bacteria,50,Thermophiles
+Ustilago hordei,E,0.000175336,0.001477005,0.998347657,1.03E-09,E,NN,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0.000177216,0.001483207,0.998339576,1.07E-09,E,NN,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,3.08E-05,0.991460846,6.45E-06,0.008501944,BM,NN,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0.000263802,0.001461432,0.998274763,2.59E-09,E,NN,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,5.71E-05,0.996275514,0.003129532,0.000537856,BM,NN,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0.000267944,0.001309829,0.998422224,2.86E-09,E,NN,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0.000190245,0.001760938,0.998048816,1.32E-09,E,NN,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0.002825529,0.000496828,0.99667696,6.83E-07,E,NN,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0.000227093,0.00141741,0.998355496,1.49E-09,E,NN,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0.000294988,0.001414041,0.998290969,2.19E-09,E,NN,Eukaryota,25,Mesophiles
+Absidia repens,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0,0.6,0,0.4,BM,KNN,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0,0,0,1,THP,KNN,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0,0,0,1,THP,KNN,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0,0,1,0,E,KNN,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Alternaria alternata,E,0,0,1,0,E,KNN,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0,0.4,0,0.6,THP,KNN,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0,0,0,1,THP,KNN,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0,0,0,1,THP,KNN,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0,0.4,0,0.6,THP,KNN,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0,1,0,0,BM,KNN,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0,0.4,0,0.6,THP,KNN,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0,0.6,0,0.4,BM,KNN,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0,0.166666667,0,0.833333333,THP,KNN,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0,0.8,0,0.2,BM,KNN,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0,0,0,1,THP,KNN,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0,1,0,0,BM,KNN,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0,0.666666667,0,0.333333333,BM,KNN,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0,0,0,1,THP,KNN,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0,0.166666667,0,0.833333333,THP,KNN,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0,0.4,0,0.6,THP,KNN,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0,1,0,0,BM,KNN,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0,0,1,0,E,KNN,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0,0.6,0,0.4,BM,KNN,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0,0.666666667,0,0.333333333,BM,KNN,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0,0.142857143,0,0.857142857,THP,KNN,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0,1,0,0,BM,KNN,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0,0.2,0,0.8,THP,KNN,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0,0.333333333,0,0.666666667,THP,KNN,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0,0,0,1,THP,KNN,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,0,1,0,0,BM,KNN,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,0,0.6,0,0.4,BM,KNN,Bacteria,34,Mesophiles
+Fusarium poae,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Gimesia alba,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0,0.6,0,0.4,BM,KNN,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halobellus rufus,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halogranum rubrum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,1,0,0,0,AM,KNN,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halopelagius longus,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halopenitus persicus,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,1,0,0,0,AM,KNN,Archaea,38,Mesophiles
+Halorubrum depositum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halorubrum persicum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halorussus salinus,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Haloterrigena longa,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,0,0.428571429,0,0.571428571,THP,KNN,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0,0.8,0,0.2,BM,KNN,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0,0,0,1,THP,KNN,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0,1,0,0,BM,KNN,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,0,0.333333333,0,0.666666667,THP,KNN,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,0,0.6,0,0.4,BM,KNN,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,0,1,0,0,BM,KNN,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0,1,0,0,BM,KNN,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0,0,0,1,THP,KNN,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.833333333,0,0,0.166666667,AM,KNN,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,1,0,0,0,AM,KNN,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0,0,0,1,THP,KNN,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,1,0,0,0,AM,KNN,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,1,0,0,0,AM,KNN,Archaea,21,Mesophiles
+Methanococcus voltae,AM,1,0,0,0,AM,KNN,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanolobus profundi,AM,1,0,0,0,AM,KNN,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,1,0,0,0,AM,KNN,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.4,0,0,0.6,THP,KNN,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.8,0,0,0.2,AM,KNN,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.75,0,0,0.25,AM,KNN,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,1,0,0,0,AM,KNN,Archaea,55,Thermophiles
+Microlunatus soli,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0,0.6,0,0.4,BM,KNN,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Myroides profundi,BM,0,1,0,0,BM,KNN,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,1,0,0,0,AM,KNN,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Natrinema salaciae,AM,1,0,0,0,AM,KNN,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0,1,0,0,BM,KNN,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,0,0.6,0,0.4,BM,KNN,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,0,0.8,0,0.2,BM,KNN,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0,0.4,0,0.6,THP,KNN,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0,0.2,0,0.8,THP,KNN,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,0,0.4,0,0.6,THP,KNN,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0,1,0,0,BM,KNN,Bacteria,16,Mesophiles
+Penicillium expansum,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0,0,1,0,E,KNN,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0,1,0,0,BM,KNN,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0,0,0,1,THP,KNN,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0,0,0,1,THP,KNN,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0,0,0,1,THP,KNN,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0,0.6,0,0.4,BM,KNN,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,0,1,0,0,BM,KNN,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,0,1,0,0,BM,KNN,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0,0,0,1,THP,KNN,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,1,0,0,0,AM,KNN,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0,1,0,0,BM,KNN,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,0,1,0,0,BM,KNN,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0,1,0,0,BM,KNN,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0,0.4,0,0.6,THP,KNN,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,0,1,0,0,BM,KNN,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0,0.8,0,0.2,BM,KNN,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0,0.8,0,0.2,BM,KNN,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0,0,0,1,THP,KNN,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,0,1,0,0,BM,KNN,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,0,1,0,0,BM,KNN,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0,0.166666667,0,0.833333333,THP,KNN,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0,0.2,0,0.8,THP,KNN,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,0,0.666666667,0,0.333333333,BM,KNN,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0,0.4,0,0.6,THP,KNN,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0,0,0,1,THP,KNN,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0,0,0,1,THP,KNN,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0,0,0,1,THP,KNN,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0,0.142857143,0,0.857142857,THP,KNN,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0,0.4,0,0.6,THP,KNN,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0,0,0,1,THP,KNN,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0,0.428571429,0,0.571428571,THP,KNN,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0,0,0,1,THP,KNN,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,1,0,0,0,AM,KNN,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0,1,0,0,BM,KNN,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0,0.2,0,0.8,THP,KNN,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0,0.4,0,0.6,THP,KNN,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0,0,0,1,THP,KNN,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0,0,0,1,THP,KNN,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0,0,0,1,THP,KNN,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0,0.8,0,0.2,BM,KNN,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0,0,1,0,E,KNN,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0,0,1,0,E,KNN,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0,0.142857143,0,0.857142857,THP,KNN,Bacteria,50,Thermophiles
+Ustilago hordei,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,0,0.6,0,0.4,BM,KNN,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0,0,1,0,E,KNN,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,0,0.8,0,0.2,BM,KNN,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0,0,1,0,E,KNN,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0,0,1,0,E,KNN,Eukaryota,25,Mesophiles
+Absidia repens,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Achromobacter spanius,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Acidianus brierleyi,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,72,Hyperthermophiles
+Acidilobus saccharovorans 345-15,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,80,Hyperthermophiles
+Acremonium chrysogenum ATCC 11550,E,0,0,1,0,E,DT,Eukaryota,22,Mesophiles
+Actinotignum urinale,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,37,Mesophiles
+Alicyclobacillus herbarius DSM 13609,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Alicyclobacillus mali NBRC 102425,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Alternaria alternata,E,0,0,1,0,E,DT,Eukaryota,26,Mesophiles
+Amycolatopsis mediterranei RB,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Amycolatopsis roodepoortensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Anaerolinea thermolimosa,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,50,Thermophiles
+Anoxybacillus tepidamans,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,53,Thermophiles
+Anoxybacillus vitaminiphilus,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,55,Thermophiles
+Archaeoglobus veneficus SNP6,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Archaea,75,Hyperthermophiles
+Ardenticatena maritima,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,65,Hyperthermophiles
+Aspergillus ellipticus CBS 707.79,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Aspergillus ibericus CBS 121593,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Aspergillus japonicus CBS 114.51,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Aspergillus lentulus,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Aspergillus thermomutatus,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Asticcacaulis benevestitus DSM 16100 = ATCC BAA-896,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,17,Mesophiles
+Bacillus thuringiensis serovar berliner ATCC 10792,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Bacillus toyonensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Bartonella alsatica,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Bartonella ancashensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Bartonella bovis 91-4,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,37,Mesophiles
+Beauveria brongniartii RCEF 3172,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Bifiguratus adelaidae,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Bradyrhizobium erythrophlei,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Bradyrhizobium guangxiense,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Brevibacillus brevis,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,30,Mesophiles
+Brockia lithotrophica,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,63,Hyperthermophiles
+Burkholderia gladioli,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Burkholderia lata,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,29,Mesophiles
+Burkholderia metallica,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Burkholderia oklahomensis C6786,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,32,Mesophiles
+Burkholderia plantarii,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Burkholderia territorii,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Calderihabitans maritimus,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Caldicellulosiruptor acetigenus DSM 7040,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Caldicellulosiruptor obsidiansis OB47,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,75,Hyperthermophiles
+Caldichromatium japonicum,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,50,Thermophiles
+Caldilinea aerophila DSM 14535 = NBRC 104270,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,55,Thermophiles
+Caloramator proteoclasticus DSM 10124,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Candidatus Rhabdochlamydia porcellionis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Carboxydothermus ferrireducens DSM 11255,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Carboxydothermus pertinax,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Chaetomium globosum CBS 148.51,E,0,0,1,0,E,DT,Eukaryota,26,Mesophiles
+Clostridium saccharoperbutylacetonicum N1-4(HMT),BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Coprothermobacter platensis DSM 11748,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Corallococcus coralloides DSM 2259,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,30,Mesophiles
+Cryobacterium roopkundense,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Cryobacterium soli,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Daejeonella rubra,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Deferribacter autotrophicus,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Deferrisoma camini S3R1,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Deinococcus marmoris DSM 12784,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Delftia lacustris,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,24,Mesophiles
+Desulfohalotomaculum alkaliphilum DSM 12257,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Desulfonema limicola,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,30,Mesophiles
+Desulfotomaculum nigrificans DSM 574,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Desulfurispora thermophila DSM 16022,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Desulfurococcus mucosus DSM 2162,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,85,Hyperthermophiles
+Dictyostelium discoideum AX4,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Fervidobacterium nodosum Rt17-B1,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Fervidobacterium pennivorans DSM 9078,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Flavobacterium faecale,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,18,Mesophiles
+Francisella persica ATCC VR-331,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,34,Mesophiles
+Fusarium poae,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Geobacillus jurassicus NBRC 107829,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Geobacillus kaustophilus HTA426,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Geobacillus thermocatenulatus,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Geobacillus thermodenitrificans,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Geobacillus vulcani PSS1,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Gimesia alba,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,30,Mesophiles
+Gimesia fumaroli,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,28,Mesophiles
+Glaciibacter superstes DSM 21135,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Haladaptatus cibarius D43,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Haloarchaeobius iranensis,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halobaculum halophilum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halobellus rufus,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halococcus thailandensis JCM 13552,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halogeometricum pallidum JCM 14848,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halogranum rubrum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halomicrobium katesii DSM 19301,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,40,Mesophiles
+Halomicrobium zhouii,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halopelagius longus,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halopenitus persicus,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halorhabdus rudnickae,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,38,Mesophiles
+Halorubrum depositum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halorubrum halodurans,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halorubrum persicum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halorussus salinus,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halosimplex halophilum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halosimplex litoreum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halosimplex pelagicum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Haloterrigena longa,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Halovivax asiaticus JCM 14624,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Hanseniaspora osmophila,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Hymenobacter elongatus,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,15,Mesophiles
+Hymenobacter lapidarius,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,15,Mesophiles
+Ignicoccus islandicus DSM 13165,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,90,Hyperthermophiles
+Janthinobacterium lividum,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Kibdelosporangium phytohabitans,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Kosmotoga pacifica,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Ktedonosporobacter rubrisoli,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Kutzneria albida DSM 43870,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Labilithrix luteola,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,29,Mesophiles
+Laceyella sacchari,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Lachancea meyersii CBS 8951,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Marinithermus hydrothermalis DSM 14884,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Marinitoga hydrogenitolerans DSM 16785,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Marinobacter psychrophilus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,18,Mesophiles
+Massilia psychrophila,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Meiothermus cateniformans,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Meiothermus silvanus DSM 9946,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Melittangium boletus DSM 14713,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,29,Mesophiles
+Mesorhizobium opportunistum WSM2075,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Metallosphaera cuprina Ar-4,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,65,Hyperthermophiles
+Methanimicrococcus blatticola,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,35,Mesophiles
+Methanobacterium formicicum,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanobacterium petrolearium,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,35,Mesophiles
+Methanobrevibacter boviskoreani JH1,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanobrevibacter ruminantium M1,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanocaldococcus bathoardescens,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,80,Hyperthermophiles
+Methanocella conradii HZ254,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,50,Thermophiles
+Methanocella paludicola SANAE,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanococcoides burtonii DSM 6242,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,21,Mesophiles
+Methanococcus voltae,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,30,Mesophiles
+Methanohalophilus mahii DSM 5219,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanolacinia paynteri,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanolacinia petrolearia DSM 11571,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanolobus profundi,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,30,Mesophiles
+Methanolobus psychrotolerans,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,35,Mesophiles
+Methanosarcina acetivorans C2A,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanosarcina flavescens,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,45,Mesophiles
+Methanosarcina mazei Go1,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanosarcina spelaei,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,29,Mesophiles
+Methanosarcina vacuolata Z-761,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanospirillum hungatei JF-1,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanothrix soehngenii GP6,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Methanothrix thermoacetophila PT,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,55,Thermophiles
+Microlunatus soli,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Micromonospora coriariae,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Micromonospora inositola,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Micromonospora viridifaciens,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Murdochiella vaginalis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycobacterium vicinigordonae,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,30,Mesophiles
+Mycolicibacterium aichiense,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,37,Mesophiles
+Mycolicibacterium arabiense,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Mycolicibacterium smegmatis,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,37,Mesophiles
+Mycoplasma crocodyli MP145,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycoplasma feriruminatoris,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycoplasma nasistruthionis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycoplasmopsis bovigenitalium,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycoplasmopsis californica,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Mycoplasmopsis pulmonis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Myroides profundi,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,18,Mesophiles
+Nannizzia gypsea CBS 118893,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Natrarchaeobaculum aegyptiacum,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,55,Thermophiles
+Natrialba aegyptia DSM 13077,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Natrinema salaciae,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,45,Mesophiles
+Niastella koreensis GR20-10,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,26,Mesophiles
+Nitrospirillum amazonense CBAmc,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,30,Mesophiles
+Nocardia brasiliensis,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,37,Mesophiles
+Nocardia yunnanensis,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Nonomuraea coxensis DSM 45129,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,29,Mesophiles
+Oceanithermus profundus DSM 14977,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Ogataea parapolymorpha DL-1,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Ogataea polymorpha,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Paenibacillus dendritiformis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Paenibacillus odorifer,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Paludibaculum fermentans,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Paraburkholderia acidiphila,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Paraburkholderia atlantica,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Paraburkholderia caffeinilytica,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Parageobacillus thermoglucosidasius,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Paraglaciecola psychrophila 170,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Pedobacter psychrophilus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,16,Mesophiles
+Penicillium expansum,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Penicillium subrubescens,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Petrotoga halophila DSM 16923,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Petrotoga mexicana DSM 14811,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Petrotoga sibirica DSM 13575,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Phytohabitans suffuscus,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Planifilum fulgidum,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Pleurotus pulmonarius,E,0,0,1,0,E,DT,Eukaryota,22,Mesophiles
+Polaribacter pacificus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,16,Mesophiles
+Protomyces lactucae-debilis,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Pseudomonas asplenii,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Pseudomonas monsensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Pseudomonas silesiensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Pseudomonas vancouverensis,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Pseudorhodoplanes sinuspersici,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Pseudothermotoga lettingae TMO,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Psychrobacillus insolitus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Psychrobacter glacincola,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Purpureocillium lilacinum,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Pyrobaculum arsenaticum DSM 13514,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,95,Hyperthermophiles
+Pyrodictium occultum,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,95,Hyperthermophiles
+Ralstonia insidiosa,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Rhizobium bangladeshense,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,29,Mesophiles
+Rhizobium esperanzae,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Rhodococcus erythropolis R138,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,29,Mesophiles
+Rhodothermus marinus DSM 4252,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,67,Hyperthermophiles
+Rhodotorula diobovata,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Roseovarius indicus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Saccharomyces paradoxus,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Saccharothrix espanaensis DSM 44229,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Salinadaptatus halalkaliphilus,AM,0.871724138,0,0,0.128275862,AM,DT,Archaea,37,Mesophiles
+Sandarakinorhabdus limnophila DSM 17366,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Scardovia inopinata JCM 12537,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,37,Mesophiles
+Schizosaccharomyces cryophilus OY26,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Schizosaccharomyces octosporus yFS286,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Shewanella halifaxensis HAW-EB4,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Siminovitchia thermophila,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,50,Thermophiles
+Sinorhizobium fredii CCBAU 25509,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Spirochaeta thermophila DSM 6578,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,65,Hyperthermophiles
+Spiroplasma alleghenense,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Spiroplasma apis B31,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Spirosoma aerolatum,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Spirosoma endbachense,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Stieleria neptunia,BM,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,28,Mesophiles
+Streptobacillus moniliformis DSM 12112,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,37,Mesophiles
+Streptomyces alboniger,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Streptomyces angustmyceticus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,29,Mesophiles
+Streptomyces atratus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Streptomyces aurantiacus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Streptomyces clavuligerus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Streptomyces davaonensis JCM 4913,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,28,Mesophiles
+Streptomyces griseus subsp. griseus NBRC 13350,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Streptomyces rectiverticillatus,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,28,Mesophiles
+Symbiobacterium thermophilum IAM 14863,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Tepidibacter thalassicus DSM 15285,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Tepidiphilus succinatimandens,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Thalassomonas viridans,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,25,Mesophiles
+Thermacetogenium phaeum DSM 12270,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Thermaerobacter marianensis DSM 12885,THP,0,0.813084112,0,0.186915888,BM,DT,Bacteria,75,Hyperthermophiles
+Thermoactinomyces vulgaris,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,50,Thermophiles
+Thermoanaerobacter kivui,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Thermoanaerobacterium butyriciformans,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Thermoanaerobaculum aquaticum,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Thermocladium modestius,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,75,Hyperthermophiles
+Thermoclostridium caenicola,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,56,Thermophiles
+Thermoclostridium stercorarium subsp. stercorarium DSM 8532,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,60,Thermophiles
+Thermodesulfobacterium geofontis OPF15,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,80,Hyperthermophiles
+Thermodesulfobacterium hydrogeniphilum,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Thermodesulfobium acidiphilum,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,55,Thermophiles
+Thermodesulfovibrio thiophilus DSM 17215,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,55,Thermophiles
+Thermogymnomonas acidicola,THP,0.871724138,0,0,0.128275862,AM,DT,Archaea,60,Thermophiles
+Thermomonospora amylolytica,BM,0,0.813084112,0,0.186915888,BM,DT,Bacteria,45,Mesophiles
+Thermonema lapsum,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,60,Thermophiles
+Thermosipho japonicus,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Thermosulfurimonas dismutans,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Thermosynechococcus elongatus PKUAC-SCTE542,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,50,Thermophiles
+Thermotoga maritima MSB8,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,80,Hyperthermophiles
+Thermovenabulum gondwanense,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Thermus antranikianii DSM 12462,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,70,Hyperthermophiles
+Thermus scotoductus,THP,0,0.065359477,0.010893246,0.923747277,THP,DT,Bacteria,65,Hyperthermophiles
+Thiomicrorhabdus arctica DSM 13458,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,15,Mesophiles
+Torulaspora delbrueckii,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Torulaspora globosa,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Trichophyton equinum CBS 127.97,E,0,0,1,0,E,DT,Eukaryota,30,Mesophiles
+Trichophyton interdigitale,E,0,0,1,0,E,DT,Eukaryota,30,Mesophiles
+Uncinocarpus reesii 1704,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Ureibacillus thermophilus,THP,0,0.850894632,0,0.149105368,BM,DT,Bacteria,50,Thermophiles
+Ustilago hordei,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Verticillium nonalfalfae,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Vibrio penaeicida,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,22,Mesophiles
+Wallemia mellicola CBS 633.66,E,0,0,1,0,E,DT,Eukaryota,22,Mesophiles
+Weissella viridescens,BM,0,0.850894632,0,0.149105368,BM,DT,Bacteria,30,Mesophiles
+Westerdykella ornata,E,0,0,1,0,E,DT,Eukaryota,24,Mesophiles
+Wickerhamiella sorbophila,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Wickerhamomyces ciferrii,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Zygosaccharomyces parabailii,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
+Zygosaccharomyces rouxii,E,0,0,1,0,E,DT,Eukaryota,25,Mesophiles
