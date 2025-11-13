@@ -5,18 +5,18 @@ library(ape)
 library(caper)
 library(nlme)
 library(rr2)
-setwd("/home/huangr/projects/dailywork/Metrics")
+setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred/temp")
 #每次分析读取特定数据文件
-filename <- "/home/huangr/r2_data/Barnum2024_temperature_clean.csv"
+filename <- "Barnum2024_temperature_clean.csv"
 #------通用数据读取和分析代码----------
 result_file <- "r2_comparison_results.csv"
 df <- read.csv(filename)
-tree <- read.tree("/home/huangr/r2_data/bac120_r226.tree")
+tree <- read.tree("D:/pine/paper_redo/GTDB_tree/bac120_r226.tree")
 # 读取元数据，只保留需要的列
 cols_to_keep <- c("accession", "ncbi_organism_name", "gtdb_taxonomy", 
                   "gtdb_representative", "gtdb_genome_representative",
                   "ncbi_refseq_category", "ncbi_assembly_level")
-gtdb_meta <- read.delim("/home/huangr/r2_data/bac120_metadata_r226.tsv", 
+gtdb_meta <- read.delim("D:/pine/paper_redo/GTDB_tree/bac120_metadata_r226.tsv", 
                         sep = "\t", 
                         header = TRUE)[, cols_to_keep]
 
@@ -99,7 +99,12 @@ calculate_all_r2 <- function(final_data, tree_subset, comp_data,
   pgls_model <- pgls(as.formula(paste(response_var, "~", predictor_var)), 
                      data = comp_data, lambda = "ML")
   caper_r2 <- summary(pgls_model)$r.squared
-  lambda <- as.numeric(summary(pgls_model)$param[2])
+  # lambda改为响应变量的系统发育信号lambda
+  # 使用phylosig函数计算response_var的Pagel's lambda
+  response_values <- final_data[[response_var]]
+  names(response_values) <- final_data$GCF
+  lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
+  lambda <- as.numeric(lambda_result$lambda)
   # 4.相关系数平方：R2=r^2
   observed <- pgls_model$y
   predicted <- fitted(pgls_model)
@@ -251,81 +256,133 @@ if (!file.exists(random_split_file)) {
 perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.8) {
   
   results <- list()
+  successful_iterations <- 0
+  iteration_count <- 0
   
-  for (i in 1:n_iterations) {
-    cat("正在进行第", i, "次随机划分...\n")
+  while (successful_iterations < n_iterations && iteration_count < n_iterations * 2) {
+    iteration_count <- iteration_count + 1
+    cat("正在进行第", iteration_count, "次尝试，成功次数:", successful_iterations, "/", n_iterations, "...\n")
     
     # 设置随机种子
-    current_seed <- as.integer(Sys.time()) + i
+    current_seed <- as.integer(Sys.time()) + iteration_count
     set.seed(current_seed)
     
-    # 随机划分数据
-    n_total <- nrow(final_data)
-    n_train <- round(n_total * train_ratio)
-    train_indices <- sample(1:n_total, n_train, replace = FALSE)
-    
-    train_data <- final_data[train_indices, ]
-    test_data <- final_data[-train_indices, ]
-    
-    # 对训练集进行计算
-    prune_train <- prune_tree_and_data(tree, train_data)
-    tree_train <- prune_train$tree
-    train_data_ordered <- prune_train$data
-    comp_data_train <- prune_train$comp_data
-    
-    r2_train <- calculate_all_r2(train_data_ordered, tree_train, comp_data_train)
-    
-    # 对测试集进行计算
-    prune_test <- prune_tree_and_data(tree, test_data)
-    tree_test <- prune_test$tree
-    test_data_ordered <- prune_test$data
-    comp_data_test <- prune_test$comp_data
-    
-    r2_test <- calculate_all_r2(test_data_ordered, tree_test, comp_data_test)
-    
-    # 保存结果
-    result_row <- data.frame(
-      filename = filename,
-      iteration = i,
-      random_seed = current_seed,
-      train_size = n_train,
-      test_size = n_total - n_train,
+    # 使用tryCatch进行错误处理
+    result <- tryCatch({
+      # 随机划分数据
+      n_total <- nrow(final_data)
       
-      ols_r2_train = r2_train$ols_r2,
-      pic_r2_train = r2_train$pic_r2,
-      phylo_r2_train = r2_train$phylo_r2,
-      caper_r2_train = r2_train$caper_r2,
-      cor_r2_train = r2_train$cor_r2,
-      var_r2_train = r2_train$var_r2,
-      resid_r2_train = r2_train$resid_r2,
-      lik_r2_train = r2_train$lik_r2,
-      lambda_train = r2_train$lambda,
+      # 特殊处理：当train_ratio为0.5时，确保两个数据集大小完全相等
+      if (train_ratio == 0.5) {
+        # 计算对等样本量（向下取整以确保偶数）
+        n_half <- floor(n_total / 2)
+        n_train <- n_half
+        n_test <- n_half
+        # 如果总样本量为奇数，我们会舍弃一个样本
+        n_used <- n_train + n_test
+        
+        # 从总数据中随机选择要使用的样本
+        used_indices <- sample(1:n_total, n_used, replace = FALSE)
+        train_indices <- sample(used_indices, n_train, replace = FALSE)
+        test_indices <- setdiff(used_indices, train_indices)
+        
+        cat("比例设置为0.5，使用对等划分: 训练集=", n_train, "测试集=", n_test)
+        if (n_used < n_total) {
+          cat("，舍弃了", n_total - n_used, "个样本\n")
+        } else {
+          cat("\n")
+        }
+      } else {
+        # 原有逻辑：按比例划分
+        n_train <- round(n_total * train_ratio)
+        n_test <- n_total - n_train
+        n_used <- n_total
+        
+        # 随机选择训练集索引
+        train_indices <- sample(1:n_total, n_train, replace = FALSE)
+        test_indices <- setdiff(1:n_total, train_indices)
+      }
       
-      ols_r2_test = r2_test$ols_r2,
-      pic_r2_test = r2_test$pic_r2,
-      phylo_r2_test = r2_test$phylo_r2,
-      caper_r2_test = r2_test$caper_r2,
-      cor_r2_test = r2_test$cor_r2,
-      var_r2_test = r2_test$var_r2,
-      resid_r2_test = r2_test$resid_r2,
-      lik_r2_test = r2_test$lik_r2,
-      lambda_test = r2_test$lambda
-    )
+      # 创建训练集和测试集
+      train_data <- final_data[train_indices, ]
+      test_data <- final_data[test_indices, ]
+      
+      # 对训练集进行计算
+      prune_train <- prune_tree_and_data(tree, train_data)
+      tree_train <- prune_train$tree
+      train_data_ordered <- prune_train$data
+      comp_data_train <- prune_train$comp_data
+      
+      r2_train <- calculate_all_r2(train_data_ordered, tree_train, comp_data_train)
+      
+      # 对测试集进行计算
+      prune_test <- prune_tree_and_data(tree, test_data)
+      tree_test <- prune_test$tree
+      test_data_ordered <- prune_test$data
+      comp_data_test <- prune_test$comp_data
+      
+      r2_test <- calculate_all_r2(test_data_ordered, tree_test, comp_data_test)
+      
+      # 如果所有计算都成功，构建结果行
+      result_row <- data.frame(
+        filename = filename,
+        iteration = successful_iterations + 1,
+        random_seed = current_seed,
+        train_size = n_train,
+        test_size = n_test,
+        
+        ols_r2_train = r2_train$ols_r2,
+        pic_r2_train = r2_train$pic_r2,
+        phylo_r2_train = r2_train$phylo_r2,
+        caper_r2_train = r2_train$caper_r2,
+        cor_r2_train = r2_train$cor_r2,
+        var_r2_train = r2_train$var_r2,
+        resid_r2_train = r2_train$resid_r2,
+        lik_r2_train = r2_train$lik_r2,
+        lambda_train = r2_train$lambda,
+        
+        ols_r2_test = r2_test$ols_r2,
+        pic_r2_test = r2_test$pic_r2,
+        phylo_r2_test = r2_test$phylo_r2,
+        caper_r2_test = r2_test$caper_r2,
+        cor_r2_test = r2_test$cor_r2,
+        var_r2_test = r2_test$var_r2,
+        resid_r2_test = r2_test$resid_r2,
+        lik_r2_test = r2_test$lik_r2,
+        lambda_test = r2_test$lambda
+      )
+      
+      # 返回成功的结果
+      list(success = TRUE, result = result_row)
+      
+    }, error = function(e) {
+      # 捕获错误，返回失败
+      cat("第", iteration_count, "次尝试失败，错误信息:", e$message, "\n")
+      list(success = FALSE, result = NULL)
+    })
     
-    results[[i]] <- result_row
-    
-    # 每次迭代后立即写入文件（追加模式）
-    write.table(result_row, random_split_file, 
-                sep = ",", col.names = FALSE, row.names = FALSE, 
-                append = TRUE)
-    
-    cat("第", i, "次划分完成，训练集大小:", n_train, "测试集大小:", n_total - n_train, "\n")
+    # 如果成功，保存结果
+    if (result$success) {
+      successful_iterations <- successful_iterations + 1
+      results[[successful_iterations]] <- result$result
+      
+      # 每次成功迭代后立即写入文件
+      write.table(result$result, random_split_file, 
+                  sep = ",", col.names = FALSE, row.names = FALSE, 
+                  append = TRUE)
+      
+      cat("第", successful_iterations, "次成功划分完成，训练集大小:", n_train, "测试集大小:", n_test, "\n")
+    }
   }
   
-  # 返回所有结果
+  # 检查是否达到目标迭代次数
+  if (successful_iterations < n_iterations) {
+    cat("警告: 只完成了", successful_iterations, "次成功迭代，目标为", n_iterations, "次\n")
+  }
+  
+  # 返回所有成功的结果
   return(do.call(rbind, results))
 }
-
 #--------划分1：对整体数据集进行划分-----------
 prune <- prune_tree_and_data(tree, final_data)
 tree_subset <- prune$tree
@@ -370,10 +427,9 @@ result <- read.csv("random_split_results.csv")
 # result1 <- result[1:50,]
 # result1 <- result[51:100,]
 # result1 <- result[101:150,]
-result1 <- result[1:100,]
+# result1 <- result[1:100,]
 # result1 <- result[101:200,]
-# result1 <- result[201:300,]
-
+result1 <- result[301:400,]
 # 计算delta列（test - train）
 delta_columns <- c()  # 用于存储新列名
 
