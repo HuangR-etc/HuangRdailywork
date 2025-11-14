@@ -98,7 +98,12 @@ calculate_all_r2 <- function(final_data, tree_subset, comp_data,
   pgls_model <- pgls(as.formula(paste(response_var, "~", predictor_var)), 
                      data = comp_data, lambda = "ML")
   caper_r2 <- summary(pgls_model)$r.squared
-  lambda <- as.numeric(summary(pgls_model)$param[2])
+  # lambda改为响应变量的系统发育信号lambda
+  # 使用phylosig函数计算response_var的Pagel's lambda
+  response_values <- final_data[[response_var]]
+  names(response_values) <- final_data$GCF
+  lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
+  lambda <- as.numeric(lambda_result$lambda)
   # 4.相关系数平方：R2=r^2
   observed <- pgls_model$y
   predicted <- fitted(pgls_model)
@@ -215,7 +220,7 @@ calculate_all_r2 <- function(final_data, tree_subset, comp_data,
 
 #--------抽样准备，通用函数---------
 #------新增：创建随机划分结果文件头----------
-random_split_file <- "random_split_results.csv"
+random_split_file <- "random_split_results_1115.csv"
 if (!file.exists(random_split_file)) {
   random_split_header <- data.frame(
     filename = character(),
@@ -385,7 +390,7 @@ comp_data <- prune$comp_data
 # 计算完整数据的R2
 # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
 cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(final_data, tree, n_iterations = 100)
+random_results <- perform_random_split_analysis(final_data, tree, n_iterations = 100,train_ratio = 0.5)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
 #--------划分2：筛选出原训练集，进行划分-----------
@@ -399,7 +404,7 @@ comp_data <- prune$comp_data
 # 计算完整数据的R2
 # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
 cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(train_data, tree, n_iterations = 100)
+random_results <- perform_random_split_analysis(train_data, tree, n_iterations = 100,train_ratio = 0.5)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
 #--------划分3：筛选出原测试集，进行划分-----------
@@ -417,14 +422,14 @@ random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
 #--------结果分析----------
-result <- read.csv("random_split_results.csv")
+result <- read.csv("random_split_results_1115.csv")
 # result1 <- result[1:50,]
 # result1 <- result[51:100,]
 # result1 <- result[101:150,]
-# result1 <- result[1:100,]
+result1 <- result[1:100,]
 # result1 <- result[101:200,]
 # result1 <- result[201:300,]
-result1 <- result[301:400,]
+# result1 <- result[301:400,]
 
 # 计算delta列（test - train）
 delta_columns <- c()  # 用于存储新列名
