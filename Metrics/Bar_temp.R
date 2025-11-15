@@ -221,7 +221,7 @@ calculate_all_r2 <- function(final_data, tree_subset, comp_data,
 
 #--------抽样准备，通用函数---------
 #------新增：创建随机划分结果文件头----------
-random_split_file <- "random_split_results.csv"
+random_split_file <- "random_split_results_1115.csv"
 if (!file.exists(random_split_file)) {
   random_split_header <- data.frame(
     filename = character(),
@@ -253,7 +253,7 @@ if (!file.exists(random_split_file)) {
   )
   write.csv(random_split_header, random_split_file, row.names = FALSE)
 }
-perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.8) {
+perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.5) {
   
   results <- list()
   successful_iterations <- 0
@@ -422,14 +422,228 @@ cat("开始50次随机划分分析...\n")
 random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 100,train_ratio = 0.5)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
+# #-------新抽样函数：五等分和筛选lambda-------
+# perform_quintile_split_analysis <- function(final_data, tree, n_iterations = 50, output_file = "quintile_analysis_results.csv") {
+#   
+#   # 初始化结果列表
+#   results <- list()
+#   successful_iterations <- 0
+#   total_attempts <- 0
+#   max_total_attempts <- n_iterations * 20  # 防止无限循环
+#   
+#   # 创建输出文件并写入表头
+#   header <- data.frame(
+#     iteration = integer(),
+#     random_seed = integer(),
+#     quintile_pair = character(),
+#     dataset_type = character(),
+#     dataset_size = integer(),
+#     lambda = numeric(),
+#     ols_r2 = numeric(),
+#     pic_r2 = numeric(),
+#     phylo_r2 = numeric(),
+#     caper_r2 = numeric(),
+#     cor_r2 = numeric(),
+#     var_r2 = numeric(),
+#     resid_r2 = numeric(),
+#     lik_r2 = numeric(),
+#     stringsAsFactors = FALSE
+#   )
+#   
+#   write.csv(header, output_file, row.names = FALSE)
+#   cat("创建输出文件:", output_file, "\n")
+#   
+#   while (successful_iterations < n_iterations && total_attempts < max_total_attempts) {
+#     total_attempts <- total_attempts + 1
+#     
+#     # 设置随机种子
+#     current_seed <- as.integer(Sys.time()) + total_attempts
+#     set.seed(current_seed)
+#     
+#     cat("正在进行第", total_attempts, "次尝试，成功次数:", successful_iterations, "/", n_iterations, "...\n")
+#     
+#     # 使用tryCatch进行错误处理
+#     result <- tryCatch({
+#       # 计算五等分的大小
+#       n_total <- nrow(final_data)
+#       quintile_size <- floor(n_total / 5)  # 每份的大小
+#       n_used <- quintile_size * 5  # 实际使用的样本数
+#       
+#       cat("总样本量:", n_total, "，每等分大小:", quintile_size, "，使用样本数:", n_used)
+#       if (n_used < n_total) {
+#         cat("，舍弃了", n_total - n_used, "个样本\n")
+#       } else {
+#         cat("\n")
+#       }
+#       
+#       # 随机选择要使用的样本
+#       used_indices <- sample(1:n_total, n_used, replace = FALSE)
+#       
+#       # 创建五个等分数据集
+#       quintiles <- list()
+#       for (i in 1:5) {
+#         start_idx <- (i-1) * quintile_size + 1
+#         end_idx <- i * quintile_size
+#         quintile_indices <- used_indices[start_idx:end_idx]
+#         quintiles[[i]] <- final_data[quintile_indices, ]
+#       }
+#       
+#       # 计算每个等分的lambda值
+#       lambda_values <- numeric(5)
+#       valid_quintiles <- list()
+#       valid_indices <- integer(0)
+#       
+#       for (i in 1:5) {
+#         quintile_data <- quintiles[[i]]
+#         
+#         # 对等分数据进行修剪和计算lambda
+#         prune_result <- prune_tree_and_data(tree, quintile_data)
+#         tree_quintile <- prune_result$tree
+#         quintile_data_ordered <- prune_result$data
+#         
+#         # 计算系统发育信号lambda
+#         r2_result <- calculate_all_r2(quintile_data_ordered, tree_quintile, prune_result$comp_data)
+#         lambda_values[i] <- r2_result$lambda
+#         
+#         cat("  等分", i, "的lambda =", lambda_values[i], "\n")
+#         
+#         # 检查lambda是否大于0.95
+#         if (lambda_values[i] > 0.95) {
+#           valid_quintiles[[length(valid_quintiles) + 1]] <- list(
+#             data = quintile_data_ordered,
+#             tree = tree_quintile,
+#             comp_data = prune_result$comp_data,
+#             lambda = lambda_values[i],
+#             index = i
+#           )
+#           valid_indices <- c(valid_indices, i)
+#         }
+#       }
+#       
+#       # 检查是否有至少两个等分满足条件
+#       if (length(valid_quintiles) >= 2) {
+#         cat("找到", length(valid_quintiles), "个lambda>0.95的等分，使用前两个进行分析\n")
+#         
+#         # 选择前两个有效等分
+#         train_quintile <- valid_quintiles[[1]]
+#         test_quintile <- valid_quintiles[[2]]
+#         
+#         # 对train等分进行计算
+#         r2_train <- calculate_all_r2(train_quintile$data, train_quintile$tree, train_quintile$comp_data)
+#         
+#         # 对test等分进行计算
+#         r2_test <- calculate_all_r2(test_quintile$data, test_quintile$tree, test_quintile$comp_data)
+#         
+#         # 构建结果行 - train数据集
+#         result_row_train <- data.frame(
+#           iteration = successful_iterations + 1,
+#           random_seed = current_seed,
+#           quintile_pair = paste(train_quintile$index, "vs", test_quintile$index),
+#           dataset_type = "train",
+#           dataset_size = nrow(train_quintile$data),
+#           lambda = train_quintile$lambda,
+#           ols_r2 = r2_train$ols_r2,
+#           pic_r2 = r2_train$pic_r2,
+#           phylo_r2 = r2_train$phylo_r2,
+#           caper_r2 = r2_train$caper_r2,
+#           cor_r2 = r2_train$cor_r2,
+#           var_r2 = r2_train$var_r2,
+#           resid_r2 = r2_train$resid_r2,
+#           lik_r2 = r2_train$lik_r2,
+#           stringsAsFactors = FALSE
+#         )
+#         
+#         # 构建结果行 - test数据集
+#         result_row_test <- data.frame(
+#           iteration = successful_iterations + 1,
+#           random_seed = current_seed,
+#           quintile_pair = paste(train_quintile$index, "vs", test_quintile$index),
+#           dataset_type = "test",
+#           dataset_size = nrow(test_quintile$data),
+#           lambda = test_quintile$lambda,
+#           ols_r2 = r2_test$ols_r2,
+#           pic_r2 = r2_test$pic_r2,
+#           phylo_r2 = r2_test$phylo_r2,
+#           caper_r2 = r2_test$caper_r2,
+#           cor_r2 = r2_test$cor_r2,
+#           var_r2 = r2_test$var_r2,
+#           resid_r2 = r2_test$resid_r2,
+#           lik_r2 = r2_test$lik_r2,
+#           stringsAsFactors = FALSE
+#         )
+#         
+#         # 返回成功的结果
+#         list(success = TRUE, 
+#              result_train = result_row_train, 
+#              result_test = result_row_test)
+#         
+#       } else {
+#         cat("只有", length(valid_quintiles), "个等分满足lambda>0.95的条件，需要重新抽样\n")
+#         list(success = FALSE, result_train = NULL, result_test = NULL)
+#       }
+#       
+#     }, error = function(e) {
+#       # 捕获错误，返回失败
+#       cat("第", total_attempts, "次尝试失败，错误信息:", e$message, "\n")
+#       list(success = FALSE, result_train = NULL, result_test = NULL)
+#     })
+#     
+#     # 如果成功，保存结果
+#     if (result$success) {
+#       successful_iterations <- successful_iterations + 1
+#       
+#       # 保存train数据集结果
+#       results[[length(results) + 1]] <- result$result_train
+#       # 保存test数据集结果
+#       results[[length(results) + 1]] <- result$result_test
+#       
+#       # 每次成功迭代后立即写入文件
+#       write.table(result$result_train, output_file, 
+#                   sep = ",", col.names = FALSE, row.names = FALSE, 
+#                   append = TRUE)
+#       write.table(result$result_test, output_file, 
+#                   sep = ",", col.names = FALSE, row.names = FALSE, 
+#                   append = TRUE)
+#       
+#       cat("第", successful_iterations, "次成功分析完成！使用的等分对:", 
+#           result$result_train$quintile_pair, 
+#           "，数据集大小: train=", result$result_train$dataset_size, 
+#           ", test=", result$result_test$dataset_size, "\n")
+#     }
+#   }
+#   
+#   # 检查是否达到目标迭代次数
+#   if (successful_iterations < n_iterations) {
+#     cat("警告: 只完成了", successful_iterations, "次成功迭代，目标为", n_iterations, "次\n")
+#     cat("总尝试次数:", total_attempts, "\n")
+#   } else {
+#     cat("成功完成所有", n_iterations, "次迭代分析！\n")
+#   }
+#   
+#   # 返回所有成功的结果
+#   return(do.call(rbind, results))
+# }
+# 
+# # 使用示例
+# # quintile_results <- perform_quintile_split_analysis(final_data, tree, n_iterations = 50)
+# # 使用示例（与之前相同）
+# prune <- prune_tree_and_data(tree, final_data)
+# tree_subset <- prune$tree
+# final_data_processed <- prune$data
+# comp_data <- prune$comp_data
+# quintile_results <- perform_quintile_split_analysis(final_data, tree_subset, n_iterations = 50)
+# 
+# cat("五等分分析完成！\n")
+
 #--------结果分析----------
-result <- read.csv("random_split_results.csv")
+result <- read.csv("random_split_results_1115.csv")
 # result1 <- result[1:50,]
 # result1 <- result[51:100,]
 # result1 <- result[101:150,]
 # result1 <- result[1:100,]
 # result1 <- result[101:200,]
-result1 <- result[301:400,]
+result1 <- result[201:300,]
+# result1 <- result[301:400,]
 # 计算delta列（test - train）
 delta_columns <- c()  # 用于存储新列名
 
