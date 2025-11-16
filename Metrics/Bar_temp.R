@@ -978,3 +978,81 @@ significant_correlations <- all_results %>%
 
 print("显著的相关性结果 (p < 0.05)：")
 print(significant_correlations)
+#------相对差异--------
+result <- read.csv("random_split_results_1115.csv")
+result1 <- result[1:100,]
+# result1 <- result[101:200,]
+# result1 <- result[201:300,]
+# 计算相对差异列 [deltaR2(Test - Train)]/R2_train
+relative_delta_columns <- c()  # 用于存储新列名
+
+# 遍历所有R2指标，计算相对差异
+r2_methods <- c("ols", "pic", "phylo", "caper", "cor", "var", "resid", "lik")
+
+for(method in r2_methods) {
+  train_col <- paste0(method, "_r2_train")
+  test_col <- paste0(method, "_r2_test")
+  relative_delta_col <- paste0("relative_delta_", method, "_r2")
+  
+  # 确保列存在后再计算
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    # 计算相对差异：(test - train) / train
+    result1[[relative_delta_col]] <- (result1[[test_col]] - result1[[train_col]]) / result1[[train_col]]
+    relative_delta_columns <- c(relative_delta_columns, relative_delta_col)
+  }
+}
+
+# 计算相对差异列的均值和方差
+relative_delta_stats <- data.frame(
+  Method = gsub("relative_delta_|_r2", "", relative_delta_columns),
+  Mean = sapply(result1[relative_delta_columns], mean, na.rm = TRUE),
+  Variance = sapply(result1[relative_delta_columns], var, na.rm = TRUE)
+)
+
+print("相对差异列 [(Test - Train)/Train] 的均值和方差：")
+print(relative_delta_stats)
+
+# 准备绘图数据（长格式）
+library(tidyr)
+library(ggplot2)
+
+relative_delta_long <- result1[relative_delta_columns] %>%
+  pivot_longer(cols = everything(), 
+               names_to = "Method", 
+               values_to = "Relative_Delta") %>%
+  mutate(Method = gsub("relative_delta_|_r2", "", Method))
+
+# 绘制散点图
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, color = Method)) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.7, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 4, color = "black") +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train]",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train]",
+       caption = "黑色菱形表示均值，虚线y=0作为参考") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+# 箱线图版本
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, fill = Method)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train] - 箱线图",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train]") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# 可选：如果相对差异值范围很大，可以使用对数尺度
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, fill = Method)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  scale_y_continuous(trans = "pseudo_log", 
+                     breaks = c(-10, -1, 0, 1, 10, 100)) +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train] - 对数尺度",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train] (伪对数尺度)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
