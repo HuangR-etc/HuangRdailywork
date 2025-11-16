@@ -45,6 +45,12 @@ matched_data <- merge(df, tree_tip_df,
 final_data <- matched_data
 final_data$GCF <- final_data$tip_label
 rownames(final_data) <- final_data$GCF
+#计算整体数据的系统发育信号(观察值列)
+# response_values <- final_data$reported_ph_optimum
+# names(response_values) <- final_data$GCF
+# tree_subset <- prune_tree_and_data(tree, final_data)$tree
+# lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
+# lambda <- as.numeric(lambda_result$lambda)
 # 检查匹配结果
 cat("原始数据集物种数:", nrow(df), "\n")
 cat("匹配成功的物种数:", nrow(final_data), "\n")
