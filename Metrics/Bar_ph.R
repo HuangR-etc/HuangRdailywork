@@ -45,6 +45,12 @@ matched_data <- merge(df, tree_tip_df,
 final_data <- matched_data
 final_data$GCF <- final_data$tip_label
 rownames(final_data) <- final_data$GCF
+#计算整体数据的系统发育信号(观察值列)
+# response_values <- final_data$reported_ph_optimum
+# names(response_values) <- final_data$GCF
+# tree_subset <- prune_tree_and_data(tree, final_data)$tree
+# lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
+# lambda <- as.numeric(lambda_result$lambda)
 # 检查匹配结果
 cat("原始数据集物种数:", nrow(df), "\n")
 cat("匹配成功的物种数:", nrow(final_data), "\n")
@@ -79,148 +85,197 @@ prune_tree_and_data <- function(tree, final_data) {
 }
 
 # 计算各种R2的函数
-calculate_all_r2 <- function(final_data, tree_subset, comp_data, 
-                             response_var = "reported_ph_optimum", 
-                             predictor_var = "ph_optimum") {
+# 修改后的函数：计算所有指标
+calculate_all_metrics <- function(final_data, tree_subset, comp_data, 
+                                  response_var = "reported_ph_optimum", 
+                                  predictor_var = "ph_optimum") {
   
-  # 1. 原始OLS回归R2
+  # 提取观测值和预测值
+  y_true <- final_data[[response_var]]
+  y_pred <- final_data[[predictor_var]]
+  n <- length(y_true)
+  
+  # 1. 基础误差指标
+  residuals <- y_true - y_pred
+  
+  # OLS回归
   raw_model <- lm(as.formula(paste(response_var, "~", predictor_var)), data = final_data)
   ols_r2 <- summary(raw_model)$r.squared
   
-  # 2. 系统发育独立对比 (PIC) R2
-  pic_obs <- pic(final_data[[response_var]], tree_subset)
-  pic_pred <- pic(final_data[[predictor_var]], tree_subset)
-  pic_df <- data.frame(pic_obs = pic_obs, pic_pred = pic_pred)
-  pic_model <- lm(pic_obs ~ pic_pred - 1)  # 无截距项
-  pic_r2 <- summary(pic_model)$r.squared
+  # 调整R² (p=1个预测变量)
+  p <- 1
+  adjusted_r2 <- 1 - (1 - ols_r2) * (n - 1) / (n - p - 1)
   
-  # 3. caper::pgls R2
-  pgls_model <- pgls(as.formula(paste(response_var, "~", predictor_var)), 
-                     data = comp_data, lambda = "ML")
-  caper_r2 <- summary(pgls_model)$r.squared
-  # lambda改为响应变量的系统发育信号lambda
-  # 使用phylosig函数计算response_var的Pagel's lambda
-  response_values <- final_data[[response_var]]
+  # 误差指标
+  mse <- mean(residuals^2)
+  rmse <- sqrt(mse)
+  mae <- mean(abs(residuals))
+  median_ae <- median(abs(residuals))
+  
+  # 相关性指标
+  pearson_corr <- cor(y_true, y_pred, method = "pearson")
+  spearman_corr <- cor(y_true, y_pred, method = "spearman")
+  
+  # 百分比误差指标
+  safe_division <- function(a, b) {
+    ifelse(b == 0, ifelse(a == 0, 0, Inf), a / b)
+  }
+  mape <- mean(abs(safe_division(residuals, y_true))) * 100
+  
+  # SMAPE指标
+  numerator <- abs(residuals)
+  denominator <- (abs(y_true) + abs(y_pred)) / 2
+  denominator[denominator == 0] <- 1e-10
+  smape_val <- mean(numerator / denominator) * 100
+  cn_smape <- 1 - (smape_val / 200)
+  
+  # 2. 系统发育相关指标
+  
+  # 系统发育信号lambda
+  response_values <- y_true
   names(response_values) <- final_data$GCF
   lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
   lambda <- as.numeric(lambda_result$lambda)
-  # 4.相关系数平方：R2=r^2
-  observed <- pgls_model$y
-  predicted <- fitted(pgls_model)
-  cor_r2 <- as.numeric(cor(observed, predicted)^2)
-  # 5.残差平方和和总平方和
-  rss <- sum((observed - predicted)^2)  # 残差平方和
-  tss <- sum((observed - mean(observed))^2)  # 总平方和
-  var_r2 <- 1 - (rss / tss)
   
-  # 6. 系统发育白化R2
-  calculate_phylo_r2 <- function(y, yhat, tip_labels, tree, model = "lambda", lambda = 1) {
-    stopifnot(length(y) == length(yhat))
-    names(y) <- names(yhat) <- tip_labels
+  # PIC相关指标
+  pic_obs <- pic(y_true, tree_subset)
+  pic_pred <- pic(y_pred, tree_subset)
+  
+  if (length(pic_obs) > 1 && length(pic_pred) > 1) {
+    pic_pearson <- cor(pic_obs, pic_pred, method = "pearson")
+    pic_spearman <- cor(pic_obs, pic_pred, method = "spearman")
     
-    # 构造协方差矩阵
-    if (model == "BM") {
-      V <- ape::vcv(tree)
-    } else if (model == "lambda") {
-      # 使用lambda调整的协方差矩阵
-      if (is.null(lambda)) {
-        stop("当model='lambda'时，必须提供lambda参数")
+    pic_residuals <- pic_obs - pic_pred
+    pic_rmse <- sqrt(mean(pic_residuals^2))
+    pic_mae <- mean(abs(pic_residuals))
+    
+    # PIC R² (无截距模型)
+    pic_model <- lm(pic_obs ~ pic_pred - 1)
+    pic_r2 <- summary(pic_model)$r.squared
+  } else {
+    pic_pearson <- NA
+    pic_spearman <- NA
+    pic_rmse <- NA
+    pic_mae <- NA
+    pic_r2 <- NA
+  }
+  
+  # 系统发育白化指标
+  calculate_whitened_metrics <- function(y, yhat, tip_labels, tree, lambda) {
+    # 辅助函数：根据lambda调整协方差矩阵
+    adjust_vcv_by_lambda <- function(tree, lambda) {
+      V_bm <- ape::vcv(tree)
+      diag_vals <- diag(V_bm)
+      V_lambda <- V_bm
+      n <- nrow(V_bm)
+      
+      for (i in 1:(n-1)) {
+        for (j in (i+1):n) {
+          V_lambda[i, j] <- V_lambda[j, i] <- V_bm[i, j] * lambda
+        }
       }
-      V <- adjust_vcv_by_lambda(tree, lambda)
-    } else {
-      stop("目前支持BM和lambda模型")
+      eps <- 1e-8
+      V_lambda <- V_lambda + diag(eps, n)
+      return(V_lambda)
     }
     
-    # 确保顺序一致
+    names(y) <- names(yhat) <- tip_labels
+    V <- adjust_vcv_by_lambda(tree, lambda)
     V <- V[tip_labels, tip_labels, drop = FALSE]
     
     # Cholesky 白化
     eps <- 1e-8
     W <- solve(V + diag(eps, nrow(V)))
-    L <- chol(W)  # W = LᵀL
+    L <- chol(W)
     
     # 白化变换
     y_star <- as.numeric(L %*% y)
     yhat_star <- as.numeric(L %*% yhat)
     
-    # 在白化后空间计算均值
+    # 在白化空间计算指标
+    whitened_residuals <- y_star - yhat_star
+    whitened_rmse <- sqrt(mean(whitened_residuals^2))
+    whitened_mae <- mean(abs(whitened_residuals))
+    
+    # 白化R²
     ybar_star <- mean(y_star)
-    
-    RSS <- sum((y_star - yhat_star)^2)
+    RSS <- sum(whitened_residuals^2)
     TSS <- sum((y_star - ybar_star)^2)
+    whitened_r2 <- 1 - RSS/TSS
     
-    R2 <- 1 - RSS/TSS
-    return(R2)
+    return(list(
+      whitened_r2 = whitened_r2,
+      whitened_rmse = whitened_rmse,
+      whitened_mae = whitened_mae
+    ))
   }
-  # 辅助函数：根据lambda调整协方差矩阵
-  adjust_vcv_by_lambda <- function(tree, lambda) {
-    # 获取原始BM模型的协方差矩阵
-    V_bm <- ape::vcv(tree)
-    
-    # 对角线元素（种间方差）
-    diag_vals <- diag(V_bm)
-    
-    # 调整非对角线元素（种间协方差）
-    V_lambda <- V_bm
-    n <- nrow(V_bm)
-    
-    for (i in 1:(n-1)) {
-      for (j in (i+1):n) {
-        V_lambda[i, j] <- V_lambda[j, i] <- V_bm[i, j] * lambda
-      }
-    }
-    
-    # 确保矩阵是数值稳定的
-    eps <- 1e-8
-    V_lambda <- V_lambda + diag(eps, n)
-    
-    return(V_lambda)
-  }
-  phylo_r2 <- calculate_phylo_r2(
-    y = final_data$reported_ph_optimum,
-    yhat = final_data$ph_optimum,
+  
+  whitened_results <- calculate_whitened_metrics(
+    y = y_true,
+    yhat = y_pred,
     tip_labels = final_data$GCF,
     tree = tree_subset,
-    model = "lambda",
     lambda = lambda
   )
   
-  # 7. Ives R2 
+  # 3. GLS相关指标
   final_data$weights <- diag(ape::vcv(tree_subset))
-  # 使用权重重新拟合模型
   gls_model <- gls(as.formula(paste(response_var, "~", predictor_var)), 
                    data = final_data,
                    correlation = corBrownian(1, form = ~GCF, phy = tree_subset),
                    weights = varFixed(~weights),
                    method = "ML")
   
-  # 计算Ives提出的R2
+  # Ives提出的R2
   resid_r2 <- R2_resid(gls_model)
   lik_r2 <- R2_lik(gls_model)
-  #计算时间实在太长，而且原理上未必有用，先不算了
-  # pred_r2 <- R2_pred(gls_model)
   
-  # 返回所有R2值
+  # 返回所有指标
   return(list(
+    # 基础指标
     ols_r2 = ols_r2,
+    adjusted_r2 = adjusted_r2,
+    mse = mse,
+    rmse = rmse,
+    mae = mae,
+    median_ae = median_ae,
+    
+    # 相关性指标
+    pearson_corr = pearson_corr,
+    spearman_corr = spearman_corr,
+    
+    # 百分比误差指标
+    mape = mape,
+    smape = smape_val,
+    cn_smape = cn_smape,
+    
+    # 系统发育指标
+    lambda = lambda,
     pic_r2 = pic_r2,
-    phylo_r2 = phylo_r2,
-    caper_r2 = caper_r2,
-    cor_r2 = cor_r2,
-    var_r2 = var_r2,
+    pic_pearson = pic_pearson,
+    pic_spearman = pic_spearman,
+    pic_rmse = pic_rmse,
+    pic_mae = pic_mae,
+    
+    # 白化指标
+    whitened_r2 = whitened_results$whitened_r2,
+    whitened_rmse = whitened_results$whitened_rmse,
+    whitened_mae = whitened_results$whitened_mae,
+    
+    # GLS指标
     resid_r2 = resid_r2,
-    lik_r2 = lik_r2,
-    lambda = lambda
+    lik_r2 = lik_r2
   ))
 }
-# 测试确认无误
-# result <- calculate_all_r2(final_data, tree_subset, comp_data, 
-#                            response_var = "reported_ph_optimum", 
+# # 测试确认无误
+# result <- calculate_all_metrics(final_data, tree_subset, comp_data,
+#                            response_var = "reported_ph_optimum",
 #                            predictor_var = "ph_optimum")
 
 #--------抽样准备，通用函数---------
 #------新增：创建随机划分结果文件头----------
-random_split_file <- "random_split_results_1115.csv"
+# 更新结果文件头
+random_split_file <- "random_split_results_1118.csv"
 if (!file.exists(random_split_file)) {
   random_split_header <- data.frame(
     filename = character(),
@@ -229,30 +284,60 @@ if (!file.exists(random_split_file)) {
     train_size = integer(),
     test_size = integer(),
     
+    # 训练集指标
     ols_r2_train = numeric(),
+    adjusted_r2_train = numeric(),
+    mse_train = numeric(),
+    rmse_train = numeric(),
+    mae_train = numeric(),
+    median_ae_train = numeric(),
+    pearson_corr_train = numeric(),
+    spearman_corr_train = numeric(),
+    mape_train = numeric(),
+    smape_train = numeric(),
+    cn_smape_train = numeric(),
+    lambda_train = numeric(),
     pic_r2_train = numeric(),
-    phylo_r2_train = numeric(),
-    caper_r2_train = numeric(),
-    cor_r2_train = numeric(),
-    var_r2_train = numeric(),
+    pic_pearson_train = numeric(),
+    pic_spearman_train = numeric(),
+    pic_rmse_train = numeric(),
+    pic_mae_train = numeric(),
+    whitened_r2_train = numeric(),
+    whitened_rmse_train = numeric(),
+    whitened_mae_train = numeric(),
     resid_r2_train = numeric(),
     lik_r2_train = numeric(),
-    lambda_train = numeric(),
     
+    # 测试集指标
     ols_r2_test = numeric(),
+    adjusted_r2_test = numeric(),
+    mse_test = numeric(),
+    rmse_test = numeric(),
+    mae_test = numeric(),
+    median_ae_test = numeric(),
+    pearson_corr_test = numeric(),
+    spearman_corr_test = numeric(),
+    mape_test = numeric(),
+    smape_test = numeric(),
+    cn_smape_test = numeric(),
+    lambda_test = numeric(),
     pic_r2_test = numeric(),
-    phylo_r2_test = numeric(),
-    caper_r2_test = numeric(),
-    cor_r2_test = numeric(),
-    var_r2_test = numeric(),
+    pic_pearson_test = numeric(),
+    pic_spearman_test = numeric(),
+    pic_rmse_test = numeric(),
+    pic_mae_test = numeric(),
+    whitened_r2_test = numeric(),
+    whitened_rmse_test = numeric(),
+    whitened_mae_test = numeric(),
     resid_r2_test = numeric(),
     lik_r2_test = numeric(),
-    lambda_test = numeric(),
+    
     stringsAsFactors = FALSE
   )
   write.csv(random_split_header, random_split_file, row.names = FALSE)
 }
-perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.8) {
+# 修改随机划分分析函数
+perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.5) {
   
   results <- list()
   successful_iterations <- 0
@@ -273,14 +358,11 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
       
       # 特殊处理：当train_ratio为0.5时，确保两个数据集大小完全相等
       if (train_ratio == 0.5) {
-        # 计算对等样本量（向下取整以确保偶数）
         n_half <- floor(n_total / 2)
         n_train <- n_half
         n_test <- n_half
-        # 如果总样本量为奇数，我们会舍弃一个样本
         n_used <- n_train + n_test
         
-        # 从总数据中随机选择要使用的样本
         used_indices <- sample(1:n_total, n_used, replace = FALSE)
         train_indices <- sample(used_indices, n_train, replace = FALSE)
         test_indices <- setdiff(used_indices, train_indices)
@@ -292,12 +374,10 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
           cat("\n")
         }
       } else {
-        # 原有逻辑：按比例划分
         n_train <- round(n_total * train_ratio)
         n_test <- n_total - n_train
         n_used <- n_total
         
-        # 随机选择训练集索引
         train_indices <- sample(1:n_total, n_train, replace = FALSE)
         test_indices <- setdiff(1:n_total, train_indices)
       }
@@ -312,7 +392,7 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
       train_data_ordered <- prune_train$data
       comp_data_train <- prune_train$comp_data
       
-      r2_train <- calculate_all_r2(train_data_ordered, tree_train, comp_data_train)
+      metrics_train <- calculate_all_metrics(train_data_ordered, tree_train, comp_data_train)
       
       # 对测试集进行计算
       prune_test <- prune_tree_and_data(tree, test_data)
@@ -320,9 +400,9 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
       test_data_ordered <- prune_test$data
       comp_data_test <- prune_test$comp_data
       
-      r2_test <- calculate_all_r2(test_data_ordered, tree_test, comp_data_test)
+      metrics_test <- calculate_all_metrics(test_data_ordered, tree_test, comp_data_test)
       
-      # 如果所有计算都成功，构建结果行
+      # 构建结果行
       result_row <- data.frame(
         filename = filename,
         iteration = successful_iterations + 1,
@@ -330,32 +410,59 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
         train_size = n_train,
         test_size = n_test,
         
-        ols_r2_train = r2_train$ols_r2,
-        pic_r2_train = r2_train$pic_r2,
-        phylo_r2_train = r2_train$phylo_r2,
-        caper_r2_train = r2_train$caper_r2,
-        cor_r2_train = r2_train$cor_r2,
-        var_r2_train = r2_train$var_r2,
-        resid_r2_train = r2_train$resid_r2,
-        lik_r2_train = r2_train$lik_r2,
-        lambda_train = r2_train$lambda,
+        # 训练集指标
+        ols_r2_train = metrics_train$ols_r2,
+        adjusted_r2_train = metrics_train$adjusted_r2,
+        mse_train = metrics_train$mse,
+        rmse_train = metrics_train$rmse,
+        mae_train = metrics_train$mae,
+        median_ae_train = metrics_train$median_ae,
+        pearson_corr_train = metrics_train$pearson_corr,
+        spearman_corr_train = metrics_train$spearman_corr,
+        mape_train = metrics_train$mape,
+        smape_train = metrics_train$smape,
+        cn_smape_train = metrics_train$cn_smape,
+        lambda_train = metrics_train$lambda,
+        pic_r2_train = metrics_train$pic_r2,
+        pic_pearson_train = metrics_train$pic_pearson,
+        pic_spearman_train = metrics_train$pic_spearman,
+        pic_rmse_train = metrics_train$pic_rmse,
+        pic_mae_train = metrics_train$pic_mae,
+        whitened_r2_train = metrics_train$whitened_r2,
+        whitened_rmse_train = metrics_train$whitened_rmse,
+        whitened_mae_train = metrics_train$whitened_mae,
+        resid_r2_train = metrics_train$resid_r2,
+        lik_r2_train = metrics_train$lik_r2,
         
-        ols_r2_test = r2_test$ols_r2,
-        pic_r2_test = r2_test$pic_r2,
-        phylo_r2_test = r2_test$phylo_r2,
-        caper_r2_test = r2_test$caper_r2,
-        cor_r2_test = r2_test$cor_r2,
-        var_r2_test = r2_test$var_r2,
-        resid_r2_test = r2_test$resid_r2,
-        lik_r2_test = r2_test$lik_r2,
-        lambda_test = r2_test$lambda
+        # 测试集指标
+        ols_r2_test = metrics_test$ols_r2,
+        adjusted_r2_test = metrics_test$adjusted_r2,
+        mse_test = metrics_test$mse,
+        rmse_test = metrics_test$rmse,
+        mae_test = metrics_test$mae,
+        median_ae_test = metrics_test$median_ae,
+        pearson_corr_test = metrics_test$pearson_corr,
+        spearman_corr_test = metrics_test$spearman_corr,
+        mape_test = metrics_test$mape,
+        smape_test = metrics_test$smape,
+        cn_smape_test = metrics_test$cn_smape,
+        lambda_test = metrics_test$lambda,
+        pic_r2_test = metrics_test$pic_r2,
+        pic_pearson_test = metrics_test$pic_pearson,
+        pic_spearman_test = metrics_test$pic_spearman,
+        pic_rmse_test = metrics_test$pic_rmse,
+        pic_mae_test = metrics_test$pic_mae,
+        whitened_r2_test = metrics_test$whitened_r2,
+        whitened_rmse_test = metrics_test$whitened_rmse,
+        whitened_mae_test = metrics_test$whitened_mae,
+        resid_r2_test = metrics_test$resid_r2,
+        lik_r2_test = metrics_test$lik_r2
       )
       
       # 返回成功的结果
       list(success = TRUE, result = result_row)
       
     }, error = function(e) {
-      # 捕获错误，返回失败
       cat("第", iteration_count, "次尝试失败，错误信息:", e$message, "\n")
       list(success = FALSE, result = NULL)
     })
@@ -370,16 +477,14 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
                   sep = ",", col.names = FALSE, row.names = FALSE, 
                   append = TRUE)
       
-      cat("第", successful_iterations, "次成功划分完成，训练集大小:", n_train, "测试集大小:", n_test, "\n")
+      cat("第", successful_iterations, "次成功划分完成\n")
     }
   }
   
-  # 检查是否达到目标迭代次数
   if (successful_iterations < n_iterations) {
     cat("警告: 只完成了", successful_iterations, "次成功迭代，目标为", n_iterations, "次\n")
   }
   
-  # 返回所有成功的结果
   return(do.call(rbind, results))
 }
 #--------划分1：对整体数据集进行划分-----------
@@ -418,17 +523,193 @@ comp_data <- prune$comp_data
 # 计算完整数据的R2
 # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
 cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 100,train_ratio = 0.5)
+random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 50,train_ratio = 0.5)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
+result <- read.csv("random_split_results_1118.csv")
+#-------1118版本结果分析--------
 #--------结果分析----------
 result <- read.csv("random_split_results_1115.csv")
-# result1 <- result[1:50,]
-# result1 <- result[51:100,]
-# result1 <- result[101:150,]
 result1 <- result[1:100,]
-# result1 <- result[101:200,]
-# result1 <- result[201:300,]
+
+# 定义各类指标
+r2_metrics <- c("ols", "adjusted", "pic", "whitened", "resid", "lik")
+error_metrics <- c("mse", "rmse", "mae", "median_ae", "pic_rmse", "pic_mae", "whitened_rmse", "whitened_mae")
+corr_metrics <- c("pearson", "spearman", "pic_pearson", "pic_spearman")
+percentage_metrics <- c("mape", "smape", "cn_smape")
+
+# 计算delta列（test - train）
+delta_columns <- c()
+
+# 1. R²类指标
+for(metric in r2_metrics) {
+  train_col <- paste0(metric, "_r2_train")
+  test_col <- paste0(metric, "_r2_test")
+  delta_col <- paste0("delta_", metric, "_r2")
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    result1[[delta_col]] <- result1[[test_col]] - result1[[train_col]]
+    delta_columns <- c(delta_columns, delta_col)
+  }
+}
+
+# 2. 误差类指标
+for(metric in error_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  delta_col <- paste0("delta_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    result1[[delta_col]] <- result1[[test_col]] - result1[[train_col]]
+    delta_columns <- c(delta_columns, delta_col)
+  }
+}
+
+# 3. 相关性指标
+for(metric in corr_metrics) {
+  train_col <- paste0(metric, "_corr_train")
+  test_col <- paste0(metric, "_corr_test")
+  delta_col <- paste0("delta_", metric, "_corr")
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    result1[[delta_col]] <- result1[[test_col]] - result1[[train_col]]
+    delta_columns <- c(delta_columns, delta_col)
+  }
+}
+
+# 4. 百分比误差指标
+for(metric in percentage_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  delta_col <- paste0("delta_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    result1[[delta_col]] <- result1[[test_col]] - result1[[train_col]]
+    delta_columns <- c(delta_columns, delta_col)
+  }
+}
+
+# 计算delta列的统计量
+delta_stats <- data.frame(
+  Metric = character(),
+  Type = character(),
+  Mean = numeric(),
+  Variance = numeric(),
+  StdDev = numeric(),
+  AbsMean = numeric(),
+  stringsAsFactors = FALSE
+)
+
+for(delta_col in delta_columns) {
+  values <- result1[[delta_col]]
+  values <- values[!is.na(values)]  # 移除NA值
+  
+  if(length(values) > 0) {
+    # 确定指标类型
+    if(grepl("_r2$", delta_col)) {
+      type <- "R-squared"
+    } else if(grepl("delta_mse|delta_rmse|delta_mae|delta_median_ae", delta_col)) {
+      type <- "Error"
+    } else if(grepl("_corr$", delta_col)) {
+      type <- "Correlation"
+    } else if(grepl("delta_mape|delta_smape|delta_cn_smape", delta_col)) {
+      type <- "Percentage Error"
+    } else {
+      type <- "Other"
+    }
+    
+    delta_stats <- rbind(delta_stats, data.frame(
+      Metric = delta_col,
+      Type = type,
+      Mean = mean(values),
+      Variance = var(values),
+      StdDev = sd(values),
+      AbsMean = mean(abs(values))
+    ))
+  }
+}
+
+print("Delta列的统计量：")
+print(delta_stats)
+
+# 准备绘图数据（长格式）
+library(tidyr)
+library(ggplot2)
+library(dplyr)
+
+# 创建包含所有delta值的长格式数据
+delta_long <- result1[delta_columns] %>%
+  pivot_longer(cols = everything(), 
+               names_to = "Metric", 
+               values_to = "Delta") %>%
+  mutate(Metric_clean = gsub("^delta_", "", Metric))
+
+# 为每个指标添加类型信息
+metric_type_mapping <- delta_stats[, c("Metric", "Type")]
+delta_long <- delta_long %>%
+  left_join(metric_type_mapping, by = "Metric")
+
+# 绘制综合箱线图（所有指标在一起，按类型着色）
+ggplot(delta_long, aes(x = reorder(Metric_clean, Delta), y = Delta, fill = Type)) +
+  geom_boxplot(alpha = 0.8) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = 1) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "各指标训练-测试差异分布 (Test - Train)",
+       x = "指标", 
+       y = "Δ (Test - Train)",
+       fill = "指标类型") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  coord_flip()
+
+# 绘制方差比较条形图
+ggplot(delta_stats, aes(x = reorder(Metric, Variance), y = Variance, fill = Type)) +
+  geom_bar(stat = "identity", alpha = 0.8) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  labs(title = "各指标Delta值的方差比较",
+       x = "指标", 
+       y = "方差",
+       fill = "指标类型") +
+  theme_minimal()
+
+# 计算稳定性指标：变异系数 (Coefficient of Variation)
+delta_stats$CV <- delta_stats$StdDev / abs(delta_stats$Mean)
+
+# 绘制变异系数比较条形图
+ggplot(delta_stats, aes(x = reorder(Metric, CV), y = CV, fill = Type)) +
+  geom_bar(stat = "identity", alpha = 0.8) +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  labs(title = "各指标Delta值的变异系数比较",
+       x = "指标", 
+       y = "变异系数 (StdDev/Mean)",
+       fill = "指标类型") +
+  theme_minimal() +
+  scale_y_continuous(limits = c(0, NA))  # 从0开始
+
+# 输出最稳定的指标（变异系数最小）
+stable_metrics <- delta_stats %>%
+  filter(!is.infinite(CV) & !is.na(CV)) %>%
+  arrange(CV)
+
+print("最稳定的指标（变异系数最小）：")
+print(head(stable_metrics, 10))
+
+# 输出最不稳定的指标（变异系数最大）
+unstable_metrics <- delta_stats %>%
+  filter(!is.infinite(CV) & !is.na(CV)) %>%
+  arrange(desc(CV))
+
+print("最不稳定的指标（变异系数最大）：")
+print(head(unstable_metrics, 10))
+
+#--------1115版本结果分析----------
+result <- read.csv("random_split_results_1115.csv")
+result1 <- result[1:100,]
+result1 <- result[101:200,]
+result1 <- result[201:300,]
 # result1 <- result[301:400,]
 
 # 计算delta列（test - train）
@@ -765,3 +1046,81 @@ significant_correlations <- all_results %>%
 
 print("显著的相关性结果 (p < 0.05)：")
 print(significant_correlations)
+#------相对差异--------
+result <- read.csv("random_split_results_1115.csv")
+# result1 <- result[1:100,]
+# result1 <- result[101:200,]
+result1 <- result[201:300,]
+# 计算相对差异列 [deltaR2(Test - Train)]/R2_train
+relative_delta_columns <- c()  # 用于存储新列名
+
+# 遍历所有R2指标，计算相对差异
+r2_methods <- c("ols", "pic", "phylo", "caper", "cor", "var", "resid", "lik")
+
+for(method in r2_methods) {
+  train_col <- paste0(method, "_r2_train")
+  test_col <- paste0(method, "_r2_test")
+  relative_delta_col <- paste0("relative_delta_", method, "_r2")
+  
+  # 确保列存在后再计算
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    # 计算相对差异：(test - train) / train
+    result1[[relative_delta_col]] <- (result1[[test_col]] - result1[[train_col]]) / result1[[train_col]]
+    relative_delta_columns <- c(relative_delta_columns, relative_delta_col)
+  }
+}
+
+# 计算相对差异列的均值和方差
+relative_delta_stats <- data.frame(
+  Method = gsub("relative_delta_|_r2", "", relative_delta_columns),
+  Mean = sapply(result1[relative_delta_columns], mean, na.rm = TRUE),
+  Variance = sapply(result1[relative_delta_columns], var, na.rm = TRUE)
+)
+
+print("相对差异列 [(Test - Train)/Train] 的均值和方差：")
+print(relative_delta_stats)
+
+# 准备绘图数据（长格式）
+library(tidyr)
+library(ggplot2)
+
+relative_delta_long <- result1[relative_delta_columns] %>%
+  pivot_longer(cols = everything(), 
+               names_to = "Method", 
+               values_to = "Relative_Delta") %>%
+  mutate(Method = gsub("relative_delta_|_r2", "", Method))
+
+# 绘制散点图
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, color = Method)) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.7, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 4, color = "black") +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train]",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train]",
+       caption = "黑色菱形表示均值，虚线y=0作为参考") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+# 箱线图版本
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, fill = Method)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train] - 箱线图",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train]") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# 可选：如果相对差异值范围很大，可以使用对数尺度
+ggplot(relative_delta_long, aes(x = Method, y = Relative_Delta, fill = Method)) +
+  geom_boxplot(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  scale_y_continuous(trans = "pseudo_log", 
+                     breaks = c(-10, -1, 0, 1, 10, 100)) +
+  labs(title = "各方法R²相对差异分布 [(Test - Train)/Train] - 对数尺度",
+       x = "方法", 
+       y = "相对ΔR² [(Test - Train)/Train] (伪对数尺度)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
