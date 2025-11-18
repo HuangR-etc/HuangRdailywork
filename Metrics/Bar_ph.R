@@ -83,8 +83,6 @@ prune_tree_and_data <- function(tree, final_data) {
   
   return(list(tree = tree_subset, data = final_data, comp_data = comp_data))
 }
-
-# 计算各种R2的函数
 # 修改后的函数：计算所有指标
 calculate_all_metrics <- function(final_data, tree_subset, comp_data, 
                                   response_var = "reported_ph_optimum", 
@@ -487,7 +485,7 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
   
   return(do.call(rbind, results))
 }
-#--------划分1：对整体数据集进行划分-----------
+#--------划分1：对整体数据集进行82划分-----------
 prune <- prune_tree_and_data(tree, final_data)
 tree_subset <- prune$tree
 final_data <- prune$data
@@ -495,24 +493,24 @@ comp_data <- prune$comp_data
 # 计算完整数据的R2
 # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
 cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(final_data, tree, n_iterations = 100,train_ratio = 0.5)
+random_results <- perform_random_split_analysis(final_data, tree, n_iterations = 100,train_ratio = 0.8)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
-#--------划分2：筛选出原训练集，进行划分-----------
-library(dplyr)
-train_data <- final_data %>%
-  filter(partition_ph == "train")
-prune <- prune_tree_and_data(tree, train_data)
-tree_subset <- prune$tree
-train_data <- prune$data
-comp_data <- prune$comp_data
-# 计算完整数据的R2
-# full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
-cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(train_data, tree, n_iterations = 100,train_ratio = 0.5)
-
-cat("所有分析完成！结果已保存至:", random_split_file, "\n")
-#--------划分3：筛选出原测试集，进行划分-----------
+#--------划分2：筛选出原训练集，进行82划分-----------
+# library(dplyr)
+# train_data <- final_data %>%
+#   filter(partition_ph == "train")
+# prune <- prune_tree_and_data(tree, train_data)
+# tree_subset <- prune$tree
+# train_data <- prune$data
+# comp_data <- prune$comp_data
+# # 计算完整数据的R2
+# # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
+# cat("开始50次随机划分分析...\n")
+# random_results <- perform_random_split_analysis(train_data, tree, n_iterations = 100,train_ratio = 0.8)
+# 
+# cat("所有分析完成！结果已保存至:", random_split_file, "\n")
+#--------划分3：筛选出原测试集，进行55划分-----------
 library(dplyr)
 test_data <- final_data %>%
   filter(partition_ph == "test")
@@ -523,14 +521,26 @@ comp_data <- prune$comp_data
 # 计算完整数据的R2
 # full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
 cat("开始50次随机划分分析...\n")
-random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 50,train_ratio = 0.5)
+random_results <- perform_random_split_analysis(test_data, tree, n_iterations = 100,train_ratio = 0.5)
 
 cat("所有分析完成！结果已保存至:", random_split_file, "\n")
 result <- read.csv("random_split_results_1118.csv")
+#--------划分4：对整体数据集进行55划分-----------
+prune <- prune_tree_and_data(tree, final_data)
+tree_subset <- prune$tree
+final_data <- prune$data
+comp_data <- prune$comp_data
+# 计算完整数据的R2
+# full_r2 <- calculate_all_r2(final_data_ordered, tree_subset, comp_data)
+cat("开始50次随机划分分析...\n")
+random_results <- perform_random_split_analysis(final_data, tree, n_iterations = 100,train_ratio = 0.5)
+
+cat("所有分析完成！结果已保存至:", random_split_file, "\n")
 #-------1118版本结果分析--------
-#--------结果分析----------
-result <- read.csv("random_split_results_1115.csv")
-result1 <- result[1:100,]
+result <- read.csv("random_split_results_1118.csv")
+# result1 <- result[1:100,]
+result1 <- result[101:200,]
+# result1 <- result[201:300,]
 
 # 定义各类指标
 r2_metrics <- c("ols", "adjusted", "pic", "whitened", "resid", "lik")
@@ -589,121 +599,255 @@ for(metric in percentage_metrics) {
   }
 }
 
-# 计算delta列的统计量
-delta_stats <- data.frame(
-  Metric = character(),
-  Type = character(),
-  Mean = numeric(),
-  Variance = numeric(),
-  StdDev = numeric(),
-  AbsMean = numeric(),
-  stringsAsFactors = FALSE
-)
-
-for(delta_col in delta_columns) {
-  values <- result1[[delta_col]]
-  values <- values[!is.na(values)]  # 移除NA值
+# 新增指标1：相对变化率 (delta/train)
+relative_columns <- c()
+for(metric in r2_metrics) {
+  train_col <- paste0(metric, "_r2_train")
+  test_col <- paste0(metric, "_r2_test")
+  relative_col <- paste0("relative_", metric, "_r2")
   
-  if(length(values) > 0) {
-    # 确定指标类型
-    if(grepl("_r2$", delta_col)) {
-      type <- "R-squared"
-    } else if(grepl("delta_mse|delta_rmse|delta_mae|delta_median_ae", delta_col)) {
-      type <- "Error"
-    } else if(grepl("_corr$", delta_col)) {
-      type <- "Correlation"
-    } else if(grepl("delta_mape|delta_smape|delta_cn_smape", delta_col)) {
-      type <- "Percentage Error"
-    } else {
-      type <- "Other"
-    }
-    
-    delta_stats <- rbind(delta_stats, data.frame(
-      Metric = delta_col,
-      Type = type,
-      Mean = mean(values),
-      Variance = var(values),
-      StdDev = sd(values),
-      AbsMean = mean(abs(values))
-    ))
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    # 避免除数为0，使用绝对值
+    denominator <- ifelse(abs(result1[[train_col]]) < 1e-10, sign(result1[[train_col]]) * 1e-10, result1[[train_col]])
+    result1[[relative_col]] <- (result1[[test_col]] - result1[[train_col]]) / abs(denominator)
+    relative_columns <- c(relative_columns, relative_col)
   }
 }
 
-print("Delta列的统计量：")
-print(delta_stats)
+for(metric in error_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  relative_col <- paste0("relative_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    denominator <- ifelse(abs(result1[[train_col]]) < 1e-10, sign(result1[[train_col]]) * 1e-10, result1[[train_col]])
+    result1[[relative_col]] <- (result1[[test_col]] - result1[[train_col]]) / abs(denominator)
+    relative_columns <- c(relative_columns, relative_col)
+  }
+}
+
+for(metric in corr_metrics) {
+  train_col <- paste0(metric, "_corr_train")
+  test_col <- paste0(metric, "_corr_test")
+  relative_col <- paste0("relative_", metric, "_corr")
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    denominator <- ifelse(abs(result1[[train_col]]) < 1e-10, sign(result1[[train_col]]) * 1e-10, result1[[train_col]])
+    result1[[relative_col]] <- (result1[[test_col]] - result1[[train_col]]) / abs(denominator)
+    relative_columns <- c(relative_columns, relative_col)
+  }
+}
+
+for(metric in percentage_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  relative_col <- paste0("relative_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    denominator <- ifelse(abs(result1[[train_col]]) < 1e-10, sign(result1[[train_col]]) * 1e-10, result1[[train_col]])
+    result1[[relative_col]] <- (result1[[test_col]] - result1[[train_col]]) / abs(denominator)
+    relative_columns <- c(relative_columns, relative_col)
+  }
+}
+
+# 新增指标2：标准化变化 (delta/sd)
+standardized_columns <- c()
+for(metric in r2_metrics) {
+  train_col <- paste0(metric, "_r2_train")
+  test_col <- paste0(metric, "_r2_test")
+  standardized_col <- paste0("standardized_", metric, "_r2")
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    # 计算train和test合并后的标准差
+    combined_values <- c(result1[[train_col]], result1[[test_col]])
+    sd_value <- sd(combined_values, na.rm = TRUE)
+    # 避免除数为0
+    if(sd_value < 1e-10) sd_value <- 1e-10
+    result1[[standardized_col]] <- (result1[[test_col]] - result1[[train_col]]) / sd_value
+    standardized_columns <- c(standardized_columns, standardized_col)
+  }
+}
+
+for(metric in error_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  standardized_col <- paste0("standardized_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    combined_values <- c(result1[[train_col]], result1[[test_col]])
+    sd_value <- sd(combined_values, na.rm = TRUE)
+    if(sd_value < 1e-10) sd_value <- 1e-10
+    result1[[standardized_col]] <- (result1[[test_col]] - result1[[train_col]]) / sd_value
+    standardized_columns <- c(standardized_columns, standardized_col)
+  }
+}
+
+for(metric in corr_metrics) {
+  train_col <- paste0(metric, "_corr_train")
+  test_col <- paste0(metric, "_corr_test")
+  standardized_col <- paste0("standardized_", metric, "_corr")
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    combined_values <- c(result1[[train_col]], result1[[test_col]])
+    sd_value <- sd(combined_values, na.rm = TRUE)
+    if(sd_value < 1e-10) sd_value <- 1e-10
+    result1[[standardized_col]] <- (result1[[test_col]] - result1[[train_col]]) / sd_value
+    standardized_columns <- c(standardized_columns, standardized_col)
+  }
+}
+
+for(metric in percentage_metrics) {
+  train_col <- paste0(metric, "_train")
+  test_col <- paste0(metric, "_test")
+  standardized_col <- paste0("standardized_", metric)
+  
+  if(train_col %in% colnames(result1) && test_col %in% colnames(result1)) {
+    combined_values <- c(result1[[train_col]], result1[[test_col]])
+    sd_value <- sd(combined_values, na.rm = TRUE)
+    if(sd_value < 1e-10) sd_value <- 1e-10
+    result1[[standardized_col]] <- (result1[[test_col]] - result1[[train_col]]) / sd_value
+    standardized_columns <- c(standardized_columns, standardized_col)
+  }
+}
+
+# 计算所有指标的统计量
+calculate_stats <- function(columns, type_name) {
+  stats_df <- data.frame(
+    Metric = character(),
+    Type = character(),
+    Mean = numeric(),
+    Variance = numeric(),
+    StdDev = numeric(),
+    AbsMean = numeric(),
+    stringsAsFactors = FALSE
+  )
+  
+  for(col in columns) {
+    values <- result1[[col]]
+    values <- values[!is.na(values)]  # 移除NA值
+    
+    if(length(values) > 0) {
+      # 确定指标类型
+      if(grepl("_r2$", col)) {
+        metric_type <- "R-squared"
+      } else if(grepl("mse|rmse|mae|median_ae", col)) {
+        metric_type <- "Error"
+      } else if(grepl("_corr$", col)) {
+        metric_type <- "Correlation"
+      } else if(grepl("mape|smape|cn_smape", col)) {
+        metric_type <- "Percentage Error"
+      } else {
+        metric_type <- "Other"
+      }
+      
+      stats_df <- rbind(stats_df, data.frame(
+        Metric = col,
+        Type = metric_type,
+        Mean = mean(values),
+        Variance = var(values),
+        StdDev = sd(values),
+        AbsMean = mean(abs(values)),
+        Source = type_name
+      ))
+    }
+  }
+  return(stats_df)
+}
+
+# 计算三种指标的统计量
+delta_stats <- calculate_stats(delta_columns, "Delta")
+relative_stats <- calculate_stats(relative_columns, "Relative")
+standardized_stats <- calculate_stats(standardized_columns, "Standardized")
+
+# 合并所有统计量
+all_stats <- rbind(delta_stats, relative_stats, standardized_stats)
+
+print("所有指标的统计量：")
+print(all_stats)
 
 # 准备绘图数据（长格式）
 library(tidyr)
 library(ggplot2)
 library(dplyr)
 
-# 创建包含所有delta值的长格式数据
-delta_long <- result1[delta_columns] %>%
-  pivot_longer(cols = everything(), 
-               names_to = "Metric", 
-               values_to = "Delta") %>%
-  mutate(Metric_clean = gsub("^delta_", "", Metric))
+# 创建绘图函数
+create_plots <- function(columns, source_name, title_suffix) {
+  # 创建长格式数据
+  long_data <- result1[columns] %>%
+    pivot_longer(cols = everything(), 
+                 names_to = "Metric", 
+                 values_to = "Value") %>%
+    mutate(Metric_clean = gsub(paste0("^", tolower(source_name), "_"), "", Metric))
+  
+  # 添加类型信息
+  if(source_name == "Delta") {
+    stats_subset <- delta_stats
+  } else if(source_name == "Relative") {
+    stats_subset <- relative_stats
+  } else {
+    stats_subset <- standardized_stats
+  }
+  
+  long_data <- long_data %>%
+    left_join(stats_subset[, c("Metric", "Type")], by = "Metric")
+  
+  # 箱线图
+  p1 <- ggplot(long_data, aes(x = reorder(Metric_clean, Value), y = Value, fill = Type)) +
+    geom_boxplot(alpha = 0.8) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = 1) +
+    scale_fill_brewer(palette = "Set2") +
+    labs(title = paste(source_name, title_suffix),
+         x = "指标", 
+         y = source_name,
+         fill = "指标类型") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "bottom") +
+    coord_flip()
+  
+  # 方差条形图
+  stats_source <- stats_subset
+  p2 <- ggplot(stats_source, aes(x = reorder(Metric, Variance), y = Variance, fill = Type)) +
+    geom_bar(stat = "identity", alpha = 0.8) +
+    scale_fill_brewer(palette = "Set2") +
+    coord_flip() +
+    labs(title = paste(source_name, "指标的方差比较"),
+         x = "指标", 
+         y = "方差",
+         fill = "指标类型") +
+    theme_minimal()
+  
+  return(list(boxplot = p1, variance_plot = p2))
+}
 
-# 为每个指标添加类型信息
-metric_type_mapping <- delta_stats[, c("Metric", "Type")]
-delta_long <- delta_long %>%
-  left_join(metric_type_mapping, by = "Metric")
+# 为三种指标创建图形
+delta_plots <- create_plots(delta_columns, "Delta", "训练-测试差异分布 (Test - Train)")
+relative_plots <- create_plots(relative_columns, "Relative", "相对变化分布 ((Test-Train)/Train)")
+standardized_plots <- create_plots(standardized_columns, "Standardized", "标准化变化分布 ((Test-Train)/SD)")
 
-# 绘制综合箱线图（所有指标在一起，按类型着色）
-ggplot(delta_long, aes(x = reorder(Metric_clean, Delta), y = Delta, fill = Type)) +
-  geom_boxplot(alpha = 0.8) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = 1) +
-  scale_fill_brewer(palette = "Set2") +
-  labs(title = "各指标训练-测试差异分布 (Test - Train)",
+# 显示图形
+print(delta_plots$boxplot)
+print(delta_plots$variance_plot)
+
+print(relative_plots$boxplot)
+print(relative_plots$variance_plot)
+
+print(standardized_plots$boxplot)
+print(standardized_plots$variance_plot)
+
+# 额外：三种指标的综合比较（使用绝对均值）
+comparison_plot <- ggplot(all_stats, aes(x = reorder(Metric, AbsMean), y = AbsMean, fill = Source)) +
+  geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
+  scale_fill_brewer(palette = "Set1") +
+  coord_flip() +
+  labs(title = "三种指标类型的绝对均值比较",
        x = "指标", 
-       y = "Δ (Test - Train)",
+       y = "绝对均值",
        fill = "指标类型") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  coord_flip()
+  theme(legend.position = "bottom")
 
-# 绘制方差比较条形图
-ggplot(delta_stats, aes(x = reorder(Metric, Variance), y = Variance, fill = Type)) +
-  geom_bar(stat = "identity", alpha = 0.8) +
-  scale_fill_brewer(palette = "Set2") +
-  coord_flip() +
-  labs(title = "各指标Delta值的方差比较",
-       x = "指标", 
-       y = "方差",
-       fill = "指标类型") +
-  theme_minimal()
-
-# 计算稳定性指标：变异系数 (Coefficient of Variation)
-delta_stats$CV <- delta_stats$StdDev / abs(delta_stats$Mean)
-
-# 绘制变异系数比较条形图
-ggplot(delta_stats, aes(x = reorder(Metric, CV), y = CV, fill = Type)) +
-  geom_bar(stat = "identity", alpha = 0.8) +
-  scale_fill_brewer(palette = "Set2") +
-  coord_flip() +
-  labs(title = "各指标Delta值的变异系数比较",
-       x = "指标", 
-       y = "变异系数 (StdDev/Mean)",
-       fill = "指标类型") +
-  theme_minimal() +
-  scale_y_continuous(limits = c(0, NA))  # 从0开始
-
-# 输出最稳定的指标（变异系数最小）
-stable_metrics <- delta_stats %>%
-  filter(!is.infinite(CV) & !is.na(CV)) %>%
-  arrange(CV)
-
-print("最稳定的指标（变异系数最小）：")
-print(head(stable_metrics, 10))
-
-# 输出最不稳定的指标（变异系数最大）
-unstable_metrics <- delta_stats %>%
-  filter(!is.infinite(CV) & !is.na(CV)) %>%
-  arrange(desc(CV))
-
-print("最不稳定的指标（变异系数最大）：")
-print(head(unstable_metrics, 10))
+print(comparison_plot)
 
 #--------1115版本结果分析----------
 result <- read.csv("random_split_results_1115.csv")
