@@ -253,27 +253,173 @@ calculate_all_metrics <- function(final_data, tree_subset, comp_data,
     is_constant_pred = is_constant_pred
   ))
 }
+# 修剪树和数据的辅助函数
+prune_tree_and_data <- function(tree, data) {
+  # 确保数据中的GCF在树中存在
+  common_species <- intersect(data$GCF, tree$tip.label)
+  
+  if (length(common_species) < 2) {
+    stop("树和数据中共同的物种数量不足")
+  }
+  
+  # 修剪树和数据
+  tree_pruned <- keep.tip(tree, common_species)
+  data_pruned <- data[data$GCF %in% common_species, ]
+  
+  # 确保数据顺序与树一致
+  data_ordered <- data_pruned[match(tree_pruned$tip.label, data_pruned$GCF), ]
+  
+  # 创建比较数据对象
+  comp_data <- comparative.data(tree_pruned, data_ordered, names.col = "GCF")
+  
+  return(list(
+    tree = tree_pruned,
+    data = data_ordered,
+    comp_data = comp_data
+  ))
+}
+
+# 随机分割分析函数（修改版）
+perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.8, 
+                                          response_var = "reported_data", predictor_var = "data",
+                                          scenario_name = "Unknown", sim_id = 1) {
+  
+  results <- list()
+  successful_iterations <- 0
+  iteration_count <- 0
+  
+  while (successful_iterations < n_iterations && iteration_count < n_iterations * 2) {
+    iteration_count <- iteration_count + 1
+    
+    # 设置随机种子
+    current_seed <- 123 + sim_id * 1000 + iteration_count
+    set.seed(current_seed)
+    
+    # 使用tryCatch进行错误处理
+    result <- tryCatch({
+      # 随机划分数据
+      n_total <- nrow(final_data)
+      n_train <- round(n_total * train_ratio)
+      n_test <- n_total - n_train
+      
+      train_indices <- sample(1:n_total, n_train, replace = FALSE)
+      test_indices <- setdiff(1:n_total, train_indices)
+      
+      # 创建训练集和测试集
+      train_data <- final_data[train_indices, ]
+      test_data <- final_data[test_indices, ]
+      
+      # 对训练集进行计算
+      prune_train <- prune_tree_and_data(tree, train_data)
+      tree_train <- prune_train$tree
+      train_data_ordered <- prune_train$data
+      comp_data_train <- prune_train$comp_data
+      
+      metrics_train <- calculate_all_metrics(train_data_ordered, tree_train, comp_data_train,
+                                             response_var = response_var, predictor_var = predictor_var)
+      
+      # 对测试集进行计算
+      prune_test <- prune_tree_and_data(tree, test_data)
+      tree_test <- prune_test$tree
+      test_data_ordered <- prune_test$data
+      comp_data_test <- prune_test$comp_data
+      
+      metrics_test <- calculate_all_metrics(test_data_ordered, tree_test, comp_data_test,
+                                            response_var = response_var, predictor_var = predictor_var)
+      
+      # 构建结果行
+      result_row <- data.frame(
+        scenario = scenario_name,
+        simulation_id = sim_id,
+        split_iteration = successful_iterations + 1,
+        random_seed = current_seed,
+        train_size = n_train,
+        test_size = n_test,
+        
+        # 训练集指标
+        ols_r2_train = metrics_train$ols_r2,
+        adjusted_r2_train = metrics_train$adjusted_r2,
+        mse_train = metrics_train$mse,
+        rmse_train = metrics_train$rmse,
+        mae_train = metrics_train$mae,
+        median_ae_train = metrics_train$median_ae,
+        pearson_corr_train = metrics_train$pearson_corr,
+        spearman_corr_train = metrics_train$spearman_corr,
+        mape_train = metrics_train$mape,
+        smape_train = metrics_train$smape,
+        cn_smape_train = metrics_train$cn_smape,
+        lambda_train = metrics_train$lambda,
+        pic_r2_train = metrics_train$pic_r2,
+        pic_pearson_train = metrics_train$pic_pearson,
+        pic_spearman_train = metrics_train$pic_spearman,
+        pic_rmse_train = metrics_train$pic_rmse,
+        pic_mae_train = metrics_train$pic_mae,
+        whitened_r2_train = metrics_train$whitened_r2,
+        whitened_rmse_train = metrics_train$whitened_rmse,
+        whitened_mae_train = metrics_train$whitened_mae,
+        resid_r2_train = metrics_train$resid_r2,
+        lik_r2_train = metrics_train$lik_r2,
+        
+        # 测试集指标
+        ols_r2_test = metrics_test$ols_r2,
+        adjusted_r2_test = metrics_test$adjusted_r2,
+        mse_test = metrics_test$mse,
+        rmse_test = metrics_test$rmse,
+        mae_test = metrics_test$mae,
+        median_ae_test = metrics_test$median_ae,
+        pearson_corr_test = metrics_test$pearson_corr,
+        spearman_corr_test = metrics_test$spearman_corr,
+        mape_test = metrics_test$mape,
+        smape_test = metrics_test$smape,
+        cn_smape_test = metrics_test$cn_smape,
+        lambda_test = metrics_test$lambda,
+        pic_r2_test = metrics_test$pic_r2,
+        pic_pearson_test = metrics_test$pic_pearson,
+        pic_spearman_test = metrics_test$pic_spearman,
+        pic_rmse_test = metrics_test$pic_rmse,
+        pic_mae_test = metrics_test$pic_mae,
+        whitened_r2_test = metrics_test$whitened_r2,
+        whitened_rmse_test = metrics_test$whitened_rmse,
+        whitened_mae_test = metrics_test$whitened_mae,
+        resid_r2_test = metrics_test$resid_r2,
+        lik_r2_test = metrics_test$lik_r2
+      )
+      
+      # 返回成功的结果
+      list(success = TRUE, result = result_row)
+      
+    }, error = function(e) {
+      list(success = FALSE, result = NULL)
+    })
+    
+    # 如果成功，保存结果
+    if (result$success) {
+      successful_iterations <- successful_iterations + 1
+      results[[successful_iterations]] <- result$result
+    }
+  }
+  
+  if (successful_iterations < n_iterations) {
+    cat("警告: 场景", scenario_name, "模拟", sim_id, "只完成了", successful_iterations, "次成功分割\n")
+  }
+  
+  return(do.call(rbind, results))
+}
+
 # 设置重复模拟次数
-n_simulations <- 100  # 可以根据需要调整
+n_simulations <- 10  # 减少模拟次数以加快测试
+n_split_iterations <- 5  # 减少分割次数以加快测试
 set.seed(123)
 
-# 1. 生成基础数据
-n_species <- 128
+# 存储所有结果
+all_sim_results <- list()
+all_split_results <- list()
 
-# 生成系统发育树
-tree <- rcoal(n_species)
-tree$tip.label <- paste0("species", 1:n_species)
-
-# 使用BM模型模拟真实性状值
-real_trait <- rTraitCont(tree, model = "BM", sigma = 1)
-# 创建存储所有模拟结果的列表
-all_sim_results <- vector("list", n_simulations)
-
-# 批量模拟函数
+# 批量模拟函数（修改版，包含分割分析）
 run_single_simulation <- function(sim_id) {
   cat("正在进行第", sim_id, "次模拟...\n")
   
-  # 设置随机种子（保证每次模拟可重现）
+  # 设置随机种子
   set.seed(123 + sim_id)
   
   # 1. 生成基础数据
@@ -345,7 +491,7 @@ run_single_simulation <- function(sim_id) {
   pred_bad_uc4 <- pred_bad_uc4 + rnorm(n_species, mean = 0, sd = 0.1)
   base_data$data_bad_uc4 <- pred_bad_uc4
   
-  # 6. 计算各场景指标
+  # 6. 计算各场景指标（完整数据集）
   scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4")
   predictor_vars <- c("data_good", "data_bad_uc1", "data_bad_uc2", 
                       "data_bad_uc3", "data_bad_uc4")
@@ -357,19 +503,58 @@ run_single_simulation <- function(sim_id) {
     metrics_list[[scenarios[i]]] <- metrics
   }
   
-  return(metrics_list)
+  # 7. 对每个场景进行分割分析
+  split_results_list <- list()
+  
+  for (i in 1:length(scenarios)) {
+    cat("  场景", scenarios[i], "分割分析...\n")
+    
+    split_results <- perform_random_split_analysis(
+      final_data = base_data,
+      tree = tree,
+      n_iterations = n_split_iterations,
+      train_ratio = 0.8,
+      response_var = "reported_data",
+      predictor_var = predictor_vars[i],
+      scenario_name = scenarios[i],
+      sim_id = sim_id
+    )
+    
+    split_results_list[[scenarios[i]]] <- split_results
+  }
+  
+  # 合并所有分割结果
+  all_split_results_for_sim <- do.call(rbind, split_results_list)
+  
+  return(list(
+    full_data_metrics = metrics_list,
+    split_analysis_results = all_split_results_for_sim,
+    base_data = base_data,  # 保存原始数据用于后续分析
+    tree = tree
+  ))
 }
 
 # 执行批量模拟
-cat("开始批量模拟，总共", n_simulations, "次...\n")
+cat("开始批量模拟，总共", n_simulations, "次模拟，每次", n_split_iterations, "次分割...\n")
 start_time <- Sys.time()
 
-# 使用lapply进行并行计算（可选）
-# 如果需要并行计算，可以使用parallel包
-all_sim_results <- lapply(1:n_simulations, run_single_simulation)
+# 使用lapply进行串行计算
+all_sim_results <- lapply(1:n_simulations, function(i) {
+  result <- run_single_simulation(i)
+  cat("完成第", i, "次模拟\n")
+  return(result)
+})
 
 end_time <- Sys.time()
 cat("批量模拟完成，耗时:", round(end_time - start_time, 2), "秒\n")
+
+# 整理结果
+# 提取完整数据集的指标
+full_metrics_list <- lapply(all_sim_results, function(x) x$full_data_metrics)
+
+# 提取分割分析结果
+split_results_list <- lapply(all_sim_results, function(x) x$split_analysis_results)
+all_split_results_df <- do.call(rbind, split_results_list)
 
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
@@ -413,10 +598,10 @@ calculate_average_metrics <- function(all_results, n_sim) {
   return(avg_results)
 }
 
-# 计算平均指标
-avg_metrics <- calculate_average_metrics(all_sim_results, n_simulations)
+# 计算完整数据集的平均指标
+avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
-# 9. 创建最终比较表格
+# # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
   scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4")
   
@@ -447,7 +632,6 @@ create_final_comparison_table <- function(avg_metrics) {
 }
 
 final_comparison <- create_final_comparison_table(avg_metrics)
-
 
 #-------9. 改进的可视化方案（基于多次模拟结果）----------
 
@@ -588,3 +772,282 @@ for (metric in available_lower) {
 # 重置图形参数
 par(mfrow = c(1, 1))
 
+
+#-------泛化能力部分的可视化--------
+library(ggplot2)
+library(dplyr)
+calculate_delta_metrics <- function(split_results_df) {
+  # 定义各类指标
+  r2_metrics <- c("ols", "adjusted", "pic", "whitened", "resid", "lik")
+  error_metrics <- c("mse", "rmse", "mae", "median_ae", "pic_rmse", "pic_mae", "whitened_rmse", "whitened_mae")
+  corr_metrics <- c("pearson", "spearman", "pic_pearson", "pic_spearman")
+  percentage_metrics <- c("mape", "smape", "cn_smape")
+  
+  # 创建结果数据框副本
+  result_with_delta <- split_results_df
+  
+  # 计算delta = (test - train) / [(train + test)/2]
+  delta_columns <- c()
+  
+  # 辅助函数：安全计算delta
+  safe_calculate_delta <- function(train_vals, test_vals) {
+    # 检查是否有NA值
+    if(any(is.na(train_vals)) || any(is.na(test_vals))) {
+      return(rep(NA, length(train_vals)))
+    }
+    
+    # 计算分母
+    denominator <- (train_vals + test_vals) / 2
+    
+    # 安全处理小分母：只对非NA值进行操作
+    non_na_idx <- !is.na(denominator)
+    denominator_safe <- denominator
+    
+    if(any(non_na_idx)) {
+      small_denom_idx <- non_na_idx & (abs(denominator[non_na_idx]) < 1e-10)
+      if(any(small_denom_idx)) {
+        # 只对有问题的值进行修正
+        denominator_safe[non_na_idx][small_denom_idx] <- 
+          sign(denominator[non_na_idx][small_denom_idx]) * 1e-10
+      }
+    }
+    
+    # 计算delta
+    delta <- (test_vals - train_vals) / denominator_safe
+    return(delta)
+  }
+  
+  # 1. R²类指标
+  for(metric in r2_metrics) {
+    train_col <- paste0(metric, "_r2_train")
+    test_col <- paste0(metric, "_r2_test")
+    delta_col <- paste0("delta_", metric, "_r2")
+    
+    if(train_col %in% colnames(result_with_delta) && test_col %in% colnames(result_with_delta)) {
+      result_with_delta[[delta_col]] <- safe_calculate_delta(
+        result_with_delta[[train_col]], 
+        result_with_delta[[test_col]]
+      )
+      delta_columns <- c(delta_columns, delta_col)
+    }
+  }
+  
+  # 2. 误差类指标
+  for(metric in error_metrics) {
+    train_col <- paste0(metric, "_train")
+    test_col <- paste0(metric, "_test")
+    delta_col <- paste0("delta_", metric)
+    
+    if(train_col %in% colnames(result_with_delta) && test_col %in% colnames(result_with_delta)) {
+      result_with_delta[[delta_col]] <- safe_calculate_delta(
+        result_with_delta[[train_col]], 
+        result_with_delta[[test_col]]
+      )
+      delta_columns <- c(delta_columns, delta_col)
+    }
+  }
+  
+  # 3. 相关性指标
+  for(metric in corr_metrics) {
+    # 检查两种可能的列名格式
+    train_col1 <- paste0(metric, "_corr_train")
+    test_col1 <- paste0(metric, "_corr_test")
+    train_col2 <- paste0(metric, "_train")
+    test_col2 <- paste0(metric, "_test")
+    
+    if(train_col1 %in% colnames(result_with_delta) && test_col1 %in% colnames(result_with_delta)) {
+      result_with_delta[[paste0("delta_", metric, "_corr")]] <- safe_calculate_delta(
+        result_with_delta[[train_col1]], 
+        result_with_delta[[test_col1]]
+      )
+      delta_columns <- c(delta_columns, paste0("delta_", metric, "_corr"))
+    } else if(train_col2 %in% colnames(result_with_delta) && test_col2 %in% colnames(result_with_delta)) {
+      result_with_delta[[paste0("delta_", metric)]] <- safe_calculate_delta(
+        result_with_delta[[train_col2]], 
+        result_with_delta[[test_col2]]
+      )
+      delta_columns <- c(delta_columns, paste0("delta_", metric))
+    }
+  }
+  
+  # 4. 百分比误差指标
+  for(metric in percentage_metrics) {
+    train_col <- paste0(metric, "_train")
+    test_col <- paste0(metric, "_test")
+    delta_col <- paste0("delta_", metric)
+    
+    if(train_col %in% colnames(result_with_delta) && test_col %in% colnames(result_with_delta)) {
+      result_with_delta[[delta_col]] <- safe_calculate_delta(
+        result_with_delta[[train_col]], 
+        result_with_delta[[test_col]]
+      )
+      delta_columns <- c(delta_columns, delta_col)
+    }
+  }
+  
+  return(list(
+    data = result_with_delta,
+    delta_columns = delta_columns
+  ))
+}
+
+# 先检查数据中是否有NA值
+cat("检查分割结果数据中的NA值情况:\n")
+cat("总行数:", nrow(all_split_results_df), "\n")
+
+# 检查关键列是否有NA
+check_na_columns <- function(df) {
+  na_counts <- sapply(df, function(x) sum(is.na(x)))
+  na_columns <- na_counts[na_counts > 0]
+  if(length(na_columns) > 0) {
+    cat("包含NA值的列:\n")
+    print(na_columns)
+  } else {
+    cat("没有发现NA值\n")
+  }
+}
+
+check_na_columns(all_split_results_df)
+
+# 应用修复后的函数计算delta指标
+cat("\n应用修复后的函数计算delta指标...\n")
+delta_results <- calculate_delta_metrics(all_split_results_df)
+delta_data <- delta_results$data
+delta_columns <- delta_results$delta_columns
+
+cat("成功计算了", length(delta_columns), "个delta指标\n")
+
+# 检查delta指标中的NA情况
+if(length(delta_columns) > 0) {
+  delta_na_counts <- sapply(delta_columns, function(col) {
+    if(col %in% names(delta_data)) {
+      sum(is.na(delta_data[[col]]))
+    } else {
+      NA
+    }
+  })
+  cat("各delta指标的NA值数量:\n")
+  print(delta_na_counts)
+}
+# 计算每个场景和每个指标的delta方差
+calculate_delta_variance <- function(delta_data, delta_columns) {
+  scenarios <- unique(delta_data$scenario)
+  
+  variance_results <- data.frame()
+  
+  for(scenario in scenarios) {
+    scenario_data <- delta_data[delta_data$scenario == scenario, ]
+    
+    for(metric in delta_columns) {
+      values <- scenario_data[[metric]]
+      values <- values[!is.na(values)]  # 移除NA值
+      
+      if(length(values) > 1) {
+        variance_val <- var(values)
+        mean_val <- mean(values)
+        abs_mean_val <- mean(abs(values))
+        
+        # 确定指标类型
+        if(grepl("_r2$", metric)) {
+          metric_type <- "R-squared"
+        } else if(grepl("mse|rmse|mae|median_ae", metric)) {
+          metric_type <- "Error"
+        } else if(grepl("pearson|spearman", metric)) {
+          metric_type <- "Correlation"
+        } else if(grepl("mape|smape|cn_smape", metric)) {
+          metric_type <- "Percentage Error"
+        } else if(grepl("lambda", metric)) {
+          metric_type <- "Phylogenetic Signal"
+        } else {
+          metric_type <- "Other"
+        }
+        
+        # 简化指标名称用于显示
+        clean_metric_name <- gsub("^delta_", "", metric)
+        
+        variance_results <- rbind(variance_results, data.frame(
+          Scenario = scenario,
+          Metric = metric,
+          CleanMetric = clean_metric_name,
+          Type = metric_type,
+          Variance = variance_val,
+          MeanDelta = mean_val,
+          AbsMeanDelta = abs_mean_val,
+          N = length(values)
+        ))
+      }
+    }
+  }
+  
+  return(variance_results)
+}
+
+# 计算方差
+variance_results <- calculate_delta_variance(delta_data, delta_columns)
+
+#-------修改后的方差排序图绘制逻辑----------
+
+# 按场景分别绘制方差排序柱状图
+plot_variance_barchart_by_scenario <- function(variance_results) {
+  scenarios <- unique(variance_results$Scenario)
+  plots <- list()
+  
+  for(scenario in scenarios) {
+    # 筛选当前场景的数据
+    scenario_data <- variance_results[variance_results$Scenario == scenario, ]
+    
+    # 按方差排序
+    scenario_ranked <- scenario_data[order(-scenario_data$Variance), ]
+    
+    # 设置颜色（每个场景使用单一颜色）
+    scenario_colors <- c(
+      "Good" = "#c9cb05", 
+      "UC1" = "#bab1d8", 
+      "UC2" = "#8076b5", 
+      "UC3" = "#9e7cba", 
+      "UC4" = "#ac5aa1"
+    )
+    
+    current_color <- scenario_colors[scenario]
+    
+    # 创建图形
+    p <- ggplot(scenario_ranked, aes(x = reorder(CleanMetric, Variance), y = Variance)) +
+      geom_bar(stat = "identity", fill = current_color, alpha = 0.8) +
+      coord_flip() +
+      labs(
+        title = paste("场景", scenario, "- Delta指标方差排序"),
+        subtitle = "Delta = (测试集 - 训练集) / 均值",
+        x = "指标",
+        y = "方差"
+      ) +
+      theme_minimal() +
+      theme(
+        axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14, face = "bold"),
+        plot.subtitle = element_text(size = 10),
+        legend.position = "none"
+      ) +
+      # 添加数值标签
+      geom_text(aes(label = sprintf("%.4f", Variance)), 
+                hjust = -0.1, size = 3, color = "darkblue")
+    
+    plots[[scenario]] <- p
+  }
+  
+  return(plots)
+}
+
+# 执行分开绘图
+cat("=== 按场景分开绘制Delta指标可视化图表 ===\n")
+
+# 方差排序柱状图（按场景分开）
+cat("1. 按场景绘制方差排序柱状图...\n")
+variance_plots_by_scenario <- plot_variance_barchart_by_scenario(variance_results)
+
+# 显示每个场景的方差排序图
+for(scenario in names(variance_plots_by_scenario)) {
+  cat("显示场景", scenario, "的方差排序图...\n")
+  print(variance_plots_by_scenario[[scenario]])
+}
