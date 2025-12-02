@@ -407,8 +407,8 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
 }
 
 # 设置重复模拟次数
-n_simulations <- 10  # 减少模拟次数以加快测试
-n_split_iterations <- 5  # 减少分割次数以加快测试
+n_simulations <- 50  # 减少模拟次数以加快测试
+n_split_iterations <- 50  # 减少分割次数以加快测试
 set.seed(123)
 
 # 存储所有结果
@@ -1050,4 +1050,53 @@ variance_plots_by_scenario <- plot_variance_barchart_by_scenario(variance_result
 for(scenario in names(variance_plots_by_scenario)) {
   cat("显示场景", scenario, "的方差排序图...\n")
   print(variance_plots_by_scenario[[scenario]])
+}
+#-------新增：收集方差排序结果，与另一分析流程格式保持一致----------
+
+# 定义数据集ID（根据实际情况修改）
+dataset_id <- "simulation_data"  # 可以根据需要修改，如"simulation_1", "simulation_2"等
+
+# 为每个场景生成方差排名结果并保存
+cat("\n=== 收集方差排序结果，与下游分析流程保持一致 ===\n")
+
+# 初始化一个列表来存储所有场景的排名结果
+all_ranking_results <- list()
+
+# 对每个场景进行处理
+scenarios <- unique(variance_results$Scenario)
+
+for(scenario in scenarios) {
+  cat("处理场景:", scenario, "\n")
+  
+  # 筛选当前场景的数据
+  scenario_data <- variance_results[variance_results$Scenario == scenario, ]
+  
+  # 1. 计算当前场景的方差排名（方差越小越好，所以用升序排名）
+  # 注意：使用负号将方差转换为降序，这样方差小的排名靠前
+  scenario_data$Variance_Rank <- rank(scenario_data$Variance, ties.method = "min")
+  
+  # 2. 按方差从小到大排序（方差越小越好）
+  scenario_data_sorted <- scenario_data[order(scenario_data$Variance), ]
+  
+  # 3. 创建排名结果数据框（与另一分析流程格式完全相同）
+  ranking_results <- data.frame(
+    Metric = scenario_data_sorted$CleanMetric,  # 使用简化后的指标名称
+    Type = scenario_data_sorted$Type,
+    Variance = scenario_data_sorted$Variance,
+    Rank = 1:nrow(scenario_data_sorted),  # 重新编号从1开始
+    Dataset = paste0(dataset_id, "_", scenario)  # 格式：数据集ID_场景名
+  )
+  
+  # 4. 打印当前场景的排名结果摘要
+  cat("场景", scenario, "方差排名前5的指标:\n")
+  print(head(ranking_results, 5))
+  cat("\n")
+  
+  # 5. 保存当前场景的排名结果到文件
+  ranking_filename <- paste0("variance_ranking_", dataset_id, "_", scenario, ".csv")
+  write.csv(ranking_results, ranking_filename, row.names = FALSE)
+  cat("场景", scenario, "排名结果已保存到:", ranking_filename, "\n\n")
+  
+  # 6. 将当前场景的结果添加到总列表中
+  all_ranking_results[[scenario]] <- ranking_results
 }
