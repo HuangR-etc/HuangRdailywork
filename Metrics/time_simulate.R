@@ -175,7 +175,7 @@ calculate_all_metrics <- function(time_data, time_points,
 }
 
 # 模仿scikit-learn的TimeSeriesSplit逻辑的时间序列分割分析函数
-perform_time_split_analysis <- function(time_data, n_splits = 4, 
+perform_time_split_analysis <- function(time_data, n_splits = 5, 
                                         response_var = "reported_data", predictor_var = "data",
                                         scenario_name = "Unknown", sim_id = 1) {
   
@@ -353,37 +353,19 @@ run_single_simulation <- function(sim_id) {
   
   time_data$data_bad_residual <- time_data$reported_data + residual_signal * 0.5
   
-  # 7. 场景3：结构性断点预测失败 - 模型未适应数据生成过程的变化
-  time_data$data_bad_breakpoint <- time_data$reported_data
   
-  # 创建一个结构性断点（例如，第70个时间点后数据生成过程改变）
-  break_point <- 70
-  
-  # 在断点前拟合线性趋势
-  train_data <- data.frame(
-    y = as.numeric(time_data$reported_data[1:break_point]),
-    t = 1:break_point
-  )
-  linear_model <- lm(y ~ t, data = train_data)
-  
-  # 断点后继续使用该线性模型预测
-  for(i in (break_point+1):n) {
-    time_data$data_bad_breakpoint[i] <- predict(linear_model, 
-                                                newdata = data.frame(t = i))
-  }
-  
-  # 8. 场景4：朴素预测模型（直接使用上一个点的真实值做预测值）
+  # 8. 场景3：朴素预测模型（直接使用上一个点的真实值做预测值）
   time_data$data_bad_naive <- c(NA, time_data$reported_data[1:(n-1)])
   time_data$data_bad_naive[1] <- time_data$reported_data[1]  # 第一个点用自身值
   
-  # 9. 场景5：完全失败模型
+  # 9. 场景4：完全失败模型
   mean_data <- mean(time_data$reported_data)
   time_data$data_bad <- rep(mean_data, n) + rnorm(n, mean = 0, sd = 0.1)
   
   # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4", "UC5")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   predictor_vars <- c("data_good", "data_bad_seasonal", "data_bad_residual", 
-                      "data_bad_breakpoint", "data_bad_naive", "data_bad")
+                     "data_bad_naive", "data_bad")
   
   # 移除包含NA的行（特别是朴素预测的第一个点）
   time_data_clean <- time_data[complete.cases(time_data), ]
@@ -424,7 +406,7 @@ run_single_simulation <- function(sim_id) {
 }
 
 # 执行批量模拟
-n_simulations <- 30
+n_simulations <- 50
 cat("开始时间序列自相关模拟，总共", n_simulations, "次模拟...\n")
 start_time <- Sys.time()
 
@@ -448,7 +430,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4","UC5")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -493,7 +475,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4","UC5")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -568,7 +550,7 @@ cat("可用的'越小越好'指标:", length(available_lower), "\n")
 
 # 设置颜色方案
 good_color <- "#c9cb05"  # 好模型
-bad_colors <- c("#bab1d8","#8076b5","#9e7cba", "#ac5aa1","#27447c")  # 紫色系 - 坏模型
+bad_colors <- c("#bab1d8","#8076b5","#9e7cba", "#27447c")  # 紫色系 - 坏模型
 scenario_colors <- c(good_color, bad_colors)
 
 # 9.2 改进的柱状图（带误差线）
@@ -893,8 +875,7 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
       "UC1" = "#bab1d8", 
       "UC2" = "#8076b5", 
       "UC3" = "#9e7cba", 
-      "UC4" = "#ac5aa1",
-      "UC5" = "#27447c"
+      "Bad" = "#27447c"
     )
     
     current_color <- scenario_colors[scenario]

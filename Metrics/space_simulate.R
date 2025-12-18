@@ -379,7 +379,7 @@ run_single_simulation <- function(sim_id) {
   base_data$data_bad <- rep(mean_data, n_locations) + rnorm(n_locations, mean = 0, sd = 0.1)
   
   # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   predictor_vars <- c("data_good", "data_bad_region", "data_bad_spatialerr", 
                       "data_boundary_bias", "data_bad")
   
@@ -446,7 +446,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -491,7 +491,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "UC4")
+  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -891,7 +891,7 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
       "UC1" = "#bab1d8", 
       "UC2" = "#8076b5", 
       "UC3" = "#9e7cba", 
-      "UC4" = "#ac5aa1"
+      "Bad" = "#ac5aa1"
     )
     
     current_color <- scenario_colors[scenario]
