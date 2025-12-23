@@ -1,4 +1,3 @@
-setwd("D:/Lavender/metric")
 # 加载时间序列分析必要的包
 library(forecast)  # 用于时间序列分析和预测
 library(tseries)   # 时间序列检验
@@ -346,25 +345,49 @@ run_single_simulation <- function(sim_id) {
   
   # 6. 场景2：残差具有自相关 - 模型未完全捕捉时间依赖结构
   # 生成具有自相关的残差序列
-  residual_signal <- arima.sim(
-    model = list(order = c(1, 0, 0), ar = 0.7), 
+  
+  residual_scale <- 0.5  # 控制残差的总体变异程度
+  
+  # 场景2：残差时间自相关很强
+  residual_strong_ar <- arima.sim(
+    model = list(order = c(1, 0, 0), ar = 0.9),  # AR(1)系数=0.9，强自相关
     n = n
   )
+  # 标准化残差序列，使其方差为1，然后缩放
+  residual_strong_ar <- as.numeric(scale(residual_strong_ar)) * residual_scale
+  time_data$data_bad_residual_strong <- time_data$reported_data + residual_strong_ar
   
-  time_data$data_bad_residual <- time_data$reported_data + residual_signal * 0.5
+  # 场景3：残差时间自相关中等
+  residual_medium_ar <- arima.sim(
+    model = list(order = c(1, 0, 0), ar = 0.5),  # AR(1)系数=0.5，中等自相关
+    n = n
+  )
+  # 标准化残差序列，使其方差为1，然后缩放
+  residual_medium_ar <- as.numeric(scale(residual_medium_ar)) * residual_scale
+  time_data$data_bad_residual_medium <- time_data$reported_data + residual_medium_ar
   
+  # 场景4：残差时间自相关极弱（无自相关）
+  # 使用ar=0生成纯白噪声，确保完全无自相关
+  residual_weak_ar <- arima.sim(
+    model = list(order = c(1, 0, 0), ar = 0),  # AR(1)系数=0，无自相关
+    n = n
+  )
+  # 标准化残差序列，使其方差为1，然后缩放
+  residual_weak_ar <- as.numeric(scale(residual_weak_ar)) * residual_scale
+  time_data$data_bad_residual_weak <- time_data$reported_data + residual_weak_ar
   
-  # 8. 场景3：朴素预测模型（直接使用上一个点的真实值做预测值）
+  # 8. 场景5：朴素预测模型（直接使用上一个点的真实值做预测值）
   time_data$data_bad_naive <- c(NA, time_data$reported_data[1:(n-1)])
   time_data$data_bad_naive[1] <- time_data$reported_data[1]  # 第一个点用自身值
   
-  # 9. 场景4：完全失败模型
+  # 9. 场景6：完全失败模型
   mean_data <- mean(time_data$reported_data)
   time_data$data_bad <- rep(mean_data, n) + rnorm(n, mean = 0, sd = 0.1)
   
   # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
-  predictor_vars <- c("data_good", "data_bad_seasonal", "data_bad_residual", 
+  scenarios <- c("Good", "UC1", "UC2_st","UC2_md","UC2_wk", "UC3", "Bad")
+  predictor_vars <- c("data_good", "data_bad_seasonal", "data_bad_residual_strong",
+                      "data_bad_residual_medium", "data_bad_residual_weak",
                      "data_bad_naive", "data_bad")
   
   # 移除包含NA的行（特别是朴素预测的第一个点）
@@ -430,7 +453,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
+  scenarios <- c("Good", "UC1",  "UC2_st","UC2_md","UC2_wk", "UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -475,7 +498,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
+  scenarios <- c("Good", "UC1",  "UC2_st","UC2_md","UC2_wk", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -550,7 +573,7 @@ cat("可用的'越小越好'指标:", length(available_lower), "\n")
 
 # 设置颜色方案
 good_color <- "#c9cb05"  # 好模型
-bad_colors <- c("#bab1d8","#8076b5","#9e7cba", "#27447c")  # 紫色系 - 坏模型
+bad_colors <- c("#bab1d8","#9e7cba","#8076b5","#624c7c","#ac5aa1","#27447c")  # 紫色系 - 坏模型
 scenario_colors <- c(good_color, bad_colors)
 
 # 9.2 改进的柱状图（带误差线）
@@ -873,8 +896,10 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
     scenario_colors <- c(
       "Good" = "#c9cb05", 
       "UC1" = "#bab1d8", 
-      "UC2" = "#8076b5", 
-      "UC3" = "#9e7cba", 
+      "UC2_st" = "#9e7cba", 
+      "UC2_mid" = "#8076b5",
+      "UC2_wk" = "#624c7c",
+      "UC3" = "#ac5aa1",
       "Bad" = "#27447c"
     )
     
@@ -963,7 +988,7 @@ for(scenario in scenarios) {
   cat("\n")
   
   # 5. 保存当前场景的排名结果到文件
-  ranking_filename <- paste0("time_variance_ranking_", dataset_id, "_", scenario, ".csv")
+  ranking_filename <- paste0("time_var_rank_", dataset_id, "_", scenario, ".csv")
   write.csv(ranking_results, ranking_filename, row.names = FALSE)
   cat("场景", scenario, "排名结果已保存到:", ranking_filename, "\n\n")
   

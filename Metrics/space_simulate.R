@@ -6,6 +6,7 @@ library(spdep)    # 空间自相关分析
 library(ape)      # 莫兰指数计算
 library(nlme)     # 空间线性模型
 library(fields)   # 用于距离计算和可视化
+library(cluster)  # 聚类
 
 # 修改后的calculate_all_metrics函数 - 移除系统发育指标，增加空间指标
 calculate_all_metrics <- function(spatial_data, coords_matrix, 
@@ -365,15 +366,15 @@ run_single_simulation <- function(sim_id) {
     base_data$data_bad_region[spatial_clusters$clustering == biased_region] + bias_magnitude
   
   # 7. 场景3-5：残差具有不同强度的空间自相关
-  # 目标：残差场方差占主导过程方差的20%（确保不掩盖主导过程）
-  residual_variance_ratio <- 0.2
+  # 目标：残差场方差占主导过程方差的40%（确保不掩盖主导过程）
+  residual_variance_ratio <- 0.3
   target_residual_variance <- dominant_variance * residual_variance_ratio
   
   # 7.1 强空间自相关残差场 (90%结构方差，10%块金)
   strong_resid_model <- vgm(
     psill = target_residual_variance * 0.9,  # 90%结构方差
     model = "Sph",
-    range = 0.25,  # 稍小于主导过程的变程
+    range = 0.3,  # 稍小于主导过程的变程
     nugget = target_residual_variance * 0.1  # 10%块金
   )
   strong_resid_field <- predict(gstat(
@@ -389,7 +390,7 @@ run_single_simulation <- function(sim_id) {
   medium_resid_model <- vgm(
     psill = target_residual_variance * 0.5,  # 50%结构方差
     model = "Sph",
-    range = 0.15,  # 中等变程
+    range = 0.3,  # 中等变程
     nugget = target_residual_variance * 0.5  # 50%块金
   )
   medium_resid_field <- predict(gstat(
@@ -497,7 +498,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2_1", "UC2_1","UC2_3","UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_strong", "UC2_medium", "UC2_weak","UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -542,7 +543,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1",  "UC2_1", "UC2_1","UC2_3", "UC3", "Bad")
+  scenarios <- c("Good", "UC1",  "UC2_strong", "UC2_medium", "UC2_weak", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -713,6 +714,7 @@ par(mfrow = c(1, 1))
 #-------泛化能力部分的可视化--------
 library(ggplot2)
 library(dplyr)
+
 calculate_delta_metrics <- function(split_results_df) {
   # 定义各类指标
   r2_metrics <- c("ols", "adjusted")
@@ -866,6 +868,7 @@ if(length(delta_columns) > 0) {
   cat("各delta指标的NA值数量:\n")
   print(delta_na_counts)
 }
+
 # 计算每个场景和每个指标的delta方差
 calculate_delta_variance <- function(delta_data, delta_columns) {
   scenarios <- unique(delta_data$scenario)
@@ -940,9 +943,9 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
     scenario_colors <- c(
       "Good" = "#c9cb05", 
       "UC1" = "#bab1d8", 
-      "UC2_1" = "#9e7cba", 
-      "UC2_2" = "#8076b5",
-      "UC2_3" = "#624c7c",
+      "UC2_strong" = "#9e7cba", 
+      "UC2_medium" = "#8076b5",
+      "UC2_weak" = "#624c7c",
       "UC3" = "#ac5aa1", 
       "Bad" = "#27447c"
     )
@@ -1032,7 +1035,7 @@ for(scenario in scenarios) {
   cat("\n")
   
   # 5. 保存当前场景的排名结果到文件
-  ranking_filename <- paste0("variance_ranking_", dataset_id, "_", scenario, ".csv")
+  ranking_filename <- paste0("space_var_rank_", dataset_id, "_", scenario, ".csv")
   write.csv(ranking_results, ranking_filename, row.names = FALSE)
   cat("场景", scenario, "排名结果已保存到:", ranking_filename, "\n\n")
   
