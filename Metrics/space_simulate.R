@@ -322,22 +322,22 @@ run_single_simulation <- function(sim_id) {
   # 2. 计算空间距离矩阵
   spatial_dist <- as.matrix(dist(coords_matrix))
   
-  # 3. 定义空间自相关结构
-  variogram_model <- vgm(
+  # 3. 定义主导空间过程
+  dominant_variogram <- vgm(
     psill = 1.0,
     model = "Sph",
     range = 0.3,
     nugget = 0.1
   )
   
-  # 4. 生成空间自相关的"真实值"
+  # 4. 生成主导空间过程
   sp_points <- SpatialPoints(spatial_coords[, c("x", "y")])
   spatial_field <- predict(gstat(
     formula = z ~ 1,
     locations = ~ x + y,
     dummy = TRUE,
     beta = 0,
-    model = variogram_model
+    model = dominant_variogram
   ), newdata = sp_points, nsim = 1)
   
   # 创建基础数据框
@@ -348,10 +348,14 @@ run_single_simulation <- function(sim_id) {
     reported_data = spatial_field@data$sim1  # 具有空间自相关的"真实值"
   )
   
+  # 计算主导过程的方差，用于控制残差场的强度
+  dominant_variance <- var(base_data$reported_data)
+  cat("主导过程方差:", round(dominant_variance, 3), "\n")
+  
   # 5. 生成好预测值（微小随机误差）
   base_data$data_good <- base_data$reported_data + rnorm(n_locations, mean = 0, sd = 0.1)
   
-  # 6. 场景1：空间聚集误差
+  # 6. 场景2：空间聚集误差
   spatial_clusters <- pam(spatial_dist, k = 4)
   biased_region <- sample(1:4, 1)
   bias_magnitude <- 2 * sd(base_data$reported_data)
@@ -360,27 +364,74 @@ run_single_simulation <- function(sim_id) {
   base_data$data_bad_region[spatial_clusters$clustering == biased_region] <- 
     base_data$data_bad_region[spatial_clusters$clustering == biased_region] + bias_magnitude
   
-  # 7. 场景2：残差具有空间自相关
-  residual_field <- predict(gstat(formula = z ~ 1, locations = ~ x + y, 
-                                  dummy = TRUE, beta = 0, 
-                                  model = vgm(0.3, "Sph", 0.2, 0.1)), 
-                            newdata = sp_points, nsim = 1)
-  base_data$data_bad_spatialerr <- base_data$reported_data + residual_field@data$sim1
+  # 7. 场景3-5：残差具有不同强度的空间自相关
+  # 目标：残差场方差占主导过程方差的20%（确保不掩盖主导过程）
+  residual_variance_ratio <- 0.2
+  target_residual_variance <- dominant_variance * residual_variance_ratio
   
-  # 8. 场景3：边界效应误差
+  # 7.1 强空间自相关残差场 (90%结构方差，10%块金)
+  strong_resid_model <- vgm(
+    psill = target_residual_variance * 0.9,  # 90%结构方差
+    model = "Sph",
+    range = 0.25,  # 稍小于主导过程的变程
+    nugget = target_residual_variance * 0.1  # 10%块金
+  )
+  strong_resid_field <- predict(gstat(
+    formula = z ~ 1,
+    locations = ~ x + y,
+    dummy = TRUE,
+    beta = 0,
+    model = strong_resid_model
+  ), newdata = sp_points, nsim = 1)
+  base_data$data_strong_spatialerr <- base_data$reported_data + strong_resid_field@data$sim1
+  
+  # 7.2 中等空间自相关残差场 (50%结构方差，50%块金)
+  medium_resid_model <- vgm(
+    psill = target_residual_variance * 0.5,  # 50%结构方差
+    model = "Sph",
+    range = 0.15,  # 中等变程
+    nugget = target_residual_variance * 0.5  # 50%块金
+  )
+  medium_resid_field <- predict(gstat(
+    formula = z ~ 1,
+    locations = ~ x + y,
+    dummy = TRUE,
+    beta = 0,
+    model = medium_resid_model
+  ), newdata = sp_points, nsim = 1)
+  base_data$data_medium_spatialerr <- base_data$reported_data + medium_resid_field@data$sim1
+  
+  # 7.3 极弱空间自相关残差场 (纯块金模型，无空间自相关)
+  weak_resid_model <- vgm(
+    psill = 0,  # 无结构方差
+    model = "Nug",  # 块金模型
+    range = 0,  # 无变程
+    nugget = target_residual_variance  # 全部为块金方差
+  )
+  weak_resid_field <- predict(gstat(
+    formula = z ~ 1,
+    locations = ~ x + y,
+    dummy = TRUE,
+    beta = 0,
+    model = weak_resid_model
+  ), newdata = sp_points, nsim = 1)
+  base_data$data_weak_spatialerr <- base_data$reported_data + weak_resid_field@data$sim1
+  
+  # 8. 场景6：边界效应误差
   boundary_dist <- pmin(base_data$x_coord, 1-base_data$x_coord,
                         base_data$y_coord, 1-base_data$y_coord)
   boundary_effect <- boundary_dist/max(boundary_dist)
   base_data$data_boundary_bias <- base_data$reported_data + 
     rnorm(nrow(base_data), 0, sd(base_data$reported_data)*0.5) * (1-boundary_effect)
   
-  # 9. 场景4：完全失败模型
+  # 9. 场景7：完全失败模型
   mean_data <- mean(base_data$reported_data)
   base_data$data_bad <- rep(mean_data, n_locations) + rnorm(n_locations, mean = 0, sd = 0.1)
   
   # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
-  predictor_vars <- c("data_good", "data_bad_region", "data_bad_spatialerr", 
+  scenarios <- c("Good", "UC1", "UC2_strong", "UC2_medium", "UC2_weak", "UC3", "Bad")
+  predictor_vars <- c("data_good", "data_bad_region", "data_strong_spatialerr", 
+                      "data_medium_spatialerr", "data_weak_spatialerr", 
                       "data_boundary_bias", "data_bad")
   
   metrics_list <- list()
@@ -446,7 +497,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_1", "UC2_1","UC2_3","UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -491,7 +542,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1", "UC2", "UC3", "Bad")
+  scenarios <- c("Good", "UC1",  "UC2_1", "UC2_1","UC2_3", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -566,7 +617,7 @@ cat("可用的'越小越好'指标:", length(available_lower), "\n")
 
 # 设置颜色方案
 good_color <- "#c9cb05"  # 好模型
-bad_colors <- c("#bab1d8","#8076b5","#9e7cba", "#ac5aa1")  # 紫色系 - 坏模型
+bad_colors <- c("#bab1d8","#9e7cba","#8076b5","#624c7c","#ac5aa1","#27447c")  # 紫色系 - 坏模型
 scenario_colors <- c(good_color, bad_colors)
 
 # 9.2 改进的柱状图（带误差线）
@@ -889,9 +940,11 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
     scenario_colors <- c(
       "Good" = "#c9cb05", 
       "UC1" = "#bab1d8", 
-      "UC2" = "#8076b5", 
-      "UC3" = "#9e7cba", 
-      "Bad" = "#ac5aa1"
+      "UC2_1" = "#9e7cba", 
+      "UC2_2" = "#8076b5",
+      "UC2_3" = "#624c7c",
+      "UC3" = "#ac5aa1", 
+      "Bad" = "#27447c"
     )
     
     current_color <- scenario_colors[scenario]
