@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 
-setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred/var_ana")
+# setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/get_obs_pred/var_ana")
 
 # 定义指标类型和颜色（与原始分析保持一致）
 r2_metrics <- c("ols", "adjusted")
@@ -20,11 +20,13 @@ type_colors <- c(
 )
 
 # 1. 自动读取目录下所有以"variance_ranking_"开头的CSV文件
-ranking_files <- list.files(pattern = "^variance_ranking_.*\\.csv$")
+#此时改为分析模拟数据的结果
+ranking_files <- list.files(pattern = "^space_var_rank_simulation_.*\\.csv$")
 
 if(length(ranking_files) == 0) {
   stop("没有找到以'variance_ranking_'开头的CSV文件")
 }
+ranking_files <- ranking_files[!grepl("Bad", ranking_files)]
 
 print(paste("找到", length(ranking_files), "个排名文件:"))
 print(ranking_files)
@@ -60,7 +62,7 @@ print("最终平均排名结果：")
 print(final_ranking, width = Inf)
 
 # 5. 保存最终结果
-write.csv(final_ranking, "final_variance_ranking.csv", row.names = FALSE)
+# write.csv(final_ranking, "final_variance_ranking.csv", row.names = FALSE)
 
 # 6. 创建排名热图，显示每个指标在不同数据集中的排名
 rank_matrix <- all_rankings %>%
