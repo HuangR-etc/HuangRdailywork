@@ -346,7 +346,7 @@ run_single_simulation <- function(sim_id) {
   # 6. 场景2：残差具有自相关 - 模型未完全捕捉时间依赖结构
   # 生成具有自相关的残差序列
   
-  residual_scale <- 0.5  # 控制残差的总体变异程度
+  residual_scale <- 3  # 控制残差的总体变异程度
   
   # 场景2：残差时间自相关很强
   residual_strong_ar <- arima.sim(

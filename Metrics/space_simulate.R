@@ -366,8 +366,8 @@ run_single_simulation <- function(sim_id) {
     base_data$data_bad_region[spatial_clusters$clustering == biased_region] + bias_magnitude
   
   # 7. 场景3-5：残差具有不同强度的空间自相关
-  # 目标：残差场方差占主导过程方差的40%（确保不掩盖主导过程）
-  residual_variance_ratio <- 0.3
+  # 目标：残差场方差占主导过程方差的80%（确保不掩盖主导过程）
+  residual_variance_ratio <- 0.8
   target_residual_variance <- dominant_variance * residual_variance_ratio
   
   # 7.1 强空间自相关残差场 (90%结构方差，10%块金)
