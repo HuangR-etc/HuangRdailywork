@@ -1,4 +1,4 @@
-setwd("D:/Lavender/metric")
+setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/UC")
 # 加载空间分析必要的包
 library(gstat)    # 用于空间模拟和变异函数
 library(sp)       # 处理空间数据
@@ -8,10 +8,11 @@ library(nlme)     # 空间线性模型
 library(fields)   # 用于距离计算和可视化
 library(cluster)  # 聚类
 
-# 修改后的calculate_all_metrics函数 - 移除系统发育指标，增加空间指标
+# calculate_all_metrics函数
 calculate_all_metrics <- function(spatial_data, coords_matrix, 
                                   response_var = "reported_data", 
-                                  predictor_var = "data") {
+                                  predictor_var = "data",
+                                  delta = 0.01) {     # 新增参数：平滑参数
   
   # 提取观测值和预测值
   y_true <- spatial_data[[response_var]]
@@ -40,7 +41,47 @@ calculate_all_metrics <- function(spatial_data, coords_matrix,
     })
   }
   
-  # 误差指标
+  # 计算基于残差概率密度的加权RMSE
+  weighted_rmse <- NA
+  density_weights <- rep(1, n)  # 默认权重为1
+  
+  # 步骤1：计算残差的概率密度
+  if (length(unique(residuals)) > 1) {  # 确保残差不全是相同的值
+    tryCatch({
+      # 计算残差的高斯核密度估计
+      kde_density <- density(residuals, kernel = "gaussian", na.rm = TRUE)
+      
+      # 计算每个残差点处的概率密度
+      get_density <- approxfun(kde_density$x, kde_density$y)
+      prob_density <- get_density(residuals)
+      
+      # 处理可能的NA值（例如，残差在核密度估计范围外）
+      prob_density[is.na(prob_density)] <- min(prob_density, na.rm = TRUE)
+      
+      # 计算原始权重（逆概率密度 + 平滑参数）
+      raw_weights <- 1 / (prob_density + delta)
+      
+      # Min-Max归一化权重到[0,1]范围
+      density_weights <- (raw_weights - min(raw_weights)) / 
+        (max(raw_weights) - min(raw_weights))
+      
+      # 计算加权RMSE
+      weighted_mse <- sum(density_weights * residuals^2, na.rm = TRUE) / 
+        sum(density_weights, na.rm = TRUE)
+      weighted_rmse <- sqrt(weighted_mse)
+      
+    }, error = function(e) {
+      cat("加权RMSE计算错误:", e$message, "\n")
+      weighted_rmse <<- sqrt(mean(residuals^2, na.rm = TRUE))  # 回退到标准RMSE
+      density_weights <<- rep(1, n)
+    })
+  } else {
+    # 如果残差几乎相同，退回到标准RMSE
+    weighted_rmse <- sqrt(mean(residuals^2, na.rm = TRUE))
+    density_weights <- rep(1, n)
+  }
+  
+  # 普通误差指标
   mse <- mean(residuals^2)
   rmse <- sqrt(mse)
   mae <- mean(abs(residuals))
@@ -163,6 +204,8 @@ calculate_all_metrics <- function(spatial_data, coords_matrix,
     rmse = rmse,
     mae = mae,
     median_ae = median_ae,
+    # 新增指标：weighted_rmse
+    weighted_rmse = weighted_rmse,  # 基于残差概率密度的加权RMSE
     
     # 相关性指标
     pearson_corr = pearson_corr,
@@ -187,10 +230,11 @@ calculate_all_metrics <- function(spatial_data, coords_matrix,
   ))
 }
 
-# 修改后的随机分割分析函数（空间版本）
+# 随机分割分析函数（空间版本）
 perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterations = 50, train_ratio = 0.8, 
                                           response_var = "reported_data", predictor_var = "data",
-                                          scenario_name = "Unknown", sim_id = 1) {
+                                          scenario_name = "Unknown",
+                                          sim_id = 1) {
   
   results <- list()
   successful_iterations <- 0
@@ -243,6 +287,7 @@ perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterati
         adjusted_r2_train = metrics_train$adjusted_r2,
         mse_train = metrics_train$mse,
         rmse_train = metrics_train$rmse,
+        weighted_rmse_train = metrics_train$weighted_rmse,
         mae_train = metrics_train$mae,
         median_ae_train = metrics_train$median_ae,
         pearson_corr_train = metrics_train$pearson_corr,
@@ -263,6 +308,7 @@ perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterati
         adjusted_r2_test = metrics_test$adjusted_r2,
         mse_test = metrics_test$mse,
         rmse_test = metrics_test$rmse,
+        weighted_rmse_test = metrics_test$weighted_rmse,
         mae_test = metrics_test$mae,
         median_ae_test = metrics_test$median_ae,
         pearson_corr_test = metrics_test$pearson_corr,
@@ -300,7 +346,7 @@ perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterati
   return(do.call(rbind, results))
 }
 
-# 修改后的主模拟函数（空间版本）
+# 主模拟函数（空间版本）
 run_single_simulation <- function(sim_id) {
   cat("正在进行第", sim_id, "次空间模拟...\n")
   
@@ -474,7 +520,7 @@ run_single_simulation <- function(sim_id) {
 }
 
 # 执行批量模拟（减少模拟次数以加快测试）
-n_simulations <- 30
+n_simulations <- 20
 cat("开始空间自相关模拟，总共", n_simulations, "次模拟...\n")
 start_time <- Sys.time()
 
@@ -605,7 +651,7 @@ higher_better_metrics <- c(
 )
 
 lower_better_metrics <- c(
-  "mse", "rmse", "mae", "median_ae", "mape", "smape"
+  "mse", "rmse", "weighted_rmse", "mae", "median_ae", "mape", "smape"
 )
 
 # 筛选实际存在的指标
@@ -718,7 +764,7 @@ library(dplyr)
 calculate_delta_metrics <- function(split_results_df) {
   # 定义各类指标
   r2_metrics <- c("ols", "adjusted")
-  error_metrics <- c("mse", "rmse", "mae", "median_ae")
+  error_metrics <- c("mse", "rmse","weighted_rmse", "mae", "median_ae")
   corr_metrics <- c("pearson", "spearman")
   percentage_metrics <- c("mape", "smape", "cn_smape")
   
@@ -890,7 +936,7 @@ calculate_delta_variance <- function(delta_data, delta_columns) {
         # 确定指标类型
         if(grepl("_r2$", metric)) {
           metric_type <- "R-squared"
-        } else if(grepl("mse|rmse|mae|median_ae", metric)) {
+        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae", metric)) {
           metric_type <- "Error"
         } else if(grepl("pearson|spearman", metric)) {
           metric_type <- "Correlation"
