@@ -1,18 +1,21 @@
-# 加载时间序列分析必要的包
-library(forecast)  # 用于时间序列分析和预测
-library(tseries)   # 时间序列检验
-library(zoo)       # 时间序列处理
-library(Metrics)   # 评估指标
+# 加载必要的包
+library(ape)
+library(phytools)
+library(nlme)
+library(geiger)
+library(rr2)
+library(caper)
+library(cluster)
 
-# 修改后的calculate_all_metrics函数 - 移除空间指标，增加时间序列指标
-calculate_all_metrics <- function(time_data, time_points, 
+# 计算各个指标的calculate_all_metrics函数，增加错误处理
+calculate_all_metrics <- function(final_data, tree_subset, comp_data, 
                                   response_var = "reported_data", 
                                   predictor_var = "data",
                                   delta = 0.01) {
   
   # 提取观测值和预测值
-  y_true <- time_data[[response_var]]
-  y_pred <- time_data[[predictor_var]]
+  y_true <- final_data[[response_var]]
+  y_pred <- final_data[[predictor_var]]
   n <- length(y_true)
   
   # 检查预测值是否为常数
@@ -22,13 +25,14 @@ calculate_all_metrics <- function(time_data, time_points,
   # 1. 基础误差指标
   residuals <- y_true - y_pred
   
-  # OLS回归
+  # OLS回归 - 添加错误处理
   ols_r2 <- NA
   adjusted_r2 <- NA
   if (!is_constant_pred) {
     tryCatch({
-      raw_model <- lm(as.formula(paste(response_var, "~", predictor_var)), data = time_data)
+      raw_model <- lm(as.formula(paste(response_var, "~", predictor_var)), data = final_data)
       ols_r2 <- summary(raw_model)$r.squared
+      # 调整R² (p=1个预测变量)
       p <- 1
       adjusted_r2 <- 1 - (1 - ols_r2) * (n - 1) / (n - p - 1)
     }, error = function(e) {
@@ -36,7 +40,6 @@ calculate_all_metrics <- function(time_data, time_points,
       adjusted_r2 <<- NA
     })
   }
-  
   # 计算基于残差概率密度的加权RMSE
   weighted_rmse <- NA
   density_weights <- rep(1, n)  # 默认权重为1
@@ -76,14 +79,13 @@ calculate_all_metrics <- function(time_data, time_points,
     weighted_rmse <- sqrt(mean(residuals^2, na.rm = TRUE))
     density_weights <- rep(1, n)
   }
-  
-  # 误差指标
+  # 误差指标（这些应该可以正常计算）
   mse <- mean(residuals^2)
   rmse <- sqrt(mse)
   mae <- mean(abs(residuals))
   median_ae <- median(abs(residuals))
   
-  # 相关性指标
+  # 相关性指标 - 添加错误处理
   pearson_corr <- NA
   spearman_corr <- NA
   if (!is_constant_pred) {
@@ -109,77 +111,146 @@ calculate_all_metrics <- function(time_data, time_points,
   smape_val <- mean(numerator / denominator) * 100
   cn_smape <- 1 - (smape_val / 200)
   
-  # 2. 时间序列自相关指标
+  # 2. 系统发育相关指标
   
-  # 真实值的自相关系数
-  acf_real_lag1 <- NA
+  # 系统发育信号lambda
+  lambda <- NA
   tryCatch({
-    acf_real <- acf(y_true, plot = FALSE, lag.max = 1, na.action = na.pass)
-    acf_real_lag1 <- acf_real$acf[2]
+    response_values <- y_true
+    names(response_values) <- final_data$GCF
+    lambda_result <- phytools::phylosig(tree_subset, response_values, method = "lambda", test = FALSE)
+    lambda <- as.numeric(lambda_result$lambda)
   }, error = function(e) {
-    acf_real_lag1 <<- NA
+    lambda <<- NA
   })
   
-  # 预测值的自相关系数
-  acf_pred_lag1 <- NA
+  # PIC相关指标
+  pic_obs <- NA
+  pic_pred <- NA
+  pic_pearson <- NA
+  pic_spearman <- NA
+  pic_rmse <- NA
+  pic_mae <- NA
+  pic_r2 <- NA
+  
   if (!is_constant_pred) {
     tryCatch({
-      acf_pred <- acf(y_pred, plot = FALSE, lag.max = 1, na.action = na.pass)
-      acf_pred_lag1 <- acf_pred$acf[2]
+      pic_obs <- pic(y_true, tree_subset)
+      pic_pred <- pic(y_pred, tree_subset)
+      
+      if (length(pic_obs) > 1 && length(pic_pred) > 1) {
+        pic_pearson <- cor(pic_obs, pic_pred, method = "pearson")
+        pic_spearman <- cor(pic_obs, pic_pred, method = "spearman")
+        
+        pic_residuals <- pic_obs - pic_pred
+        pic_rmse <- sqrt(mean(pic_residuals^2))
+        pic_mae <- mean(abs(pic_residuals))
+        
+        # PIC R² (无截距模型)
+        pic_model <- lm(pic_obs ~ pic_pred - 1)
+        pic_r2 <- summary(pic_model)$r.squared
+      }
     }, error = function(e) {
-      acf_pred_lag1 <<- NA
+      # 如果PIC计算失败，保持NA值
     })
   }
   
-  # 残差的自相关系数
-  acf_residual_lag1 <- NA
-  tryCatch({
-    acf_resid <- acf(residuals, plot = FALSE, lag.max = 1, na.action = na.pass)
-    acf_residual_lag1 <- acf_resid$acf[2]
-  }, error = function(e) {
-    acf_residual_lag1 <<- NA
-  })
+  # 系统发育白化指标
+  calculate_whitened_metrics <- function(y, yhat, tip_labels, tree, lambda) {
+    # 如果lambda是NA，返回NA
+    if (is.na(lambda)) {
+      return(list(
+        whitened_r2 = NA,
+        whitened_rmse = NA,
+        whitened_mae = NA
+      ))
+    }
+    
+    tryCatch({
+      # 辅助函数：根据lambda调整协方差矩阵
+      adjust_vcv_by_lambda <- function(tree, lambda) {
+        V_bm <- ape::vcv(tree)
+        diag_vals <- diag(V_bm)
+        V_lambda <- V_bm
+        n <- nrow(V_bm)
+        
+        for (i in 1:(n-1)) {
+          for (j in (i+1):n) {
+            V_lambda[i, j] <- V_lambda[j, i] <- V_bm[i, j] * lambda
+          }
+        }
+        eps <- 1e-8
+        V_lambda <- V_lambda + diag(eps, n)
+        return(V_lambda)
+      }
+      
+      names(y) <- names(yhat) <- tip_labels
+      V <- adjust_vcv_by_lambda(tree, lambda)
+      V <- V[tip_labels, tip_labels, drop = FALSE]
+      
+      # Cholesky 白化
+      eps <- 1e-8
+      W <- solve(V + diag(eps, nrow(V)))
+      L <- chol(W)
+      
+      # 白化变换
+      y_star <- as.numeric(L %*% y)
+      yhat_star <- as.numeric(L %*% yhat)
+      
+      # 在白化空间计算指标
+      whitened_residuals <- y_star - yhat_star
+      whitened_rmse <- sqrt(mean(whitened_residuals^2))
+      whitened_mae <- mean(abs(whitened_residuals))
+      
+      # 白化R²
+      ybar_star <- mean(y_star)
+      RSS <- sum(whitened_residuals^2)
+      TSS <- sum((y_star - ybar_star)^2)
+      whitened_r2 <- 1 - RSS/TSS
+      
+      return(list(
+        whitened_r2 = whitened_r2,
+        whitened_rmse = whitened_rmse,
+        whitened_mae = whitened_mae
+      ))
+    }, error = function(e) {
+      return(list(
+        whitened_r2 = NA,
+        whitened_rmse = NA,
+        whitened_mae = NA
+      ))
+    })
+  }
   
-  # Ljung-Box检验（残差自相关检验）
-  lb_test_pvalue <- NA
-  tryCatch({
-    lb_test <- Box.test(residuals, lag = 1, type = "Ljung-Box")
-    lb_test_pvalue <- lb_test$p.value
-  }, error = function(e) {
-    lb_test_pvalue <<- NA
-  })
+  whitened_results <- calculate_whitened_metrics(
+    y = y_true,
+    yhat = y_pred,
+    tip_labels = final_data$GCF,
+    tree = tree_subset,
+    lambda = lambda
+  )
   
-  # 残差的ADF检验（平稳性检验）
-  adf_test_pvalue <- NA
-  tryCatch({
-    adf_test <- adf.test(residuals, alternative = "stationary")
-    adf_test_pvalue <- adf_test$p.value
-  }, error = function(e) {
-    adf_test_pvalue <<- NA
-  })
+  # 3. Ives相关指标
+  resid_r2 <- NA
+  lik_r2 <- NA
   
-  # 时间序列模型的R²（ARIMA模型）
-  arima_r2 <- NA
-  tryCatch({
-    # 拟合ARIMA模型
-    arima_model <- auto.arima(y_true, seasonal = FALSE)
-    arima_residuals <- residuals(arima_model)
-    arima_r2 <- max(0, 1 - var(arima_residuals)/var(y_true))
-  }, error = function(e) {
-    arima_r2 <<- NA
-  })
-  
-  # 3. 时间序列预测指标
-  # MASE (Mean Absolute Scaled Error) - 时间序列预测常用指标
-  mase_value <- NA
-  tryCatch({
-    # 朴素预测作为基准
-    naive_forecast <- c(NA, y_true[1:(n-1)])
-    mae_naive <- mean(abs(y_true[2:n] - naive_forecast[2:n]), na.rm = TRUE)
-    mase_value <- mae / mae_naive
-  }, error = function(e) {
-    mase_value <<- NA
-  })
+  if (!is_constant_pred) {
+    tryCatch({
+      final_data$weights <- diag(ape::vcv(tree_subset))
+      
+      gls_model <- gls(as.formula(paste(response_var, "~", predictor_var)), 
+                       data = final_data,
+                       correlation = corBrownian(1, form = ~GCF, phy = tree_subset),
+                       weights = varFixed(~weights),
+                       method = "ML")
+      
+      # Ives提出的R2
+      resid_r2 <- R2_resid(gls_model)
+      lik_r2 <- R2_lik(gls_model)
+    }, error = function(e) {
+      # 如果GLS失败，保持NA值
+    })
+  }
   
   # 返回所有指标
   return(list(
@@ -188,8 +259,7 @@ calculate_all_metrics <- function(time_data, time_points,
     adjusted_r2 = adjusted_r2,
     mse = mse,
     rmse = rmse,
-    # 新增指标：weighted_rmse
-    weighted_rmse = weighted_rmse,  # 基于残差概率密度的加权RMSE
+    weighted_rmse = weighted_rmse,
     mae = mae,
     median_ae = median_ae,
     
@@ -202,91 +272,109 @@ calculate_all_metrics <- function(time_data, time_points,
     smape = smape_val,
     cn_smape = cn_smape,
     
-    # 时间序列自相关指标
-    acf_real_lag1 = acf_real_lag1,
-    acf_pred_lag1 = acf_pred_lag1,
-    acf_residual_lag1 = acf_residual_lag1,
-    lb_test_pvalue = lb_test_pvalue,
-    adf_test_pvalue = adf_test_pvalue,
-    arima_r2 = arima_r2,
-    mase = mase_value,
+    # 系统发育指标
+    lambda = lambda,
+    pic_r2 = pic_r2,
+    pic_pearson = pic_pearson,
+    pic_spearman = pic_spearman,
+    pic_rmse = pic_rmse,
+    pic_mae = pic_mae,
+    
+    # 白化指标
+    whitened_r2 = whitened_results$whitened_r2,
+    whitened_rmse = whitened_results$whitened_rmse,
+    whitened_mae = whitened_results$whitened_mae,
+    
+    # Ives指标
+    resid_r2 = resid_r2,
+    lik_r2 = lik_r2,
     
     # 添加一个标志，指示预测值是否为常数
     is_constant_pred = is_constant_pred
   ))
 }
-
-# 模仿scikit-learn的TimeSeriesSplit逻辑的时间序列分割分析函数
-perform_time_split_analysis <- function(time_data, n_splits = 5, 
-                                        response_var = "reported_data", predictor_var = "data",
-                                        scenario_name = "Unknown", sim_id = 1) {
+# 修剪树和数据的辅助函数
+prune_tree_and_data <- function(tree, data) {
+  # 确保数据中的GCF在树中存在
+  common_species <- intersect(data$GCF, tree$tip.label)
   
-  results <- list()
-  n_total <- nrow(time_data)
-  
-  # 确保分割次数合理
-  n_splits <- min(n_splits, n_total - 1)
-  if (n_splits < 2) {
-    stop("时间序列太短，无法进行有效分割")
+  if (length(common_species) < 2) {
+    stop("树和数据中共同的物种数量不足")
   }
   
-  # 生成时间点
-  time_points <- 1:n_total
+  # 修剪树和数据
+  tree_pruned <- keep.tip(tree, common_species)
+  data_pruned <- data[data$GCF %in% common_species, ]
   
-  # 模仿scikit-learn的TimeSeriesSplit逻辑
-  # 每次分割，训练集逐步扩展，测试集紧随其后
-  for (split_idx in 1:n_splits) {
+  # 确保数据顺序与树一致
+  data_ordered <- data_pruned[match(tree_pruned$tip.label, data_pruned$GCF), ]
+  
+  # 创建比较数据对象
+  comp_data <- comparative.data(tree_pruned, data_ordered, names.col = "GCF")
+  
+  return(list(
+    tree = tree_pruned,
+    data = data_ordered,
+    comp_data = comp_data
+  ))
+}
+
+# 随机分割分析函数（修改版）
+perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, train_ratio = 0.8, 
+                                          response_var = "reported_data", predictor_var = "data",
+                                          scenario_name = "Unknown", sim_id = 1) {
+  
+  results <- list()
+  successful_iterations <- 0
+  iteration_count <- 0
+  
+  while (successful_iterations < n_iterations && iteration_count < n_iterations * 2) {
+    iteration_count <- iteration_count + 1
+    
+    # 设置随机种子
+    current_seed <- 123 + sim_id * 1000 + iteration_count
+    set.seed(current_seed)
+    
     # 使用tryCatch进行错误处理
     result <- tryCatch({
-      # 计算训练集和测试集的大小
-      # 类似scikit-learn，训练集逐步扩展
-      train_size <- round(n_total * (split_idx / (n_splits + 1)))
-      test_size <- round(n_total * (1 / (n_splits + 1)))
+      # 随机划分数据
+      n_total <- nrow(final_data)
+      n_train <- round(n_total * train_ratio)
+      n_test <- n_total - n_train
       
-      # 确保最小训练集大小
-      min_train_size <- 20
-      train_size <- max(train_size, min_train_size)
-      
-      # 确保有足够的测试数据
-      if (train_size + test_size > n_total) {
-        test_size <- n_total - train_size
-      }
-      
-      if (test_size < 5) {
-        next  # 测试集太小，跳过此次分割
-      }
-      
-      # 确定训练集和测试集索引
-      train_indices <- 1:train_size
-      test_indices <- (train_size + 1):(train_size + test_size)
+      train_indices <- sample(1:n_total, n_train, replace = FALSE)
+      test_indices <- setdiff(1:n_total, train_indices)
       
       # 创建训练集和测试集
-      train_data <- time_data[train_indices, ]
-      test_data <- time_data[test_indices, ]
+      train_data <- final_data[train_indices, ]
+      test_data <- final_data[test_indices, ]
       
-      # 对应的时序点
-      train_time <- time_points[train_indices]
-      test_time <- time_points[test_indices]
+      # 对训练集进行计算
+      prune_train <- prune_tree_and_data(tree, train_data)
+      tree_train <- prune_train$tree
+      train_data_ordered <- prune_train$data
+      comp_data_train <- prune_train$comp_data
       
-      # 计算训练集指标
-      metrics_train <- calculate_all_metrics(train_data, train_time,
+      metrics_train <- calculate_all_metrics(train_data_ordered, tree_train, comp_data_train,
                                              response_var = response_var, predictor_var = predictor_var)
       
-      # 计算测试集指标
-      metrics_test <- calculate_all_metrics(test_data, test_time,
+      # 对测试集进行计算
+      prune_test <- prune_tree_and_data(tree, test_data)
+      tree_test <- prune_test$tree
+      test_data_ordered <- prune_test$data
+      comp_data_test <- prune_test$comp_data
+      
+      metrics_test <- calculate_all_metrics(test_data_ordered, tree_test, comp_data_test,
                                             response_var = response_var, predictor_var = predictor_var)
       
       # 构建结果行
       result_row <- data.frame(
         scenario = scenario_name,
         simulation_id = sim_id,
-        split_iteration = split_idx,
-        train_size = length(train_indices),
-        test_size = length(test_indices),
-        train_start = min(train_indices),
-        train_end = max(train_indices),
-        test_start = min(test_indices),
-        test_end = max(test_indices),
+        split_iteration = successful_iterations + 1,
+        random_seed = current_seed,
+        train_size = n_train,
+        test_size = n_test,
         
         # 训练集指标
         ols_r2_train = metrics_train$ols_r2,
@@ -301,13 +389,17 @@ perform_time_split_analysis <- function(time_data, n_splits = 5,
         mape_train = metrics_train$mape,
         smape_train = metrics_train$smape,
         cn_smape_train = metrics_train$cn_smape,
-        acf_real_lag1_train = metrics_train$acf_real_lag1,
-        acf_pred_lag1_train = metrics_train$acf_pred_lag1,
-        acf_residual_lag1_train = metrics_train$acf_residual_lag1,
-        lb_test_pvalue_train = metrics_train$lb_test_pvalue,
-        adf_test_pvalue_train = metrics_train$adf_test_pvalue,
-        arima_r2_train = metrics_train$arima_r2,
-        mase_train = metrics_train$mase,
+        lambda_train = metrics_train$lambda,
+        pic_r2_train = metrics_train$pic_r2,
+        pic_pearson_train = metrics_train$pic_pearson,
+        pic_spearman_train = metrics_train$pic_spearman,
+        pic_rmse_train = metrics_train$pic_rmse,
+        pic_mae_train = metrics_train$pic_mae,
+        whitened_r2_train = metrics_train$whitened_r2,
+        whitened_rmse_train = metrics_train$whitened_rmse,
+        whitened_mae_train = metrics_train$whitened_mae,
+        resid_r2_train = metrics_train$resid_r2,
+        lik_r2_train = metrics_train$lik_r2,
         
         # 测试集指标
         ols_r2_test = metrics_test$ols_r2,
@@ -322,13 +414,17 @@ perform_time_split_analysis <- function(time_data, n_splits = 5,
         mape_test = metrics_test$mape,
         smape_test = metrics_test$smape,
         cn_smape_test = metrics_test$cn_smape,
-        acf_real_lag1_test = metrics_test$acf_real_lag1,
-        acf_pred_lag1_test = metrics_test$acf_pred_lag1,
-        acf_residual_lag1_test = metrics_test$acf_residual_lag1,
-        lb_test_pvalue_test = metrics_test$lb_test_pvalue,
-        adf_test_pvalue_test = metrics_test$adf_test_pvalue,
-        arima_r2_test = metrics_test$arima_r2,
-        mase_test = metrics_test$mase
+        lambda_test = metrics_test$lambda,
+        pic_r2_test = metrics_test$pic_r2,
+        pic_pearson_test = metrics_test$pic_pearson,
+        pic_spearman_test = metrics_test$pic_spearman,
+        pic_rmse_test = metrics_test$pic_rmse,
+        pic_mae_test = metrics_test$pic_mae,
+        whitened_r2_test = metrics_test$whitened_r2,
+        whitened_rmse_test = metrics_test$whitened_rmse,
+        whitened_mae_test = metrics_test$whitened_mae,
+        resid_r2_test = metrics_test$resid_r2,
+        lik_r2_test = metrics_test$lik_r2
       )
       
       # 返回成功的结果
@@ -340,111 +436,141 @@ perform_time_split_analysis <- function(time_data, n_splits = 5,
     
     # 如果成功，保存结果
     if (result$success) {
-      results[[split_idx]] <- result$result
+      successful_iterations <- successful_iterations + 1
+      results[[successful_iterations]] <- result$result
     }
   }
   
-  if (length(results) < n_splits) {
-    cat("警告: 场景", scenario_name, "模拟", sim_id, "只完成了", length(results), "次成功分割\n")
+  if (successful_iterations < n_iterations) {
+    cat("警告: 场景", scenario_name, "模拟", sim_id, "只完成了", successful_iterations, "次成功分割\n")
   }
   
   return(do.call(rbind, results))
 }
 
-# 修改后的主模拟函数（时间序列版本）
+# 设置重复模拟次数
+n_simulations <- 30  # 减少模拟次数以加快测试
+n_split_iterations <- 30  # 减少分割次数以加快测试
+set.seed(123)
+
+# 存储所有结果
+all_sim_results <- list()
+all_split_results <- list()
+
+# 批量模拟函数（修改版，包含分割分析）
 run_single_simulation <- function(sim_id) {
-  cat("正在进行第", sim_id, "次时间序列模拟...\n")
+  cat("正在进行第", sim_id, "次模拟...\n")
   
   # 设置随机种子
   set.seed(123 + sim_id)
   
-  # 1. 定义时间序列长度
-  n <- 200  # 时间序列长度
+  # 1. 生成基础数据
+  n_species <- 128
   
-  # 2. 生成ARMA(2,1)模型数据：具有自相关的时间序列
-  real_ts <- arima.sim(
-    model = list(order = c(2, 0, 1), ar = c(0.8, -0.3), ma = 0.4), 
-    n = n
-  ) + 0.05 * (1:n)  # 加上轻微趋势
+  # 生成系统发育树
+  tree <- rcoal(n_species)
+  tree$tip.label <- paste0("species", 1:n_species)
   
-  # 转换为时间序列对象
-  real_ts <- ts(real_ts, start = 1, frequency = 12)
+  # 使用BM模型模拟真实性状值
+  real_trait <- rTraitCont(tree, model = "BM", sigma = 1)
+  names(real_trait) <- tree$tip.label
   
-  # 3. 创建基础数据框
-  time_data <- data.frame(
-    time = 1:n,
-    reported_data = as.numeric(real_ts)
+  # 创建基础数据框
+  base_data <- data.frame(
+    GCF = tree$tip.label,
+    reported_data = real_trait
   )
   
-  # 4. 场景0：好预测值（微小随机误差）
-  time_data$data_good <- time_data$reported_data + rnorm(n, mean = 0, sd = 0.1)
+  # 生成好预测值（微小随机误差）
+  pred_good <- real_trait + rnorm(n_species, mean = 0, sd = 0.1)
+  base_data$data_good <- pred_good
   
-  # 5. 场景1：季节性预测失败 - 模型在特定季节（如冬季）表现差
-  # 识别冬季月份（假设数据从1月开始，频率为12）
-  winter_months <- (time_data$time %% 12) %in% c(12, 1, 2, 0)  # 12月、1月、2月
+  # 2. 场景1：系统发育聚集误差 (PH-UC1)
+  distance_matrix <- cophenetic(tree)
+  pam_result <- pam(distance_matrix, k = 4)
+  folds <- pam_result$clustering
+  names(folds) <- tree$tip.label
   
-  # 在冬季月份添加系统性的预测偏差
-  bias_magnitude <- 2 * sd(time_data$reported_data)
-  time_data$data_bad_seasonal <- time_data$reported_data
-  time_data$data_bad_seasonal[winter_months] <- time_data$data_bad_seasonal[winter_months] + bias_magnitude
+  biased_cluster <- sample(1:4, 1)
+  bias_magnitude <- 2 * sd(real_trait)
   
-  # 6. 场景2：残差具有自相关 - 模型未完全捕捉时间依赖结构
-  # 生成具有自相关的残差序列
+  pred_bad_uc1 <- real_trait
+  for (i in 1:n_species) {
+    species_name <- tree$tip.label[i]
+    if (folds[species_name] == biased_cluster) {
+      pred_bad_uc1[i] <- pred_bad_uc1[i] + bias_magnitude
+    }
+  }
+  base_data$data_bad_uc1 <- pred_bad_uc1
   
-  residual_scale <- 3  # 控制残差的总体变异程度
+  # 3. 场景2：残差具有系统发育信号 (PH-UC2)
+  # 3a. 强系统发育信号残差 (sigma=1)
+  # 生成具有强系统发育信号的残差
+  residual_strong_raw <- rTraitCont(tree, model = "BM", sigma = 1)
+  # 标准化到目标方差
+  target_variance <- 0.5^2  # 目标方差
+  current_variance <- var(residual_strong_raw)
+  scaling_factor <- sqrt(target_variance / current_variance)
+  residual_strong <- residual_strong_raw * scaling_factor
   
-  # 场景2：残差时间自相关很强
-  residual_strong_ar <- arima.sim(
-    model = list(order = c(1, 0, 0), ar = 0.9),  # AR(1)系数=0.9，强自相关
-    n = n
-  )
-  # 标准化残差序列，使其方差为1，然后缩放
-  residual_strong_ar <- as.numeric(scale(residual_strong_ar)) * residual_scale
-  time_data$data_bad_residual_strong <- time_data$reported_data + residual_strong_ar
+  # 3b. 弱系统发育信号残差 (独立同分布噪声)
+  # 生成独立同分布的残差
+  residual_weak <- rnorm(n_species, mean = 0, sd = sqrt(target_variance))
+  # 确保残差独立（无系统发育信号）
+  pred_bad_uc2_strong <- real_trait + residual_strong
+  pred_bad_uc2_weak <- real_trait + residual_weak
   
-  # 场景4：残差时间自相关极弱（无自相关）
-  # 使用ar=0生成纯白噪声，确保完全无自相关
-  residual_weak_ar <- arima.sim(
-    model = list(order = c(1, 0, 0), ar = 0),  # AR(1)系数=0，无自相关
-    n = n
-  )
-  # 标准化残差序列，使其方差为1，然后缩放
-  residual_weak_ar <- as.numeric(scale(residual_weak_ar)) * residual_scale
-  time_data$data_bad_residual_weak <- time_data$reported_data + residual_weak_ar
+  base_data$data_bad_uc2_st <- pred_bad_uc2_strong
+  base_data$data_bad_uc2_wk <- pred_bad_uc2_weak
   
-  # 8. 场景5：朴素预测模型（直接使用上一个点的真实值做预测值）
-  time_data$data_bad_naive <- c(NA, time_data$reported_data[1:(n-1)])
-  time_data$data_bad_naive[1] <- time_data$reported_data[1]  # 第一个点用自身值
+  # 4. 场景3：远缘类群预测失败
+  distance_matrix <- cophenetic(tree)
+  hc <- hclust(as.dist(distance_matrix), method = "complete")
+  outgroup_cut <- cutree(hc, k = 2)
+  group_sizes <- table(outgroup_cut)
+  outgroup_id <- which.min(group_sizes)
+  outgroup_species <- which(outgroup_cut == outgroup_id)
   
-  # 9. 场景6：完全失败模型
-  mean_data <- mean(time_data$reported_data)
-  time_data$data_bad <- rep(mean_data, n) + rnorm(n, mean = 0, sd = 0.1)
+  # 使用GLS估计系统发育均值
+  phylo_intercept_model <- gls(reported_data ~ 1, 
+                               data = base_data,
+                               correlation = corBrownian(1, form = ~GCF, phy = tree),
+                               method = "ML")
+  phylogenetic_mean <- as.numeric(coef(phylo_intercept_model))
   
-  # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2_st","UC2_wk", "UC3", "Bad")
-  predictor_vars <- c("data_good", "data_bad_seasonal", "data_bad_residual_strong",
-                      "data_bad_residual_weak",
-                     "data_bad_naive", "data_bad")
+  pred_bad_uc3 <- real_trait
+  pred_bad_uc3[outgroup_species] <- phylogenetic_mean
+  base_data$data_bad_uc3 <- pred_bad_uc3
   
-  # 移除包含NA的行（特别是朴素预测的第一个点）
-  time_data_clean <- time_data[complete.cases(time_data), ]
+  # 5. 场景4：完全失败模型
+  pred_bad_uc4 <- rep(phylogenetic_mean, n_species)
+  names(pred_bad_uc4) <- tree$tip.label
+  pred_bad_uc4 <- pred_bad_uc4 + rnorm(n_species, mean = 0, sd = 0.1)
+  base_data$data_bad_uc4 <- pred_bad_uc4
+  
+  # 6. 计算各场景指标（完整数据集）
+  scenarios <- c("Good", "UC1", "UC2_st","UC2_wk", "UC3", "UC4")
+  predictor_vars <- c("data_good", "data_bad_uc1", "data_bad_uc2_st", "data_bad_uc2_wk",
+                      "data_bad_uc3", "data_bad_uc4")
   
   metrics_list <- list()
   for (i in 1:length(scenarios)) {
-    metrics <- calculate_all_metrics(time_data_clean, time_data_clean$time,
+    metrics <- calculate_all_metrics(base_data, tree, base_data,
                                      predictor_var = predictor_vars[i])
     metrics_list[[scenarios[i]]] <- metrics
   }
   
-  # 11. 对每个场景进行TimeSeriesSplit分析
+  # 7. 对每个场景进行分割分析
   split_results_list <- list()
   
   for (i in 1:length(scenarios)) {
-    cat("  场景", scenarios[i], "TimeSeriesSplit分析...\n")
+    cat("  场景", scenarios[i], "分割分析...\n")
     
-    split_results <- perform_time_split_analysis(
-      time_data = time_data_clean,
-      n_splits = 5,  # 使用5折时间序列交叉验证
+    split_results <- perform_random_split_analysis(
+      final_data = base_data,
+      tree = tree,
+      n_iterations = n_split_iterations,
+      train_ratio = 0.8,
       response_var = "reported_data",
       predictor_var = predictor_vars[i],
       scenario_name = scenarios[i],
@@ -460,36 +586,36 @@ run_single_simulation <- function(sim_id) {
   return(list(
     full_data_metrics = metrics_list,
     split_analysis_results = all_split_results_for_sim,
-    time_data = time_data_clean
+    base_data = base_data,  # 保存原始数据用于后续分析
+    tree = tree
   ))
 }
 
 # 执行批量模拟
-n_simulations <- 50
-cat("开始时间序列自相关模拟，总共", n_simulations, "次模拟...\n")
+cat("开始批量模拟，总共", n_simulations, "次模拟，每次", n_split_iterations, "次分割...\n")
 start_time <- Sys.time()
 
 # 使用lapply进行串行计算
 all_sim_results <- lapply(1:n_simulations, function(i) {
   result <- run_single_simulation(i)
-  cat("完成第", i, "次时间序列模拟\n")
+  cat("完成第", i, "次模拟\n")
   return(result)
 })
 
 end_time <- Sys.time()
-cat("时间序列模拟完成，耗时:", round(end_time - start_time, 2), "秒\n")
+cat("批量模拟完成，耗时:", round(end_time - start_time, 2), "秒\n")
 
 # 整理结果
-# 完整数据集结果（进行敏感性分析）
+# 提取完整数据集的指标
 full_metrics_list <- lapply(all_sim_results, function(x) x$full_data_metrics)
 
-# 分割数据集结果（进行泛化能力分析）
+# 提取分割分析结果
 split_results_list <- lapply(all_sim_results, function(x) x$split_analysis_results)
 all_split_results_df <- do.call(rbind, split_results_list)
-#----------结果分析----------
+
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1",  "UC2_st","UC2_wk", "UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_st","UC2_wk", "UC3", "UC4")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -534,7 +660,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1",  "UC2_st","UC2_wk", "UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_st","UC2_wk", "UC3", "UC4")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -592,11 +718,13 @@ for (metric in metric_names) {
 
 # 定义指标分类（与之前相同）
 higher_better_metrics <- c(
-  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape"
+  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape",
+  "pic_r2", "pic_pearson", "pic_spearman", "whitened_r2", "resid_r2", "lik_r2"
 )
 
 lower_better_metrics <- c(
-  "mse", "rmse", "weighted_rmse","mae", "median_ae", "mape", "smape"
+  "mse", "rmse","weighted_rmse", "mae", "median_ae", "mape", "smape",
+  "pic_rmse", "pic_mae", "whitened_rmse", "whitened_mae"
 )
 
 # 筛选实际存在的指标
@@ -707,9 +835,9 @@ library(ggplot2)
 library(dplyr)
 calculate_delta_metrics <- function(split_results_df) {
   # 定义各类指标
-  r2_metrics <- c("ols", "adjusted")
-  error_metrics <- c("mse", "rmse", "weighted_rmse","mae", "median_ae")
-  corr_metrics <- c("pearson", "spearman")
+  r2_metrics <- c("ols", "adjusted", "pic", "whitened", "resid", "lik")
+  error_metrics <- c("mse", "rmse","weighted_rmse", "mae", "median_ae", "pic_rmse", "pic_mae", "whitened_rmse", "whitened_mae")
+  corr_metrics <- c("pearson", "spearman", "pic_pearson", "pic_spearman")
   percentage_metrics <- c("mape", "smape", "cn_smape")
   
   # 创建结果数据框副本
@@ -934,8 +1062,8 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
       "UC1" = "#bab1d8", 
       "UC2_st" = "#9e7cba", 
       "UC2_wk" = "#624c7c",
-      "UC3" = "#ac5aa1",
-      "Bad" = "#27447c"
+      "UC3" = "#9e7cba", 
+      "UC4" = "#ac5aa1"
     )
     
     current_color <- scenario_colors[scenario]
@@ -1023,7 +1151,7 @@ for(scenario in scenarios) {
   cat("\n")
   
   # 5. 保存当前场景的排名结果到文件
-  ranking_filename <- paste0("time_var_rank_", dataset_id, "_", scenario, ".csv")
+  ranking_filename <- paste0("phy_var_rank_", dataset_id, "_", scenario, ".csv")
   write.csv(ranking_results, ranking_filename, row.names = FALSE)
   cat("场景", scenario, "排名结果已保存到:", ranking_filename, "\n\n")
   

@@ -432,22 +432,6 @@ run_single_simulation <- function(sim_id) {
   ), newdata = sp_points, nsim = 1)
   base_data$data_strong_spatialerr <- base_data$reported_data + strong_resid_field@data$sim1
   
-  # 7.2 中等空间自相关残差场 (50%结构方差，50%块金)
-  medium_resid_model <- vgm(
-    psill = target_residual_variance * 0.5,  # 50%结构方差
-    model = "Sph",
-    range = 0.3,  # 中等变程
-    nugget = target_residual_variance * 0.5  # 50%块金
-  )
-  medium_resid_field <- predict(gstat(
-    formula = z ~ 1,
-    locations = ~ x + y,
-    dummy = TRUE,
-    beta = 0,
-    model = medium_resid_model
-  ), newdata = sp_points, nsim = 1)
-  base_data$data_medium_spatialerr <- base_data$reported_data + medium_resid_field@data$sim1
-  
   # 7.3 极弱空间自相关残差场 (纯块金模型，无空间自相关)
   weak_resid_model <- vgm(
     psill = 0,  # 无结构方差
@@ -476,9 +460,9 @@ run_single_simulation <- function(sim_id) {
   base_data$data_bad <- rep(mean_data, n_locations) + rnorm(n_locations, mean = 0, sd = 0.1)
   
   # 10. 计算各场景指标（完整数据集）
-  scenarios <- c("Good", "UC1", "UC2_strong", "UC2_medium", "UC2_weak", "UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_st", "UC2_wk", "UC3", "Bad")
   predictor_vars <- c("data_good", "data_bad_region", "data_strong_spatialerr", 
-                      "data_medium_spatialerr", "data_weak_spatialerr", 
+                      "data_weak_spatialerr", 
                       "data_boundary_bias", "data_bad")
   
   metrics_list <- list()
@@ -520,7 +504,7 @@ run_single_simulation <- function(sim_id) {
 }
 
 # 执行批量模拟（减少模拟次数以加快测试）
-n_simulations <- 20
+n_simulations <- 30
 cat("开始空间自相关模拟，总共", n_simulations, "次模拟...\n")
 start_time <- Sys.time()
 
@@ -544,7 +528,7 @@ all_split_results_df <- do.call(rbind, split_results_list)
 #----------结果分析----------
 # 8. 计算平均指标
 calculate_average_metrics <- function(all_results, n_sim) {
-  scenarios <- c("Good", "UC1", "UC2_strong", "UC2_medium", "UC2_weak","UC3", "Bad")
+  scenarios <- c("Good", "UC1", "UC2_st", "UC2_wk","UC3", "Bad")
   
   # 获取所有指标名称
   metric_names <- names(all_results[[1]][[1]])
@@ -589,7 +573,7 @@ avg_metrics <- calculate_average_metrics(full_metrics_list, n_simulations)
 
 # # 9. 创建完整数据集的比较表格
 create_final_comparison_table <- function(avg_metrics) {
-  scenarios <- c("Good", "UC1",  "UC2_strong", "UC2_medium", "UC2_weak", "UC3", "Bad")
+  scenarios <- c("Good", "UC1",  "UC2_st", "UC2_wk", "UC3", "Bad")
   
   # 获取所有指标名称（去掉后缀）
   all_names <- names(avg_metrics[[1]])
@@ -989,9 +973,8 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
     scenario_colors <- c(
       "Good" = "#c9cb05", 
       "UC1" = "#bab1d8", 
-      "UC2_strong" = "#9e7cba", 
-      "UC2_medium" = "#8076b5",
-      "UC2_weak" = "#624c7c",
+      "UC2_st" = "#9e7cba", 
+      "UC2_wk" = "#624c7c",
       "UC3" = "#ac5aa1", 
       "Bad" = "#27447c"
     )
