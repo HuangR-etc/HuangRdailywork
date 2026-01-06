@@ -109,6 +109,26 @@ calculate_all_metrics <- function(time_data, time_points,
   smape_val <- mean(numerator / denominator) * 100
   cn_smape <- 1 - (smape_val / 200)
   
+  # 新增指标: 百分比标准误差 (%SEE) 
+  # 步骤1: 计算标准估计误差 (SEE)
+  # p代表模型参数个数
+  p_for_see <- 2  # 对应于简单线性回归 (截距 + 斜率)
+  see <- sqrt(sum(residuals^2) / (n - p_for_see))
+  # 步骤2: 计算观测值平均值
+  y_mean <- mean(y_true)
+  # 步骤3: 计算百分比标准误差
+  percent_see <- (see / y_mean) * 100
+  
+  # 新增指标: 观测值:预测值比值及其汇总统计
+  # 核心公式: R_i = y_i / yhat_i
+  R_i <- safe_division(y_true, y_pred)  # 使用safe_division避免除以0
+  
+  # 汇总统计量
+  R_arithmetic_mean <- mean(R_i, na.rm = TRUE)  # 算术平均值
+  R_geometric_mean <- exp(mean(log(R_i), na.rm = TRUE))  # 几何平均值
+  R_median <- median(R_i, na.rm = TRUE)  # 中位数比值
+  
+  
   # 2. 时间序列自相关指标
   
   # 真实值的自相关系数
@@ -201,6 +221,16 @@ calculate_all_metrics <- function(time_data, time_points,
     mape = mape,
     smape = smape_val,
     cn_smape = cn_smape,
+    
+    # 新增: 百分比标准误差
+    see = see,
+    y_mean = y_mean,
+    percent_see = percent_see,
+    
+    # 新增: 观测值与预测值比值
+    R_ari = R_arithmetic_mean, #算数均值
+    R_geo = R_geometric_mean, #几何均值
+    R_median = R_median, #中位数
     
     # 时间序列自相关指标
     acf_real_lag1 = acf_real_lag1,
@@ -308,6 +338,14 @@ perform_time_split_analysis <- function(time_data, n_splits = 5,
         adf_test_pvalue_train = metrics_train$adf_test_pvalue,
         arima_r2_train = metrics_train$arima_r2,
         mase_train = metrics_train$mase,
+        # 新增: 百分比标准误差
+        see_train = metrics_train$see,
+        percent_see_train = metrics_train$percent_see,
+        
+        # 新增: 观测值与预测值比值
+        R_ari_train = metrics_train$R_ari, #算数均值
+        R_geo_train = metrics_train$R_geo, #几何均值
+        R_median_train = metrics_train$R_median, #中位数
         
         # 测试集指标
         ols_r2_test = metrics_test$ols_r2,
@@ -328,7 +366,15 @@ perform_time_split_analysis <- function(time_data, n_splits = 5,
         lb_test_pvalue_test = metrics_test$lb_test_pvalue,
         adf_test_pvalue_test = metrics_test$adf_test_pvalue,
         arima_r2_test = metrics_test$arima_r2,
-        mase_test = metrics_test$mase
+        mase_test = metrics_test$mase,
+        # 新增: 百分比标准误差
+        see_test = metrics_test$see,
+        percent_see_test = metrics_test$percent_see,
+        
+        # 新增: 观测值与预测值比值
+        R_ari_test = metrics_test$R_ari, #算数均值
+        R_geo_test = metrics_test$R_geo, #几何均值
+        R_median_test = metrics_test$R_median
       )
       
       # 返回成功的结果
@@ -592,11 +638,13 @@ for (metric in metric_names) {
 
 # 定义指标分类（与之前相同）
 higher_better_metrics <- c(
-  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape"
+  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape",
+  "R_ari","R_geo","R_median"
 )
 
 lower_better_metrics <- c(
-  "mse", "rmse", "weighted_rmse","mae", "median_ae", "mape", "smape"
+  "mse", "rmse", "weighted_rmse","mae", "median_ae", "mape", "smape",
+  "see","percent_see"
 )
 
 # 筛选实际存在的指标
@@ -708,7 +756,8 @@ library(dplyr)
 calculate_delta_metrics <- function(split_results_df) {
   # 定义各类指标
   r2_metrics <- c("ols", "adjusted")
-  error_metrics <- c("mse", "rmse", "weighted_rmse","mae", "median_ae")
+  error_metrics <- c("mse", "rmse", "weighted_rmse","mae", "median_ae",
+                     "see","percent_see","R_ari","R_geo","R_median")
   corr_metrics <- c("pearson", "spearman")
   percentage_metrics <- c("mape", "smape", "cn_smape")
   
@@ -879,7 +928,7 @@ calculate_delta_variance <- function(delta_data, delta_columns) {
         # 确定指标类型
         if(grepl("_r2$", metric)) {
           metric_type <- "R-squared"
-        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae", metric)) {
+        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae|see|percent_see|R_ari|R_geo|R_median", metric)) {
           metric_type <- "Error"
         } else if(grepl("pearson|spearman", metric)) {
           metric_type <- "Correlation"
