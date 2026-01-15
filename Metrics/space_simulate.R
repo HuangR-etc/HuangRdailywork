@@ -2,12 +2,11 @@ setwd("D:/pine/paper_redo/2025_09_obs_vs_pred/UC")
 # 加载空间分析必要的包
 library(gstat)    # 用于空间模拟和变异函数
 library(sp)       # 处理空间数据
-library(spdep)    # 空间自相关分析
 library(ape)      # 莫兰指数计算
 library(nlme)     # 空间线性模型
-library(fields)   # 用于距离计算和可视化
 library(cluster)  # 聚类
-
+packages <- c("gstat", "sp", "spdep", "ape", "nlme", "fields", "cluster")
+versions <- sapply(packages, function(x) as.character(packageVersion(x)))
 # calculate_all_metrics函数
 calculate_all_metrics <- function(spatial_data, coords_matrix, 
                                   response_var = "reported_data", 
@@ -124,7 +123,7 @@ calculate_all_metrics <- function(spatial_data, coords_matrix,
   percent_see <- (see / y_mean) * 100
   
   # 新增指标: 观测值:预测值比值及其汇总统计
-  # 核心公式: R_i = y_i / yhat_i
+  R_whole <- sum(y_true)/sum(y_pred)
   R_i <- safe_division(y_true, y_pred)  # 使用safe_division避免除以0
   
   # 汇总统计量
@@ -241,6 +240,7 @@ calculate_all_metrics <- function(spatial_data, coords_matrix,
     percent_see = percent_see,
     
     # 新增: 观测值与预测值比值
+    R_whole = R_whole,
     R_ari = R_arithmetic_mean, #算数均值
     R_geo = R_geometric_mean, #几何均值
     R_median = R_median, #中位数
@@ -336,6 +336,7 @@ perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterati
         percent_see_train = metrics_train$percent_see,
         
         # 新增: 观测值与预测值比值
+        R_whole_train = metrics_train$R_whole,
         R_ari_train = metrics_train$R_ari, #算数均值
         R_geo_train = metrics_train$R_geo, #几何均值
         R_median_train = metrics_train$R_median, #中位数
@@ -365,10 +366,10 @@ perform_random_split_analysis <- function(spatial_data, coords_matrix, n_iterati
         percent_see_test = metrics_test$percent_see,
         
         # 新增: 观测值与预测值比值
+        R_whole_test = metrics_test$R_whole,
         R_ari_test = metrics_test$R_ari, #算数均值
         R_geo_test = metrics_test$R_geo, #几何均值
         R_median = metrics_test$R_median
-        
       )
       
       # 返回成功的结果
@@ -527,7 +528,7 @@ run_single_simulation <- function(sim_id) {
     split_results <- perform_random_split_analysis(
       spatial_data = base_data,
       coords_matrix = coords_matrix,
-      n_iterations = 20,  # 减少迭代次数以加快测试
+      n_iterations = 50,  
       train_ratio = 0.8,
       response_var = "reported_data",
       predictor_var = predictor_vars[i],
@@ -549,8 +550,9 @@ run_single_simulation <- function(sim_id) {
   ))
 }
 
-# 执行批量模拟（减少模拟次数以加快测试）
-n_simulations <- 30
+# 执行批量模拟
+n_simulations <- 50
+n_iterations <- 50
 cat("开始空间自相关模拟，总共", n_simulations, "次模拟...\n")
 start_time <- Sys.time()
 
@@ -678,7 +680,7 @@ for (metric in metric_names) {
 # 定义指标分类（与之前相同）
 higher_better_metrics <- c(
   "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape",
-  "R_ari","R_geo","R_median"
+  "R_whole","R_ari","R_geo","R_median"
 )
 
 lower_better_metrics <- c(
@@ -796,7 +798,7 @@ calculate_delta_metrics <- function(split_results_df) {
   # 定义各类指标
   r2_metrics <- c("ols", "adjusted")
   error_metrics <- c("mse", "rmse","weighted_rmse", "mae", "median_ae",
-                     "see","percent_see","R_ari","R_geo","R_median")
+                     "see","percent_see","R_whole","R_ari","R_geo","R_median")
   corr_metrics <- c("pearson", "spearman")
   percentage_metrics <- c("mape", "smape", "cn_smape")
   
@@ -968,7 +970,7 @@ calculate_delta_variance <- function(delta_data, delta_columns) {
         # 确定指标类型
         if(grepl("_r2$", metric)) {
           metric_type <- "R-squared"
-        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae|see|percent_see|R_ari|R_geo|R_median", metric)) {
+        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae|see|percent_see|R_whole|R_ari|R_geo|R_median", metric)) {
           metric_type <- "Error"
         } else if(grepl("pearson|spearman", metric)) {
           metric_type <- "Correlation"

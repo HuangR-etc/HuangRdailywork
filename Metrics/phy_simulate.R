@@ -6,7 +6,9 @@ library(geiger)
 library(rr2)
 library(caper)
 library(cluster)
-
+packages <- c("ape", "phytools", "nlme","geiger","rr2","caper" , "cluster")
+versions <- sapply(packages, function(x) as.character(packageVersion(x)))
+versions
 # 计算各个指标的calculate_all_metrics函数，增加错误处理
 calculate_all_metrics <- function(final_data, tree_subset, comp_data, 
                                   response_var = "reported_data", 
@@ -122,7 +124,7 @@ calculate_all_metrics <- function(final_data, tree_subset, comp_data,
   percent_see <- (see / y_mean) * 100
   
   # 新增指标: 观测值:预测值比值及其汇总统计
-  # 核心公式: R_i = y_i / yhat_i
+  R_whole <- sum(y_true)/sum(y_pred)
   R_i <- safe_division(y_true, y_pred)  # 使用safe_division避免除以0
   
   # 汇总统计量
@@ -299,6 +301,7 @@ calculate_all_metrics <- function(final_data, tree_subset, comp_data,
     percent_see = percent_see,
     
     # 新增: 观测值与预测值比值
+    R_whole = R_whole,#整体比值
     R_ari = R_arithmetic_mean, #算数均值
     R_geo = R_geometric_mean, #几何均值
     R_median = R_median, #中位数
@@ -437,6 +440,7 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
         percent_see_train = metrics_train$percent_see,
         
         # 新增: 观测值与预测值比值
+        R_whole_train = metrics_train$R_whole,
         R_ari_train = metrics_train$R_ari, #算数均值
         R_geo_train = metrics_train$R_geo, #几何均值
         R_median_train = metrics_train$R_median, #中位数
@@ -471,6 +475,7 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
         percent_see_test = metrics_test$percent_see,
         
         # 新增: 观测值与预测值比值
+        R_whole_test = metrics_test$R_whole,
         R_ari_test = metrics_test$R_ari, #算数均值
         R_geo_test = metrics_test$R_geo, #几何均值
         R_median_test = metrics_test$R_median
@@ -499,8 +504,8 @@ perform_random_split_analysis <- function(final_data, tree, n_iterations = 50, t
 }
 
 # 设置重复模拟次数
-n_simulations <- 30  # 减少模拟次数以加快测试
-n_split_iterations <- 30  # 减少分割次数以加快测试
+n_simulations <- 50
+n_iterations <- 50
 set.seed(123)
 
 # 存储所有结果
@@ -619,7 +624,7 @@ run_single_simulation <- function(sim_id) {
     split_results <- perform_random_split_analysis(
       final_data = base_data,
       tree = tree,
-      n_iterations = n_split_iterations,
+      n_iterations = n_iterations,
       train_ratio = 0.8,
       response_var = "reported_data",
       predictor_var = predictor_vars[i],
@@ -642,7 +647,7 @@ run_single_simulation <- function(sim_id) {
 }
 
 # 执行批量模拟
-cat("开始批量模拟，总共", n_simulations, "次模拟，每次", n_split_iterations, "次分割...\n")
+cat("开始批量模拟，总共", n_simulations, "次模拟，每次", n_iterations, "次分割...\n")
 start_time <- Sys.time()
 
 # 使用lapply进行串行计算
@@ -771,7 +776,7 @@ for (metric in metric_names) {
 higher_better_metrics <- c(
   "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape",
   "pic_r2", "pic_pearson", "pic_spearman", "whitened_r2", "resid_r2", "lik_r2",
-  "R_ari","R_geo","R_median"
+  "R_whole","R_ari","R_geo","R_median"
 )
 
 lower_better_metrics <- c(
@@ -891,7 +896,7 @@ calculate_delta_metrics <- function(split_results_df) {
   r2_metrics <- c("ols", "adjusted", "pic", "whitened", "resid", "lik")
   error_metrics <- c("mse", "rmse","weighted_rmse", "mae", "median_ae", 
                      "pic_rmse", "pic_mae", "whitened_rmse", "whitened_mae",
-                     "see","percent_see","R_ari","R_geo","R_median")
+                     "see","percent_see","R_whole","R_ari","R_geo","R_median")
   corr_metrics <- c("pearson", "spearman", "pic_pearson", "pic_spearman")
   percentage_metrics <- c("mape", "smape", "cn_smape")
   
@@ -1062,7 +1067,7 @@ calculate_delta_variance <- function(delta_data, delta_columns) {
         # 确定指标类型
         if(grepl("_r2$", metric)) {
           metric_type <- "R-squared"
-        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae|see|percent_see|R_ari|R_geo|R_median", metric)) {
+        } else if(grepl("mse|rmse|weighted_rmse|mae|median_ae|see|percent_see|R_whole|R_ari|R_geo|R_median", metric)) {
           metric_type <- "Error"
         } else if(grepl("pearson|spearman", metric)) {
           metric_type <- "Correlation"
