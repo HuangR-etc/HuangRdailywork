@@ -677,30 +677,42 @@ for (metric in metric_names) {
   }
 }
 
-# 定义指标分类（与之前相同）
+# 定义指标分类
 higher_better_metrics <- c(
-  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape",
-  "R_whole","R_ari","R_geo","R_median"
+  "ols_r2", "adjusted_r2", "pearson_corr", "spearman_corr", "cn_smape"
 )
 
 lower_better_metrics <- c(
-  "mse", "rmse", "weighted_rmse", "mae", "median_ae", "mape", "smape"
+  "mse", "rmse", "weighted_rmse","mae", "median_ae", "mape", "smape",
+  "see","percent_see"
 )
+
+# 新增：越接近1越好的指标
+closer_to_one_metrics <- c("R_whole", "R_ari", "R_geo", "R_median")
 
 # 筛选实际存在的指标
 available_higher <- higher_better_metrics[higher_better_metrics %in% names(comparison_means)]
 available_lower <- lower_better_metrics[lower_better_metrics %in% names(comparison_means)]
+available_closer_to_one <- closer_to_one_metrics[closer_to_one_metrics %in% names(comparison_means)]
 
 cat("基于", n_simulations, "次模拟的平均结果\n")
 cat("可用的'越大越好'指标:", length(available_higher), "\n")
 cat("可用的'越小越好'指标:", length(available_lower), "\n")
+cat("可用的'越接近1越好'指标:", length(available_closer_to_one), "\n")
 
 # 设置颜色方案
 good_color <- "#c9cb05"  # 好模型
 bad_colors <- c("#bab1d8","#9e7cba","#8076b5","#624c7c","#ac5aa1","#27447c")  # 紫色系 - 坏模型
 scenario_colors <- c(good_color, bad_colors)
 
-# 9.2 改进的柱状图（带误差线）
+# 创建输出目录
+output_dir <- "space_model_comparison_plots"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir)
+  cat("创建输出目录:", output_dir, "\n")
+}
+
+# 9.2 创建绘图函数
 cat("\n=== 绘制带误差线的柱状图 ===\n")
 
 # 创建带误差线的柱状图函数
@@ -709,12 +721,20 @@ plot_metric_with_errorbars <- function(metric, means_df, se_df, metric_type = "h
   values <- means_df[[metric]]
   errors <- se_df[[metric]]
   
-  # 设置y轴标签和标题
+  # 设置图形参数
   ylab <- ""
-  if (metric_type == "higher_better") {
-    main_title <- paste(metric)
-  } else {
-    main_title <- paste(metric)
+  main_title <- paste(metric)
+  
+  # 根据指标类型设置不同的y轴范围
+  if (metric_type == "closer_to_one") {
+    # 对于接近1的指标，确保y轴包含1
+    y_max <- max(values + errors, 1, na.rm = TRUE) * 1.15
+    y_min <- min(values - errors, 0, na.rm = TRUE) * 0.85
+    y_lim <- c(y_min, y_max)
+  } else if (metric_type == "higher_better") {
+    y_lim <- c(0, max(values + errors, na.rm = TRUE) * 1.15)
+  } else {  # lower_better
+    y_lim <- c(0, max(values + errors, na.rm = TRUE) * 1.15)
   }
   
   # 创建条形图
@@ -722,7 +742,7 @@ plot_metric_with_errorbars <- function(metric, means_df, se_df, metric_type = "h
                      col = scenario_colors,
                      main = main_title,
                      ylab = ylab,
-                     ylim = c(0, max(values + errors, na.rm = TRUE) * 1.15),
+                     ylim = y_lim,
                      border = "white",
                      las = 2)
   
@@ -735,61 +755,224 @@ plot_metric_with_errorbars <- function(metric, means_df, se_df, metric_type = "h
        label = sprintf("%.3f", values), 
        pos = 3, cex = 0.6, col = "darkblue", font = 2)
   
-  # 添加标准误差标签
-  text(x = bar_pos, y = values - errors - max(values, na.rm = TRUE) * 0.02, 
-       label = sprintf("±%.3f", errors), 
-       pos = 1, cex = 0.5, col = "darkred")
+  # 注意：已移除标准误差具体数值的标签，只保留误差线
+  # 这在论文绘图中是常见的做法，误差线已足够表示方差
 }
 
-# 9.2.1 绘制"越大越好"指标
-cat("--- 绘制'越大越好'指标（带误差线）---\n")
-
-n_higher <- length(available_higher)
-n_cols <- 3  # 减少每行列数以便更好地显示
-n_rows <- ceiling(n_higher / n_cols)
-
-# 设置图形参数
-par(mfrow = c(n_rows, n_cols), mar = c(4, 4, 3, 1), mgp = c(2, 0.8, 0))
-
-for (metric in available_higher) {
-  if (all(is.na(comparison_means[[metric]]))) next
+# 9.3 创建导出图形的函数
+create_figure_pdf <- function(metrics, metric_type, filename, n_cols = 3) {
+  # 计算布局
+  n_metrics <- length(metrics)
+  n_rows <- ceiling(n_metrics / n_cols)
   
-  tryCatch({
-    plot_metric_with_errorbars(metric, comparison_means, comparison_se, "higher_better")
-  }, error = function(e) {
-    plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
-  })
-}
-
-# mtext(paste("'越大越好'型指标比较（基于", n_simulations, "次模拟）"), 
-#       side = 3, outer = TRUE, line = -1.5, cex = 1.2)
-
-# 9.2.2 绘制"越小越好"指标
-cat("--- 绘制'越小越好'指标（带误差线）---\n")
-
-n_lower <- length(available_lower)
-n_cols <- 3
-n_rows <- ceiling(n_lower / n_cols)
-
-par(mfrow = c(n_rows, n_cols), mar = c(4, 4, 3, 1), mgp = c(2, 0.8, 0))
-
-for (metric in available_lower) {
-  if (all(is.na(comparison_means[[metric]]))) next
+  # 设置图形尺寸（适合论文）
+  # 每个子图宽度2.5英寸，高度2英寸
+  fig_width <- n_cols * 2.5
+  fig_height <- n_rows * 2.0
   
-  tryCatch({
-    plot_metric_with_errorbars(metric, comparison_means, comparison_se, "lower_better")
-  }, error = function(e) {
-    plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
-  })
+  # 打开PDF设备
+  pdf(file.path(output_dir, filename), 
+      width = fig_width, 
+      height = fig_height)
+  
+  # 设置图形参数
+  par(mfrow = c(n_rows, n_cols), 
+      mar = c(3.5, 3, 2, 1),  # 减小边距
+      mgp = c(1.5, 0.5, 0),   # 调整坐标轴标签位置
+      cex.main = 0.9,         # 减小标题字体
+      cex.axis = 0.7)         # 减小坐标轴字体
+  
+  # 绘制所有指标
+  for (metric in metrics) {
+    if (all(is.na(comparison_means[[metric]]))) next
+    
+    tryCatch({
+      plot_metric_with_errorbars(metric, comparison_means, comparison_se, metric_type)
+    }, error = function(e) {
+      plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
+    })
+  }
+  
+  # 关闭设备
+  dev.off()
+  
+  cat("已保存图形到:", filename, "尺寸:", round(fig_width, 1), "x", round(fig_height, 1), "英寸\n")
 }
 
-# mtext(paste("'越小越好'型指标比较（基于", n_simulations, "次模拟）"), 
-#       side = 3, outer = TRUE, line = -1.5, cex = 1.2)
+# 9.4 创建单个图形（适合在R中查看）
+create_figure_screen <- function(metrics, metric_type, n_cols = 3) {
+  # 计算布局
+  n_metrics <- length(metrics)
+  n_rows <- ceiling(n_metrics / n_cols)
+  
+  # 设置图形参数
+  par(mfrow = c(n_rows, n_cols), 
+      mar = c(4, 4, 3, 1), 
+      mgp = c(2, 0.8, 0))
+  
+  # 绘制所有指标
+  for (metric in metrics) {
+    if (all(is.na(comparison_means[[metric]]))) next
+    
+    tryCatch({
+      plot_metric_with_errorbars(metric, comparison_means, comparison_se, metric_type)
+    }, error = function(e) {
+      plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
+    })
+  }
+}
+
+# 9.5 导出图形
+cat("\n=== 导出图形到文件 ===\n")
+
+# 9.5.1 导出"越大越好"指标
+if (length(available_higher) > 0) {
+  cat("--- 导出'越大越好'指标 ---\n")
+  
+  # 在屏幕上显示
+  create_figure_screen(available_higher, "越大越好")
+  
+  # 导出PDF（适合论文）
+  create_figure_pdf(available_higher, "越大越好", "higher_better_metrics.pdf")
+} else {
+  cat("没有可用的'越大越好'指标\n")
+}
+
+# 9.5.2 导出"越小越好"指标
+if (length(available_lower) > 0) {
+  cat("--- 导出'越小越好'指标 ---\n")
+  
+  # 在屏幕上显示
+  create_figure_screen(available_lower, "越小越好")
+  
+  # 导出PDF
+  create_figure_pdf(available_lower, "越小越好", "lower_better_metrics.pdf")
+} else {
+  cat("没有可用的'越小越好'指标\n")
+}
+
+# 9.5.3 导出"越接近1越好"指标
+if (length(available_closer_to_one) > 0) {
+  cat("--- 导出'越接近1越好'指标 ---\n")
+  
+  # 对于接近1的指标，每行显示2个
+  n_cols_closer <- 2
+  
+  # 在屏幕上显示
+  n_rows <- ceiling(length(available_closer_to_one) / n_cols_closer)
+  par(mfrow = c(n_rows, n_cols_closer), 
+      mar = c(4, 4, 3, 1), 
+      mgp = c(2, 0.8, 0))
+  
+  for (metric in available_closer_to_one) {
+    if (all(is.na(comparison_means[[metric]]))) next
+    
+    tryCatch({
+      plot_metric_with_errorbars(metric, comparison_means, comparison_se, "closer_to_one")
+    }, error = function(e) {
+      plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
+    })
+  }
+  
+  # 导出PDF
+  n_rows <- ceiling(length(available_closer_to_one) / n_cols_closer)
+  fig_width <- n_cols_closer * 2.5
+  fig_height <- n_rows * 2.0
+  
+  pdf(file.path(output_dir, "closer_to_one_metrics.pdf"), 
+      width = fig_width, 
+      height = fig_height)
+  
+  par(mfrow = c(n_rows, n_cols_closer), 
+      mar = c(3.5, 3, 2, 1),
+      mgp = c(1.5, 0.5, 0),
+      cex.main = 0.9,
+      cex.axis = 0.7)
+  
+  for (metric in available_closer_to_one) {
+    if (all(is.na(comparison_means[[metric]]))) next
+    
+    tryCatch({
+      plot_metric_with_errorbars(metric, comparison_means, comparison_se, "closer_to_one")
+    }, error = function(e) {
+      plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
+    })
+  }
+  
+  dev.off()
+  cat("已保存图形到: closer_to_one_metrics.pdf, 尺寸:", round(fig_width, 1), "x", round(fig_height, 1), "英寸\n")
+} else {
+  cat("没有可用的'越接近1越好'指标\n")
+}
 
 # 重置图形参数
 par(mfrow = c(1, 1))
 
+# 9.6 创建组合图（将所有指标放在一个文件中）
+cat("\n=== 创建所有指标的组合图 ===\n")
 
+# 创建包含所有指标的PDF文件
+create_all_metrics_pdf <- function() {
+  all_metrics <- c(available_higher, available_lower, available_closer_to_one)
+  metric_types <- c(
+    rep("越大越好", length(available_higher)),
+    rep("越小越好", length(available_lower)),
+    rep("越接近1越好", length(available_closer_to_one))
+  )
+  
+  n_metrics <- length(all_metrics)
+  n_cols <- 3
+  n_rows <- ceiling(n_metrics / n_cols)
+  
+  # 计算图形尺寸
+  fig_width <- 8.5  # 标准论文宽度
+  fig_height <- n_rows * 2.2
+  
+  pdf(file.path(output_dir, "all_metrics_comparison.pdf"), 
+      width = fig_width, 
+      height = fig_height)
+  
+  par(mfrow = c(n_rows, n_cols), 
+      mar = c(3, 2.5, 2, 1),
+      mgp = c(1.2, 0.4, 0),
+      cex.main = 0.8,
+      cex.axis = 0.7)
+  
+  for (i in 1:n_metrics) {
+    metric <- all_metrics[i]
+    metric_type <- metric_types[i]
+    
+    if (all(is.na(comparison_means[[metric]]))) next
+    
+    tryCatch({
+      plot_metric_with_errorbars(metric, comparison_means, comparison_se, 
+                                 ifelse(metric_type == "越接近1越好", "closer_to_one", 
+                                        ifelse(metric_type == "越大越好", "higher_better", "lower_better")))
+    }, error = function(e) {
+      plot(1, type = "n", main = paste(metric, "\n绘图错误"), xlab = "", ylab = "")
+    })
+  }
+  
+  dev.off()
+  cat("已保存所有指标组合图到: all_metrics_comparison.pdf\n")
+}
+
+# 如果至少有一个指标，创建组合图
+if (length(available_higher) + length(available_lower) + length(available_closer_to_one) > 0) {
+  create_all_metrics_pdf()
+}
+
+# 9.7 添加汇总说明
+cat("\n=== 指标分类说明 ===\n")
+cat("1. 越大越好指标:", paste(available_higher, collapse = ", "), "\n")
+cat("2. 越小越好指标:", paste(available_lower, collapse = ", "), "\n")
+cat("3. 越接近1越好指标:", paste(available_closer_to_one, collapse = ", "), "\n")
+cat("\n图形已保存到目录:", output_dir, "\n")
+cat("文件列表:\n")
+cat("  - higher_better_metrics.pdf: 越大越好指标\n")
+cat("  - lower_better_metrics.pdf: 越小越好指标\n")
+cat("  - closer_to_one_metrics.pdf: 越接近1越好指标\n")
+cat("  - all_metrics_comparison.pdf: 所有指标组合图\n")
 #-------泛化能力部分的可视化--------
 library(ggplot2)
 library(dplyr)
