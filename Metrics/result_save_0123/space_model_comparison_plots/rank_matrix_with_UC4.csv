@@ -1,0 +1,17 @@
+"Metric","space_var_rank_simulation_data_Bad","space_var_rank_simulation_data_Good","space_var_rank_simulation_data_UC1","space_var_rank_simulation_data_UC2_st","space_var_rank_simulation_data_UC2_wk","space_var_rank_simulation_data_UC3"
+"smape",1,12,12,4,5,10
+"rmse",2,7,6,1,2,7
+"see",3,8,7,2,3,8
+"mae",4,9,11,5,6,9
+"median_ae",5,10,1,8,8,11
+"mse",6,11,10,10,11,12
+"cn_smape",7,5,2,3,4,5
+"R_geo",8,6,4,9,9,6
+"mape",9,13,13,13,13,13
+"ols_r2",10,2,8,11,10,3
+"adjusted_r2",11,3,9,12,12,4
+"R_ari",12,16,14,16,15,16
+"R_whole",13,14,16,15,14,14
+"pearson_corr",14,1,3,6,1,1
+"spearman_corr",15,4,5,7,7,2
+"percent_see",16,15,15,14,16,15
