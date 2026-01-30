@@ -512,17 +512,176 @@ set.seed(123)
 all_sim_results <- list()
 all_split_results <- list()
 
-# 批量模拟函数（修改版，包含分割分析）
-run_single_simulation <- function(sim_id) {
-  cat("正在进行第", sim_id, "次模拟...\n")
+#-------增加分块分割分析（基于系统发育距离）-------
+
+# 分块分割函数
+perform_phylogenetic_block_split_kfold <- function(tree, data, response_var = "reported_data", 
+                                                   predictor_var = "data", 
+                                                   n_blocks = 4,
+                                                   scenario_name = "Unknown", sim_id = 1) {
+  
+  # 计算系统发育距离矩阵
+  phylo_dist <- cophenetic(tree)
+  
+  # 使用k-medoids聚类（PAM）基于系统发育距离分成n_blocks块
+  pam_result <- pam(phylo_dist, k = n_blocks)
+  cluster_assignments <- pam_result$clustering
+  
+  # 记录块的大小
+  block_sizes <- table(cluster_assignments)
+  cat("  场景", scenario_name, "模拟", sim_id, ": 分块大小 = ", 
+      paste(block_sizes, collapse = ", "), "\n")
+  
+  # 存储每次分割的结果
+  all_results <- list()
+  
+  # 对每一块进行交叉验证
+  for (test_block in 1:n_blocks) {
+    # 划分训练集和测试集
+    test_species <- names(cluster_assignments[cluster_assignments == test_block])
+    train_species <- names(cluster_assignments[cluster_assignments != test_block])
+    
+    # 确保训练集和测试集不重叠
+    if(length(intersect(train_species, test_species)) > 0) {
+      stop("训练集和测试集有重叠！")
+    }
+    
+    # 创建训练集和测试集
+    train_data <- data[data$GCF %in% train_species, ]
+    test_data <- data[data$GCF %in% test_species, ]
+    
+    # 确保训练集和测试集都不为空
+    if(nrow(train_data) == 0 || nrow(test_data) == 0) {
+      warning("训练集或测试集为空！跳过这次分割。")
+      next
+    }
+    
+    # 修剪树以匹配数据
+    # 训练集
+    prune_train <- prune_tree_and_data(tree, train_data)
+    tree_train <- prune_train$tree
+    train_data_ordered <- prune_train$data
+    comp_data_train <- prune_train$comp_data
+    
+    # 测试集
+    prune_test <- prune_tree_and_data(tree, test_data)
+    tree_test <- prune_test$tree
+    test_data_ordered <- prune_test$data
+    comp_data_test <- prune_test$comp_data
+    
+    # 计算训练集和测试集的指标
+    metrics_train <- calculate_all_metrics(train_data_ordered, tree_train, comp_data_train,
+                                           response_var = response_var, predictor_var = predictor_var)
+    
+    metrics_test <- calculate_all_metrics(test_data_ordered, tree_test, comp_data_test,
+                                          response_var = response_var, predictor_var = predictor_var)
+    
+    # 构建结果行
+    result_row <- data.frame(
+      scenario = scenario_name,
+      simulation_id = sim_id,
+      split_iteration = test_block,  # 使用块编号作为分割迭代
+      split_method = "phylogenetic_block",
+      train_size = nrow(train_data),
+      test_size = nrow(test_data),
+      train_proportion = round(nrow(train_data)/nrow(data), 3),
+      test_proportion = round(nrow(test_data)/nrow(data), 3),
+      block_id = test_block,
+      n_blocks = n_blocks,
+      
+      # 训练集指标
+      ols_r2_train = metrics_train$ols_r2,
+      adjusted_r2_train = metrics_train$adjusted_r2,
+      mse_train = metrics_train$mse,
+      rmse_train = metrics_train$rmse,
+      weighted_rmse_train = metrics_train$weighted_rmse,
+      mae_train = metrics_train$mae,
+      median_ae_train = metrics_train$median_ae,
+      pearson_corr_train = metrics_train$pearson_corr,
+      spearman_corr_train = metrics_train$spearman_corr,
+      mape_train = metrics_train$mape,
+      smape_train = metrics_train$smape,
+      cn_smape_train = metrics_train$cn_smape,
+      lambda_train = metrics_train$lambda,
+      pic_r2_train = metrics_train$pic_r2,
+      pic_pearson_train = metrics_train$pic_pearson,
+      pic_spearman_train = metrics_train$pic_spearman,
+      pic_rmse_train = metrics_train$pic_rmse,
+      pic_mae_train = metrics_train$pic_mae,
+      whitened_r2_train = metrics_train$whitened_r2,
+      whitened_rmse_train = metrics_train$whitened_rmse,
+      whitened_mae_train = metrics_train$whitened_mae,
+      resid_r2_train = metrics_train$resid_r2,
+      lik_r2_train = metrics_train$lik_r2,
+      
+      # 新增: 百分比标准误差
+      see_train = metrics_train$see,
+      percent_see_train = metrics_train$percent_see,
+      
+      # 新增: 观测值与预测值比值
+      R_whole_train = metrics_train$R_whole,
+      R_ari_train = metrics_train$R_ari,
+      R_geo_train = metrics_train$R_geo,
+      R_median_train = metrics_train$R_median,
+      
+      # 测试集指标
+      ols_r2_test = metrics_test$ols_r2,
+      adjusted_r2_test = metrics_test$adjusted_r2,
+      mse_test = metrics_test$mse,
+      rmse_test = metrics_test$rmse,
+      weighted_rmse_test = metrics_test$weighted_rmse,
+      mae_test = metrics_test$mae,
+      median_ae_test = metrics_test$median_ae,
+      pearson_corr_test = metrics_test$pearson_corr,
+      spearman_corr_test = metrics_test$spearman_corr,
+      mape_test = metrics_test$mape,
+      smape_test = metrics_test$smape,
+      cn_smape_test = metrics_test$cn_smape,
+      lambda_test = metrics_test$lambda,
+      pic_r2_test = metrics_test$pic_r2,
+      pic_pearson_test = metrics_test$pic_pearson,
+      pic_spearman_test = metrics_test$pic_spearman,
+      pic_rmse_test = metrics_test$pic_rmse,
+      pic_mae_test = metrics_test$pic_mae,
+      whitened_r2_test = metrics_test$whitened_r2,
+      whitened_rmse_test = metrics_test$whitened_rmse,
+      whitened_mae_test = metrics_test$whitened_mae,
+      resid_r2_test = metrics_test$resid_r2,
+      lik_r2_test = metrics_test$lik_r2,
+      
+      # 新增: 百分比标准误差
+      see_test = metrics_test$see,
+      percent_see_test = metrics_test$percent_see,
+      
+      # 新增: 观测值与预测值比值
+      R_whole_test = metrics_test$R_whole,
+      R_ari_test = metrics_test$R_ari,
+      R_geo_test = metrics_test$R_geo,
+      R_median_test = metrics_test$R_median
+    )
+    
+    all_results[[test_block]] <- result_row
+  }
+  
+  # 合并所有结果
+  if (length(all_results) > 0) {
+    return(do.call(rbind, all_results))
+  } else {
+    return(NULL)
+  }
+}
+
+# 更新批量模拟函数，支持两种分割方法
+run_single_simulation_methods <- function(sim_id, n_random_iterations = 50, 
+                                                             n_blocks = 4,
+                                                             train_ratio = 0.8) {
+  cat("正在进行第", sim_id, "次模拟（包含随机分割和分块分割）...\n")
   
   # 设置随机种子
   set.seed(123 + sim_id)
   
-  # 1. 生成基础数据
+  # 生成系统发育树和数据
   n_species <- 128
-  
-  # 生成系统发育树
   tree <- rcoal(n_species)
   tree$tip.label <- paste0("species", 1:n_species)
   
@@ -536,19 +695,18 @@ run_single_simulation <- function(sim_id) {
     reported_data = real_trait
   )
   
-  # 生成好预测值（微小随机误差）
+  # 生成各种预测值
+  # 1. 好预测值
   pred_good <- real_trait + rnorm(n_species, mean = 0, sd = 0.1)
   base_data$data_good <- pred_good
   
-  # 2. 场景1：系统发育聚集误差 (PH-UC1)
+  # 2. 系统发育聚集误差 (PH-UC1)
   distance_matrix <- cophenetic(tree)
   pam_result <- pam(distance_matrix, k = 4)
   folds <- pam_result$clustering
   names(folds) <- tree$tip.label
-  
   biased_cluster <- sample(1:4, 1)
   bias_magnitude <- 2 * sd(real_trait)
-  
   pred_bad_uc1 <- real_trait
   for (i in 1:n_species) {
     species_name <- tree$tip.label[i]
@@ -558,49 +716,39 @@ run_single_simulation <- function(sim_id) {
   }
   base_data$data_bad_uc1 <- pred_bad_uc1
   
-  # 3. 场景2：残差具有系统发育信号 (PH-UC2)
-  # 3a. 强系统发育信号残差 (sigma=1)
-  # 生成具有强系统发育信号的残差
+  # 3. 系统发育信号残差 (PH-UC2)
+  # 强信号
   residual_strong_raw <- rTraitCont(tree, model = "BM", sigma = 1)
-  # 标准化到目标方差
-  target_variance <- 0.5^2  # 目标方差
+  target_variance <- 0.5^2
   current_variance <- var(residual_strong_raw)
   scaling_factor <- sqrt(target_variance / current_variance)
   residual_strong <- residual_strong_raw * scaling_factor
-  
-  # 3b. 弱系统发育信号残差 (独立同分布噪声)
-  # 生成独立同分布的残差
-  residual_weak <- rnorm(n_species, mean = 0, sd = sqrt(target_variance))
-  # 确保残差独立（无系统发育信号）
   pred_bad_uc2_strong <- real_trait + residual_strong
-  pred_bad_uc2_weak <- real_trait + residual_weak
-  
   base_data$data_bad_uc2_st <- pred_bad_uc2_strong
+  
+  # 弱信号
+  residual_weak <- rnorm(n_species, mean = 0, sd = sqrt(target_variance))
+  pred_bad_uc2_weak <- real_trait + residual_weak
   base_data$data_bad_uc2_wk <- pred_bad_uc2_weak
   
-  # 4. 场景3：远缘类群预测失败
-  distance_matrix <- cophenetic(tree)
+  # 4. 远缘类群预测失败 (UC3)
   hc <- hclust(as.dist(distance_matrix), method = "complete")
   outgroup_cut <- cutree(hc, k = 2)
   group_sizes <- table(outgroup_cut)
   outgroup_id <- which.min(group_sizes)
   outgroup_species <- which(outgroup_cut == outgroup_id)
-  
-  # 使用GLS估计系统发育均值
   phylo_intercept_model <- gls(reported_data ~ 1, 
                                data = base_data,
                                correlation = corBrownian(1, form = ~GCF, phy = tree),
                                method = "ML")
   phylogenetic_mean <- as.numeric(coef(phylo_intercept_model))
-  
   pred_bad_uc3 <- real_trait
   pred_bad_uc3[outgroup_species] <- phylogenetic_mean
   base_data$data_bad_uc3 <- pred_bad_uc3
   
-  # 5. 场景4：完全失败模型
-  pred_bad_uc4 <- rep(phylogenetic_mean, n_species)
+  # 5. 完全失败模型 (UC4)
+  pred_bad_uc4 <- rep(phylogenetic_mean, n_species) + rnorm(n_species, mean = 0, sd = 0.1)
   names(pred_bad_uc4) <- tree$tip.label
-  pred_bad_uc4 <- pred_bad_uc4 + rnorm(n_species, mean = 0, sd = 0.1)
   base_data$data_bad_uc4 <- pred_bad_uc4
   
   # 6. 计算各场景指标（完整数据集）
@@ -615,58 +763,127 @@ run_single_simulation <- function(sim_id) {
     metrics_list[[scenarios[i]]] <- metrics
   }
   
-  # 7. 对每个场景进行分割分析
-  split_results_list <- list()
+  # 存储所有结果 - 分别存储随机分割和分块分割
+  random_split_results_list <- list()
+  block_split_results_list <- list()
   
+  # 对每个场景进行分析
   for (i in 1:length(scenarios)) {
-    cat("  场景", scenarios[i], "分割分析...\n")
+    scenario <- scenarios[i]
+    predictor_var <- predictor_vars[i]
     
-    split_results <- perform_random_split_analysis(
-      final_data = base_data,
-      tree = tree,
-      n_iterations = n_iterations,
-      train_ratio = 0.8,
-      response_var = "reported_data",
-      predictor_var = predictor_vars[i],
-      scenario_name = scenarios[i],
-      sim_id = sim_id
-    )
+    cat("  场景", scenario, "...\n")
     
-    split_results_list[[scenarios[i]]] <- split_results
+    # 1. 随机分割分析
+    tryCatch({
+      random_results <- perform_random_split_analysis(
+        final_data = base_data,
+        tree = tree,
+        n_iterations = n_random_iterations,
+        train_ratio = train_ratio,
+        response_var = "reported_data",
+        predictor_var = predictor_var,
+        scenario_name = scenario,
+        sim_id = sim_id
+      )
+      
+      random_split_results_list[[scenario]] <- random_results
+    }, error = function(e) {
+      cat("    场景", scenario, "随机分割失败:", e$message, "\n")
+    })
+    
+    # 2. 分块分割分析 (4折交叉验证)
+    tryCatch({
+      block_results <- perform_phylogenetic_block_split_kfold(
+        tree = tree,
+        data = base_data,
+        response_var = "reported_data",
+        predictor_var = predictor_var,
+        n_blocks = n_blocks,
+        scenario_name = scenario,
+        sim_id = sim_id
+      )
+      
+      if (!is.null(block_results)) {
+        block_split_results_list[[scenario]] <- block_results
+      } else {
+        cat("    场景", scenario, "分块分割返回NULL结果\n")
+      }
+    }, error = function(e) {
+      cat("    场景", scenario, "分块分割失败:", e$message, "\n")
+    })
   }
   
-  # 合并所有分割结果
-  all_split_results_for_sim <- do.call(rbind, split_results_list)
+  # 分别合并结果
+  random_split_df <- NULL
+  block_split_df <- NULL
+  
+  if (length(random_split_results_list) > 0) {
+    random_split_df <- do.call(rbind, random_split_results_list)
+    rownames(random_split_df) <- NULL
+  }
+  
+  if (length(block_split_results_list) > 0) {
+    block_split_df <- do.call(rbind, block_split_results_list)
+    rownames(block_split_df) <- NULL
+  }
   
   return(list(
     full_data_metrics = metrics_list,
-    split_analysis_results = all_split_results_for_sim,
-    base_data = base_data,  # 保存原始数据用于后续分析
+    random_split_results = random_split_df,
+    block_split_results = block_split_df,
+    base_data = base_data,  
     tree = tree
   ))
 }
 
-# 执行批量模拟
-cat("开始批量模拟，总共", n_simulations, "次模拟，每次", n_iterations, "次分割...\n")
+# 执行包含两种分割方法的模拟，但分别保存结果
+cat("开始批量模拟（包含随机分割和分块分割4折交叉验证，分别保存结果）...\n")
+n_simulations_with <- 50
+n_random_iterations <- 50
+n_blocks <- 4
+
 start_time <- Sys.time()
 
 # 使用lapply进行串行计算
-all_sim_results <- lapply(1:n_simulations, function(i) {
-  result <- run_single_simulation(i)
+all_sim_results_list <- lapply(1:n_simulations_with, function(i) {
+  result <- run_single_simulation_methods(
+    i, 
+    n_random_iterations = n_random_iterations,
+    n_blocks = n_blocks
+  )
   cat("完成第", i, "次模拟\n")
   return(result)
 })
 
+# 提取完整数据集的指标
+full_metrics_list <- lapply(all_sim_results_list, function(x) x$full_data_metrics)
+
+# 分别提取随机分割和分块分割的结果
+all_random_split_results_list <- lapply(all_sim_results_list, function(x) x$random_split_results)
+all_block_split_results_list <- lapply(all_sim_results_list, function(x) x$block_split_results)
+
+# 过滤掉NULL结果
+valid_random_results <- all_random_split_results_list[!sapply(all_random_split_results_list, is.null)]
+valid_block_results <- all_block_split_results_list[!sapply(all_block_split_results_list, is.null)]
+
+# 合并所有模拟的结果
+if (length(valid_random_results) > 0) {
+  all_random_split_results <- do.call(rbind, valid_random_results)
+} else {
+  all_random_split_results <- NULL
+  warning("所有随机分割模拟都失败了！")
+}
+
+if (length(valid_block_results) > 0) {
+  all_block_split_results <- do.call(rbind, valid_block_results)
+} else {
+  all_block_split_results <- NULL
+  warning("所有分块分割模拟都失败了！")
+}
+
 end_time <- Sys.time()
 cat("批量模拟完成，耗时:", round(end_time - start_time, 2), "秒\n")
-
-# 整理结果
-# 提取完整数据集的指标
-full_metrics_list <- lapply(all_sim_results, function(x) x$full_data_metrics)
-
-# 提取分割分析结果
-split_results_list <- lapply(all_sim_results, function(x) x$split_analysis_results)
-all_split_results_df <- do.call(rbind, split_results_list)
 
 #----------结果分析----------
 # 8. 计算平均指标
@@ -1101,6 +1318,9 @@ cat("  - higher_better_metrics.pdf: 越大越好指标\n")
 cat("  - lower_better_metrics.pdf: 越小越好指标\n")
 cat("  - closer_to_one_metrics.pdf: 越接近1越好指标\n")
 cat("  - all_metrics_comparison.pdf: 所有指标组合图\n")
+#-------切换数据集--------
+# all_split_results_df <- all_random_split_results
+all_split_results_df <- all_block_split_results
 #-------泛化能力部分的可视化--------
 library(ggplot2)
 library(dplyr)
@@ -1121,29 +1341,26 @@ calculate_delta_metrics <- function(split_results_df) {
   
   # 辅助函数：安全计算delta
   safe_calculate_delta <- function(train_vals, test_vals) {
-    # 检查是否有NA值
-    if(any(is.na(train_vals)) || any(is.na(test_vals))) {
-      return(rep(NA, length(train_vals)))
-    }
+    n <- length(train_vals)
+    delta <- rep(NA, n)  # 初始化全为NA
     
-    # 计算分母
-    denominator <- (train_vals + test_vals) / 2
-    
-    # 安全处理小分母：只对非NA值进行操作
-    non_na_idx <- !is.na(denominator)
-    denominator_safe <- denominator
-    
-    if(any(non_na_idx)) {
-      small_denom_idx <- non_na_idx & (abs(denominator[non_na_idx]) < 1e-10)
-      if(any(small_denom_idx)) {
-        # 只对有问题的值进行修正
-        denominator_safe[non_na_idx][small_denom_idx] <- 
-          sign(denominator[non_na_idx][small_denom_idx]) * 1e-10
+    for(i in 1:n) {
+      train_val <- train_vals[i]
+      test_val <- test_vals[i]
+      
+      # 只在该行两个值都非NA时才计算
+      if(!is.na(train_val) && !is.na(test_val)) {
+        denominator <- (train_val + test_val) / 2
+        
+        # 处理接近0的分母
+        if(abs(denominator) < 1e-10) {
+          denominator <- sign(denominator) * 1e-10
+        }
+        
+        delta[i] <- (test_val - train_val) / denominator
       }
     }
     
-    # 计算delta
-    delta <- (test_vals - train_vals) / denominator_safe
     return(delta)
   }
   
@@ -1315,12 +1532,19 @@ calculate_delta_variance <- function(delta_data, delta_columns) {
 # 计算方差
 variance_results <- calculate_delta_variance(delta_data, delta_columns)
 
-#-------修改后的方差排序图绘制逻辑----------
+# 创建保存结果的子目录
+output_dir <- "phy_model_comparison_plots"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir)
+  cat("创建输出目录:", output_dir, "\n")
+}
 
-# 按场景分别绘制方差排序柱状图
-plot_variance_barchart_by_scenario <- function(variance_results) {
+#-------修改后的方差排序图绘制逻辑（全部使用对数刻度）----------
+
+# 按场景分别绘制方差排序柱状图并保存为PDF
+plot_and_save_variance_barchart <- function(variance_results, output_dir) {
   scenarios <- unique(variance_results$Scenario)
-  plots <- list()
+  saved_files <- list()
   
   for(scenario in scenarios) {
     # 筛选当前场景的数据
@@ -1341,47 +1565,130 @@ plot_variance_barchart_by_scenario <- function(variance_results) {
     
     current_color <- scenario_colors[scenario]
     
-    # 创建图形
-    p <- ggplot(scenario_ranked, aes(x = reorder(CleanMetric, Variance), y = Variance)) +
-      geom_bar(stat = "identity", fill = current_color, alpha = 0.8) +
+    # 确保方差值为正值（对数刻度需要正值）
+    # 将零值替换为一个很小的正数
+    min_positive_variance <- min(scenario_ranked$Variance[scenario_ranked$Variance > 0], na.rm = TRUE)
+    scenario_ranked$Variance_adj <- ifelse(scenario_ranked$Variance <= 0, 
+                                           min_positive_variance * 0.1, 
+                                           scenario_ranked$Variance)
+    
+    # 使用对数刻度版本
+    cat("场景", scenario, "使用对数刻度\n")
+    
+    # 计算对数刻度下的合适范围
+    log_values <- log10(scenario_ranked$Variance_adj)
+    log_max <- max(log_values, na.rm = TRUE)
+    log_min <- min(log_values, na.rm = TRUE)
+    
+    # 扩展范围用于标签显示
+    log_range <- log_max - log_min
+    log_upper_limit <- log_max + (log_range * 0.05)  # 增加5%的空间用于标签
+    
+    # 转换为实际值
+    upper_limit <- 10^(log_upper_limit)
+    
+    p <- ggplot(scenario_ranked, aes(x = reorder(CleanMetric, Variance_adj), y = Variance_adj)) +
+      geom_bar(stat = "identity", fill = current_color, alpha = 0.8, width = 0.7) +
       coord_flip() +
       labs(
-        title = paste("场景", scenario, "- Delta指标方差排序"),
-        subtitle = "Delta = (测试集 - 训练集) / 均值",
-        x = "指标",
-        y = "方差"
+        title = paste("Scenario", scenario, "- Delta Metric Variance Ranking"),
+        x = "Metric",
+        y = "Variance (log10 scale)"
       ) +
-      theme_minimal() +
+      # 使用对数刻度
+      scale_y_log10(
+        breaks = scales::trans_breaks("log10", function(x) 10^x),
+        labels = function(x) {
+          ifelse(x >= 1000, 
+                 formatC(x, format = "e", digits = 1),
+                 formatC(x, format = "f", digits = 3))
+        },
+        expand = expansion(mult = c(0, 0.1)),
+        limits = c(NA, upper_limit)  # 设置上限
+      ) +
+      theme_minimal(base_size = 12) +
       theme(
-        axis.text.y = element_text(size = 10),
-        axis.text.x = element_text(size = 10),
-        axis.title = element_text(size = 12),
-        plot.title = element_text(size = 14, face = "bold"),
-        plot.subtitle = element_text(size = 10),
-        legend.position = "none"
+        axis.text.y = element_text(size = 11, color = "black", face = "bold"),
+        axis.text.x = element_text(size = 11, color = "black"),
+        axis.title = element_text(size = 12, face = "bold"),
+        plot.title = element_text(size = 14, face = "bold", hjust = 0.5, margin = margin(b = 10)),
+        plot.margin = margin(1, 2, 1, 1.2, "cm"),  # 增加右边距
+        panel.grid.major = element_line(color = "grey90", linewidth = 0.2),
+        panel.grid.minor = element_blank()
       ) +
-      # 添加数值标签
-      geom_text(aes(label = sprintf("%.4f", Variance)), 
-                hjust = -0.1, size = 3, color = "darkblue")
+      # 添加数值标签，使用合适的格式
+      geom_text(
+        aes(label = ifelse(Variance_adj >= 1000, 
+                           sprintf("%.2e", Variance_adj), 
+                           sprintf("%.3f", Variance_adj))), 
+        hjust = -0.1, 
+        size = 3.5, 
+        color = "darkblue"
+      )
     
-    plots[[scenario]] <- p
+    pdf_file <- file.path(output_dir, paste0("scenario_", scenario, "_delta_variance_log.pdf"))
+    
+    # 保存为PDF
+    ggsave(pdf_file, p, width = 10, height = 7, dpi = 300)
+    
+    cat("已保存:", pdf_file, "\n")
+    saved_files[[scenario]] <- pdf_file
+    
+    # 也显示在R中查看
+    print(p)
   }
   
-  return(plots)
+  return(saved_files)
 }
 
-# 执行分开绘图
-cat("=== 按场景分开绘制Delta指标可视化图表 ===\n")
-
-# 方差排序柱状图（按场景分开）
-cat("1. 按场景绘制方差排序柱状图...\n")
-variance_plots_by_scenario <- plot_variance_barchart_by_scenario(variance_results)
-
-# 显示每个场景的方差排序图
-for(scenario in names(variance_plots_by_scenario)) {
-  cat("显示场景", scenario, "的方差排序图...\n")
-  print(variance_plots_by_scenario[[scenario]])
+# 保存方差数据为CSV文件
+save_variance_data <- function(variance_results, output_dir) {
+  # 保存详细数据
+  csv_file <- file.path(output_dir, "delta_variance_results.csv")
+  write.csv(variance_results, csv_file, row.names = FALSE)
+  cat("已保存方差数据:", csv_file, "\n")
+  
+  # 创建汇总表格（按场景和指标类型）
+  summary_data <- variance_results %>%
+    group_by(Scenario, Type) %>%
+    summarise(
+      Avg_Variance = mean(Variance, na.rm = TRUE),
+      Max_Variance = max(Variance, na.rm = TRUE),
+      Min_Variance = min(Variance, na.rm = TRUE),
+      Avg_AbsDelta = mean(AbsMeanDelta, na.rm = TRUE),
+      n_Metrics = n(),
+      .groups = 'drop'
+    )
+  
+  summary_file <- file.path(output_dir, "delta_variance_summary.csv")
+  write.csv(summary_data, summary_file, row.names = FALSE)
+  cat("已保存汇总数据:", summary_file, "\n")
+  
+  return(list(details = csv_file, summary = summary_file))
 }
+
+# 执行绘图和保存
+cat("=== 保存Delta指标可视化图表和数据 ===\n")
+
+# 方差排序柱状图（按场景分开保存为PDF）
+cat("1. 按场景绘制方差排序柱状图（全部使用对数刻度）...\n")
+pdf_files <- plot_and_save_variance_barchart(variance_results, output_dir)
+
+# 保存数据为CSV
+cat("\n2. 保存方差数据为CSV文件...\n")
+csv_files <- save_variance_data(variance_results, output_dir)
+
+# 输出总结信息
+cat("\n=== 处理完成 ===")
+cat("\n输出目录:", output_dir)
+cat("\n保存的PDF文件:")
+for(scenario in names(pdf_files)) {
+  cat("\n  - 场景", scenario, ":", basename(pdf_files[[scenario]]))
+}
+cat("\n保存的CSV文件:")
+cat("\n  - 详细数据:", basename(csv_files$details))
+cat("\n  - 汇总数据:", basename(csv_files$summary))
+cat("\n")
 #-------新增：收集方差排序结果，与另一分析流程格式保持一致----------
 
 # 定义数据集ID（根据实际情况修改）
