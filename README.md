@@ -1,7 +1,7 @@
 # HuangR dailywork code
 保存工作分析代码
 
-#目录索引：
+# 目录索引
 
 **1、Outlier**
 
