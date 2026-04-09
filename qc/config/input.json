@@ -1,0 +1,190 @@
+{
+  "formName": "单细胞质控参数配置",
+  "description": "配置单细胞质控的运行参数，基于 nFeature_RNA、nCount_RNA 和线粒体比例进行细胞过滤",
+  "defaultValues": {
+    "assay": "RNA",
+    "qc_method": "manual",
+    "mt_pattern": "^MT-",
+    "mt_col_name": "percent.mt",
+    "min_features": 200,
+    "max_features": 2500,
+    "min_counts": 0,
+    "max_counts": 0,
+    "max_percent_mt": 5,
+    "save_plots": true,
+    "plot_format": "both",
+    "output_object": "seurat"
+  },
+  "formRules": {
+    "required": [],
+    "customRules": []
+  },
+  "fields": [
+    {
+      "name": "assay",
+      "label": "Assay 名称",
+      "type": "string",
+      "description": "Seurat 对象中要使用的 assay 名称，默认为 RNA",
+      "default": "RNA",
+      "validation": {
+        "required": true,
+        "message": "请输入 assay 名称"
+      }
+    },
+    {
+      "name": "qc_method",
+      "label": "QC 方法",
+      "type": "select",
+      "options": [
+        {
+          "label": "手工阈值过滤 (manual)",
+          "value": "manual"
+        },
+        {
+          "label": "scater MAD 自动阈值 (scater_mad)",
+          "value": "scater_mad"
+        },
+        {
+          "label": "按样本分别手工过滤 (per_sample_manual)",
+          "value": "per_sample_manual"
+        }
+      ],
+      "default": "manual",
+      "description": "当前版本仅实现 manual 方法，其他方法将在后续版本中支持",
+      "validation": {
+        "required": true,
+        "message": "请选择 QC 方法"
+      }
+    },
+    {
+      "name": "mt_pattern",
+      "label": "线粒体基因匹配模式",
+      "type": "string",
+      "description": "用于匹配线粒体基因的正则表达式，默认为 ^MT-",
+      "default": "^MT-",
+      "validation": {
+        "required": true,
+        "message": "请输入线粒体基因匹配模式"
+      }
+    },
+    {
+      "name": "mt_col_name",
+      "label": "线粒体比例列名",
+      "type": "string",
+      "description": "metadata 中线粒体比例列的列名，默认为 percent.mt",
+      "default": "percent.mt",
+      "validation": {
+        "required": true,
+        "message": "请输入线粒体比例列名"
+      }
+    },
+    {
+      "name": "min_features",
+      "label": "最小基因数 (min_features)",
+      "type": "number",
+      "description": "每个细胞最少检测到的基因数，0 表示不启用该阈值",
+      "default": 200,
+      "validation": {
+        "required": true,
+        "message": "请输入最小基因数"
+      }
+    },
+    {
+      "name": "max_features",
+      "label": "最大基因数 (max_features)",
+      "type": "number",
+      "description": "每个细胞最多检测到的基因数，0 表示不启用该阈值",
+      "default": 2500,
+      "validation": {
+        "required": true,
+        "message": "请输入最大基因数"
+      }
+    },
+    {
+      "name": "min_counts",
+      "label": "最小 UMI 数 (min_counts)",
+      "type": "number",
+      "description": "每个细胞最少的总 UMI 数，0 表示不启用该阈值",
+      "default": 0,
+      "validation": {
+        "required": true,
+        "message": "请输入最小 UMI 数"
+      }
+    },
+    {
+      "name": "max_counts",
+      "label": "最大 UMI 数 (max_counts)",
+      "type": "number",
+      "description": "每个细胞最多的总 UMI 数，0 表示不启用该阈值",
+      "default": 0,
+      "validation": {
+        "required": true,
+        "message": "请输入最大 UMI 数"
+      }
+    },
+    {
+      "name": "max_percent_mt",
+      "label": "最大线粒体比例 (max_percent_mt)",
+      "type": "number",
+      "description": "每个细胞最大的线粒体基因比例，0 表示不启用该阈值",
+      "default": 5,
+      "validation": {
+        "required": true,
+        "message": "请输入最大线粒体比例"
+      }
+    },
+    {
+      "name": "save_plots",
+      "label": "保存 QC 图",
+      "type": "boolean",
+      "description": "是否生成并保存 QC 图",
+      "default": true
+    },
+    {
+      "name": "plot_format",
+      "label": "图像格式",
+      "type": "select",
+      "options": [
+        {
+          "label": "PDF",
+          "value": "pdf"
+        },
+        {
+          "label": "PNG",
+          "value": "png"
+        },
+        {
+          "label": "PDF 和 PNG",
+          "value": "both"
+        }
+      ],
+      "default": "both",
+      "description": "QC 图的输出格式",
+      "validation": {
+        "required": true,
+        "message": "请选择图像格式"
+      }
+    },
+    {
+      "name": "output_object",
+      "label": "输出对象类型",
+      "type": "select",
+      "options": [
+        {
+          "label": "Seurat",
+          "value": "seurat"
+        },
+        {
+          "label": "继承输入对象类型",
+          "value": "inherit"
+        }
+      ],
+      "default": "seurat",
+      "description": "输出对象的类型，初版只支持 Seurat",
+      "validation": {
+        "required": true,
+        "message": "请选择输出对象类型"
+      }
+    }
+  ]
+}

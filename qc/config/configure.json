@@ -1,0 +1,10 @@
+{
+    "name": "qc",
+    "display_name": "单细胞质控",
+    "version": "1.0.0",
+    "visible": true,
+    "description": "单细胞分析流程中的细胞质量控制步骤",
+    "type": "kit",
+    "tags": ["python", "tool"],
+    "cover": "https://img.shields.io/badge/qc-tool-blue"
+}

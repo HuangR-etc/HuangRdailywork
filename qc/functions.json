@@ -1,0 +1,22 @@
+[
+  {
+    "function": {
+      "name": "qc.runner",
+      "description": "单细胞分析流程中的细胞质量控制步骤",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "file": "qc.py",
+      "sif": "adam-base:1.0.0",
+      "network": false,
+      "gpu": 0,
+      "cpu": 1,
+      "mem_per_cpu": 4000,
+      "partition": "gpu",
+      "conda_env": "base",
+      "display_name": "单细胞质控"
+    }
+  }
+]
