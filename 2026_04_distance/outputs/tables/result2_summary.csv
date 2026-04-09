@@ -1,0 +1,16 @@
+"Tree","Algorithm","MinPD","MeanPD","MeanNND"
+"large_balanced","A_main",11,20.3894736842105,13.25
+"large_balanced","B_greedy_only",11,20.2842105263158,13
+"large_balanced","C_meanpd_only",2,22,3.4
+"large_balanced","D_minpd_only",11,18.7473684210526,11.95
+"large_balanced","E_meannnd_only",9,20.3263157894737,13.3
+"large_ladder","A_main",14.1127586501207,94.5808772268818,14.8118042265189
+"large_ladder","B_greedy_only",11.0283600437482,95.1853924438049,14.6793442049826
+"large_ladder","C_meanpd_only",1.98848602712144,130.709849009388,2.86479768003414
+"large_ladder","D_minpd_only",12.3761156481539,93.1648202808932,14.2111667029603
+"large_ladder","E_meannnd_only",10.0852502872328,81.4687892413882,15.116252785357
+"small_balanced","A_main",9,11.4,9.6
+"small_balanced","B_greedy_only",8,11,9.2
+"small_balanced","C_meanpd_only",9,11.4,9.6
+"small_balanced","D_minpd_only",9,10.8,9.2
+"small_balanced","E_meannnd_only",9,11.4,9.6
