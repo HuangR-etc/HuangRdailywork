@@ -52,6 +52,65 @@ Tests whether the main method selects more dispersed subsets than random samplin
 - Empirical p-values and z-scores
 - Visualization of observed vs null distributions
 
+### Result 1b: Random-Tree Replicated Analysis
+Extends Result 1 by testing the method on 100 random phylogenetic trees to assess robustness across different topologies.
+
+**Key features:**
+- Generates 100 random trees with 256 tips each
+- Performs Result 1 analysis on each tree independently
+- Uses tree-specific null distributions (not mixed across trees)
+- Summarizes results using standardized metrics (z-scores, percentiles)
+- Compares with original Result 1 fixed tree results
+
+**Key outputs:**
+- Per-tree summary with observed metrics and null comparisons
+- Cross-tree summary statistics
+- Distribution plots of z-scores and percentiles across trees
+- Proportion of trees where observed exceeds 95th percentile
+- Comparison with fixed tree results from original Result 1
+
+**Directory structure:**
+```
+outputs/result1_random_trees/
+├── per_tree/
+│   ├── tree_001/
+│   │   ├── tree.rds
+│   │   ├── observed_subset.csv
+│   │   ├── null_metrics.csv
+│   │   └── tree_summary.csv
+│   ├── tree_002/
+│   └── ...
+├── summary/
+│   ├── per_tree_summary.csv
+│   ├── cross_tree_summary.csv
+│   └── random_tree_config.json
+└── figures/
+    ├── example_tree_null_dist.pdf
+    ├── zscore_boxplot.pdf
+    ├── percentile_boxplot.pdf
+    ├── above95_barplot.pdf
+    └── compare_with_existing_result1.pdf
+```
+
+**Usage:**
+```r
+# Run the full random-tree analysis
+source("R/result1_random_trees.R")
+results <- run_result1_random_trees()
+
+# Run with custom parameters
+results <- run_result1_random_trees(
+  n_trees = 100,
+  n_tips = 256,
+  subset_size = 20,
+  n_null_reps = 1000,
+  global_seed = 20260409
+)
+
+# Run test version (smaller parameters)
+test_result1_random_trees()
+```
+
 ### Result 2: Design Component Analysis
 Evaluates the necessity of different design components:
 - Exchange refinement vs greedy-only

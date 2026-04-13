@@ -1,0 +1,9 @@
+{
+  "n_trees": [10],
+  "n_tips": [100],
+  "subset_size": [15],
+  "n_null_reps": [200],
+  "global_seed": [20260409],
+  "output_dir": ["outputs/result1_random_trees_quick"],
+  "analysis_date": ["2026-04-09"]
+}

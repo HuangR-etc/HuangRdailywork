@@ -1,0 +1,9 @@
+{
+  "n_trees": [5],
+  "n_tips": [50],
+  "subset_size": [10],
+  "n_null_reps": [100],
+  "global_seed": [999],
+  "output_dir": ["test_outputs/result1_random_trees_test"],
+  "analysis_date": ["2026-04-09"]
+}

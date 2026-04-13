@@ -1,6 +1,6 @@
 "Algorithm","MinPD","MeanPD","MeanNND","Subset_Size"
 "A_main",11,20.3894736842105,13.25,20
-"B_greedy_only",11,20.2842105263158,13,20
+"B_greedy_only",11,20.0842105263158,13,20
 "C_meanpd_only",2,22,3.4,20
-"D_minpd_only",11,18.7473684210526,11.95,20
-"E_meannnd_only",9,20.3263157894737,13.3,20
+"D_minpd_only",11,19.0473684210526,12.1,20
+"E_meannnd_only",11,20.3789473684211,13.3,20

@@ -9,16 +9,15 @@ library(phytools)
 #'
 #' @param trait_values Vector or matrix of trait values
 #' @param tree A phylo object
-#' @param standardized If TRUE, return standardized K (default: TRUE)
 #' @return Blomberg's K value
-calc_blombergs_K <- function(trait_values, tree, standardized = TRUE) {
+calc_blombergs_K <- function(trait_values, tree) {
   # Ensure tree tips and trait names match
   if (is.vector(trait_values)) {
     # Single trait
     trait_values <- trait_values[tree$tip.label]
     
     # Calculate K using picante
-    K_result <- Kcalc(trait_values, tree, standardized = standardized)
+    K_result <- Kcalc(trait_values, tree)
     
     return(K_result)
   } else {
@@ -28,7 +27,7 @@ calc_blombergs_K <- function(trait_values, tree, standardized = TRUE) {
     
     for (i in 1:n_traits) {
       trait_vec <- trait_values[tree$tip.label, i]
-      K_values[i] <- Kcalc(trait_vec, tree, standardized = standardized)
+      K_values[i] <- Kcalc(trait_vec, tree)
     }
     
     names(K_values) <- colnames(trait_values)
@@ -40,22 +39,18 @@ calc_blombergs_K <- function(trait_values, tree, standardized = TRUE) {
 #'
 #' @param trait_values Vector or matrix of trait values
 #' @param tree A phylo object
-#' @param method Method for lambda calculation (default: "ML" for maximum likelihood)
 #' @return Pagel's lambda value
-calc_pagels_lambda <- function(trait_values, tree, method = "ML") {
+calc_pagels_lambda <- function(trait_values, tree) {
   # Ensure tree tips and trait names match
   if (is.vector(trait_values)) {
     # Single trait
     trait_values <- trait_values[tree$tip.label]
     
     # Calculate lambda using phytools
-    lambda_result <- phylosig(tree, trait_values, method = method, test = FALSE)
+    lambda_result <- phylosig(tree, trait_values, method = "lambda", test = FALSE)
     
-    if (method == "ML") {
-      return(lambda_result$lambda)
-    } else {
-      return(lambda_result)
-    }
+    # phylosig returns a list with lambda value when method = "lambda"
+    return(lambda_result$lambda)
   } else {
     # Multiple traits
     n_traits <- ncol(trait_values)
@@ -63,18 +58,38 @@ calc_pagels_lambda <- function(trait_values, tree, method = "ML") {
     
     for (i in 1:n_traits) {
       trait_vec <- trait_values[tree$tip.label, i]
-      lambda_result <- phylosig(tree, trait_vec, method = method, test = FALSE)
-      
-      if (method == "ML") {
-        lambda_values[i] <- lambda_result$lambda
-      } else {
-        lambda_values[i] <- lambda_result
-      }
+      lambda_result <- phylosig(tree, trait_vec, method = "lambda", test = FALSE)
+      lambda_values[i] <- lambda_result$lambda
     }
     
     names(lambda_values) <- colnames(trait_values)
     return(lambda_values)
   }
+}
+
+#' Calculate Moran's I for trait data with phylogenetic weights
+#'
+#' @param trait_values Vector of trait values
+#' @param tree A phylo object
+#' @return A list with Moran's I statistics: observed, expected, sd, p.value
+calc_morans_I <- function(trait_values, tree) {
+  # Ensure tree tips and trait names match
+  trait_values <- trait_values[tree$tip.label]
+  
+  # Calculate patristic distance matrix
+  dist_matrix <- cophenetic.phylo(tree)
+  
+  # Construct weight matrix W: W[i,j] = 1/D[i,j] when i != j, W[i,i] = 0
+  W <- 1 / dist_matrix
+  diag(W) <- 0
+  
+  # Ensure W is symmetric and finite
+  W[!is.finite(W)] <- 0
+  
+  # Calculate Moran's I using ape::Moran.I
+  moran_result <- ape::Moran.I(trait_values, weight = W)
+  
+  return(moran_result)
 }
 
 #' Calculate phylogenetic signal for multiple subsets
@@ -162,39 +177,83 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
   
   all_results <- data.frame()
   
-  # Get subset information
+  # Get subset information from metadata
   subset_names <- simulation_results$metadata$subset_names
-  subsets <- simulation_results$metadata$subsets  # Note: this needs to be stored in simulation_results
+  subsets <- simulation_results$metadata$subsets
   
-  # We need to reconstruct subsets from the data structure
-  # For now, we'll create a placeholder - actual implementation would extract this properly
+  if (is.null(subsets)) {
+    warning("No subsets found in simulation results metadata. Cannot calculate signal metrics.")
+    return(all_results)
+  }
   
-  # Process BM simulations
-  bm_results <- simulation_results$BM
+  # Process Lambda simulations
+  lambda_models <- names(simulation_results$Lambda)
   
-  for (subset_name in names(bm_results)) {
-    cat("  Processing BM for subset:", subset_name, "\n")
+  for (lambda_model in lambda_models) {
+    lambda_results <- simulation_results$Lambda[[lambda_model]]
     
-    # Get trait values for this subset
-    subset_traits <- bm_results[[subset_name]]
-    n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
-    
-    for (rep in 1:n_reps) {
-      # Extract trait values for this replicate
-      trait_values <- subset_traits[, rep]
+    for (subset_name in names(lambda_results)) {
+      cat("  Processing", lambda_model, "for subset:", subset_name, "\n")
       
-      # We need the actual tip names for this subset
-      # This is a placeholder - actual implementation would need proper subset tip names
+      # Find the index of this subset
+      subset_idx <- which(subset_names == subset_name)
+      if (length(subset_idx) == 0) {
+        warning(paste("Subset", subset_name, "not found in metadata"))
+        next
+      }
       
-      # Placeholder result
-      all_results <- rbind(all_results, data.frame(
-        Model = "BM",
-        Subset = subset_name,
-        Replicate = rep,
-        K = NA,
-        Lambda = NA,
-        stringsAsFactors = FALSE
-      ))
+      # Get the tip names for this subset
+      subset_tips <- subsets[[subset_idx]]
+      
+      # Get trait values for this subset
+      subset_traits <- lambda_results[[subset_name]]
+      n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
+      
+      for (rep in 1:n_reps) {
+        # Extract trait values for this replicate
+        trait_values <- subset_traits[, rep]
+        names(trait_values) <- subset_tips
+        
+        # Extract subtree for this subset
+        subset_tree <- keep.tip(tree, subset_tips)
+        
+        # Calculate K
+        K_value <- tryCatch({
+          calc_blombergs_K(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating K for replicate", rep, ":", e$message, "\n")
+          NA
+        })
+        
+        # Calculate Lambda
+        lambda_value <- tryCatch({
+          calc_pagels_lambda(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating Lambda for replicate", rep, ":", e$message, "\n")
+          NA
+        })
+        
+        # Calculate Moran's I
+        moran_result <- tryCatch({
+          calc_morans_I(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating Moran's I for replicate", rep, ":", e$message, "\n")
+          list(observed = NA, expected = NA, sd = NA, p.value = NA)
+        })
+        
+        all_results <- rbind(all_results, data.frame(
+          Model = lambda_model,
+          Subset = subset_name,
+          Replicate = rep,
+          K = K_value,
+          Lambda = lambda_value,
+          MoransI = moran_result$observed,
+          MoransI_expected = moran_result$expected,
+          MoransI_sd = moran_result$sd,
+          MoransI_p = moran_result$p.value,
+          stringsAsFactors = FALSE
+        ))
+      }
     }
   }
   
@@ -207,18 +266,62 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
     for (subset_name in names(ou_results)) {
       cat("  Processing", ou_model, "for subset:", subset_name, "\n")
       
+      # Find the index of this subset
+      subset_idx <- which(subset_names == subset_name)
+      if (length(subset_idx) == 0) {
+        warning(paste("Subset", subset_name, "not found in metadata"))
+        next
+      }
+      
+      # Get the tip names for this subset
+      subset_tips <- subsets[[subset_idx]]
+      
       # Get trait values for this subset
       subset_traits <- ou_results[[subset_name]]
       n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
       
       for (rep in 1:n_reps) {
-        # Placeholder result
+        # Extract trait values for this replicate
+        trait_values <- subset_traits[, rep]
+        names(trait_values) <- subset_tips
+        
+        # Extract subtree for this subset
+        subset_tree <- keep.tip(tree, subset_tips)
+        
+        # Calculate K
+        K_value <- tryCatch({
+          calc_blombergs_K(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating K for replicate", rep, ":", e$message, "\n")
+          NA
+        })
+        
+        # Calculate Lambda
+        lambda_value <- tryCatch({
+          calc_pagels_lambda(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating Lambda for replicate", rep, ":", e$message, "\n")
+          NA
+        })
+        
+        # Calculate Moran's I
+        moran_result <- tryCatch({
+          calc_morans_I(trait_values, subset_tree)
+        }, error = function(e) {
+          cat("    Error calculating Moran's I for replicate", rep, ":", e$message, "\n")
+          list(observed = NA, expected = NA, sd = NA, p.value = NA)
+        })
+        
         all_results <- rbind(all_results, data.frame(
           Model = ou_model,
           Subset = subset_name,
           Replicate = rep,
-          K = NA,
-          Lambda = NA,
+          K = K_value,
+          Lambda = lambda_value,
+          MoransI = moran_result$observed,
+          MoransI_expected = moran_result$expected,
+          MoransI_sd = moran_result$sd,
+          MoransI_p = moran_result$p.value,
           stringsAsFactors = FALSE
         ))
       }

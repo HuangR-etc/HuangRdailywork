@@ -82,6 +82,10 @@ generate_all_trees <- function(cfg) {
   cat("  Generating small balanced tree (n =", cfg$small_n, ")...\n")
   trees$small_balanced <- generate_balanced_tree(cfg$small_n, tip_prefix = "SB")
   
+  # Generate small ladder (unbalanced) tree
+  cat("  Generating small ladder tree (n =", cfg$small_n, ")...\n")
+  trees$small_ladder <- generate_ladder_tree(cfg$small_n, tip_prefix = "SL")
+  
   # If tree_reps > 1, generate replicates
   if (cfg$tree_reps > 1) {
     cat("  Generating", cfg$tree_reps, "replicates for each tree type...\n")
@@ -90,6 +94,7 @@ generate_all_trees <- function(cfg) {
     trees$large_balanced_reps <- list()
     trees$large_ladder_reps <- list()
     trees$small_balanced_reps <- list()
+    trees$small_ladder_reps <- list()
     
     for (i in 1:cfg$tree_reps) {
       trees$large_balanced_reps[[i]] <- generate_balanced_tree(
@@ -103,6 +108,10 @@ generate_all_trees <- function(cfg) {
       trees$small_balanced_reps[[i]] <- generate_balanced_tree(
         cfg$small_n, 
         tip_prefix = paste0("SB", i, "_")
+      )
+      trees$small_ladder_reps[[i]] <- generate_ladder_tree(
+        cfg$small_n, 
+        tip_prefix = paste0("SL", i, "_")
       )
     }
   }
@@ -139,6 +148,11 @@ plot_trees <- function(trees, cfg) {
   plot(trees$small_balanced, main = "Small Balanced Tree (n=32)", cex = 0.8)
   dev.off()
   
+  # Plot small ladder tree
+  pdf(file.path(fig_dir, "tree_small_ladder.pdf"), width = 8, height = 6)
+  plot(trees$small_ladder, main = "Small Ladder Tree (n=32)", cex = 0.8)
+  dev.off()
+  
   cat("Tree plots saved to", fig_dir, "\n")
 }
 
@@ -155,6 +169,7 @@ if (sys.nframe() == 0) {
   cat("  Large balanced tree:", length(test_trees$large_balanced$tip.label), "tips\n")
   cat("  Large ladder tree:", length(test_trees$large_ladder$tip.label), "tips\n")
   cat("  Small balanced tree:", length(test_trees$small_balanced$tip.label), "tips\n")
+  cat("  Small ladder tree:", length(test_trees$small_ladder$tip.label), "tips\n")
   
   # Plot trees
   plot_trees(test_trees, cfg)

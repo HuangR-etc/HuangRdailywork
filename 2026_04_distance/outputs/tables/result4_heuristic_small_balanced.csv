@@ -1,0 +1,6 @@
+"Tree","Subset_Size","Tip_Index","Tip_Name","MinPD","MeanPD","MeanNND"
+"small_balanced",5,13,"SB13",9,11.4,9.6
+"small_balanced",5,3,"SB03",9,11.4,9.6
+"small_balanced",5,18,"SB18",9,11.4,9.6
+"small_balanced",5,7,"SB07",9,11.4,9.6
+"small_balanced",5,29,"SB29",9,11.4,9.6

@@ -1,0 +1,78 @@
+========================================
+RESULT 1 RANDOM-TREE ANALYSIS REPORT
+========================================
+
+Analysis Date: 2026-04-09 
+Configuration:
+  Number of random trees: 10 
+  Tips per tree: 100 
+  Subset size: 15 
+  Null replicates per tree: 200 
+  Global seed: 20260409 
+
+SUMMARY STATISTICS
+==================
+
+   Metric median_z   mean_z      sd_z     iqr_z    min_z    max_z
+1   MinPD 7.889768 7.939505 0.5416993 0.3129126 6.623631 8.769625
+2  MeanPD 3.562680 3.615299 0.3728192 0.6235824 3.039737 4.070141
+3 MeanNND 6.170578 6.242040 0.4197018 0.4023866 5.695400 7.219189
+  median_percentile mean_percentile sd_percentile iqr_percentile prop_above95
+1                 1           1.000    0.00000000              0            1
+2                 1           0.999    0.00301005              0            1
+3                 1           1.000    0.00000000              0            1
+  n_above95 total_trees    median_p      mean_p prop_p_lt_0_05 prop_p_lt_0_01
+1       150         150 0.004975124 0.004975124              1            1.0
+2       150         150 0.004975124 0.005970149              1            0.9
+3       150         150 0.004975124 0.004975124              1            1.0
+      wilcox_p      t_test_p
+1 1.009082e-26 2.568297e-176
+2 1.009082e-26 8.896052e-150
+3 1.009082e-26 2.935445e-177
+
+
+KEY FINDINGS
+============
+
+MinPD :
+  Median z-score: 7.89 
+  Proportion above 95th percentile: 100 % ( 150 / 150  trees)
+  Median percentile: 1 
+  Proportion with p < 0.05: 100 %
+  Wilcoxon test p-value (z > 0): <2e-16 
+
+MeanPD :
+  Median z-score: 3.563 
+  Proportion above 95th percentile: 100 % ( 150 / 150  trees)
+  Median percentile: 1 
+  Proportion with p < 0.05: 100 %
+  Wilcoxon test p-value (z > 0): <2e-16 
+
+MeanNND :
+  Median z-score: 6.171 
+  Proportion above 95th percentile: 100 % ( 150 / 150  trees)
+  Median percentile: 1 
+  Proportion with p < 0.05: 100 %
+  Wilcoxon test p-value (z > 0): <2e-16 
+
+
+CONCLUSIONS
+===========
+
+The random-tree replicated analysis demonstrates that the main method for selecting
+dispersed subsets performs consistently across random phylogenetic topologies.
+Key observations:
+
+- For  MinPD , the observed subset exceeded the 95th percentile of the
+  tree-specific null distribution in  100 % of random trees, providing strong evidence that the method
+  consistently selects more dispersed subsets than random sampling.
+- For  MeanPD , the observed subset exceeded the 95th percentile of the
+  tree-specific null distribution in  100 % of random trees, providing strong evidence that the method
+  consistently selects more dispersed subsets than random sampling.
+- For  MeanNND , the observed subset exceeded the 95th percentile of the
+  tree-specific null distribution in  100 % of random trees, providing strong evidence that the method
+  consistently selects more dispersed subsets than random sampling.
+
+This analysis complements the original Result 1 by showing that the method's
+effectiveness is not limited to specific tree topologies but generalizes to
+random phylogenetic trees.

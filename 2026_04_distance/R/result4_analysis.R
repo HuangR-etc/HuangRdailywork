@@ -150,7 +150,7 @@ run_result4_for_tree <- function(dist_obj, subset_size, maximize = TRUE, n_greed
   return(summary)
 }
 
-#' Run Result 4 analysis for small balanced tree
+#' Run Result 4 analysis for small trees (balanced and ladder)
 #'
 #' @param dist_objs List of distance objects
 #' @param cfg Configuration list
@@ -160,74 +160,146 @@ run_result4_analysis <- function(dist_objs, cfg) {
   cat("RESULT 4: Comparing heuristic with exact optimum\n")
   cat(paste0(strrep("=", 70), "\n"))
   
-  # Only run on small balanced tree
-  if (!"small_balanced" %in% names(dist_objs)) {
-    cat("Small balanced tree not found in distance objects.\n")
-    cat("Result 4 analysis requires a small tree for exhaustive search.\n")
+  results <- list()
+  summary_dfs <- list()
+  
+  # Process small balanced tree
+  if ("small_balanced" %in% names(dist_objs)) {
+    dist_obj <- dist_objs$small_balanced
+    
+    cat("\n>>> Processing small balanced tree (n =", cfg$small_n, ")\n")
+    cat("Subset size:", cfg$subset_small, "\n")
+    cat("Total combinations: choose(", cfg$small_n, ",", cfg$subset_small, ") =", 
+        choose(cfg$small_n, cfg$subset_small), "\n")
+    
+    # Check if exhaustive search is feasible
+    total_combinations <- choose(cfg$small_n, cfg$subset_small)
+    if (total_combinations > 1000000) {
+      cat("Warning: Total combinations (", total_combinations, ") is very large.\n")
+      cat("Exhaustive search may be computationally expensive.\n")
+      cat("Consider using a smaller tree or subset size.\n")
+    }
+    
+    # Run analysis
+    result <- run_result4_for_tree(
+      dist_obj,
+      subset_size = cfg$subset_small,
+      maximize = TRUE,
+      n_greedy_starts = 1
+    )
+    
+    results$small_balanced <- result
+    
+    # Create summary
+    summary_df <- data.frame(
+      Tree = result$tree_name,
+      N_Tips = result$tree_n_tips,
+      Subset_Size = result$subset_size,
+      Total_Combinations = result$total_combinations,
+      Exact_Match = result$is_exact_match,
+      Heuristic_MinPD = result$heuristic_result$final_metrics$MinPD,
+      Exact_MinPD = result$exact_result$metrics$MinPD,
+      MinPD_Gap = result$comparison$gaps$MinPD,
+      MinPD_Rel_Gap = result$comparison$rel_gaps$MinPD,
+      Heuristic_MeanPD = result$heuristic_result$final_metrics$MeanPD,
+      Exact_MeanPD = result$exact_result$metrics$MeanPD,
+      MeanPD_Gap = result$comparison$gaps$MeanPD,
+      MeanPD_Rel_Gap = result$comparison$rel_gaps$MeanPD,
+      Heuristic_MeanNND = result$heuristic_result$final_metrics$MeanNND,
+      Exact_MeanNND = result$exact_result$metrics$MeanNND,
+      MeanNND_Gap = result$comparison$gaps$MeanNND,
+      MeanNND_Rel_Gap = result$comparison$rel_gaps$MeanNND,
+      stringsAsFactors = FALSE
+    )
+    
+    # Add rank information if available
+    if (!is.null(result$evaluation$rank_analysis)) {
+      summary_df$Rank <- result$evaluation$rank_analysis$rank
+      summary_df$Percentile <- result$evaluation$rank_analysis$percentile
+      summary_df$Evaluated_Subsets <- result$evaluation$rank_analysis$evaluated_count
+    }
+    
+    summary_dfs$small_balanced <- summary_df
+  }
+  
+  # Process small ladder tree
+  if ("small_ladder" %in% names(dist_objs)) {
+    dist_obj <- dist_objs$small_ladder
+    
+    cat("\n>>> Processing small ladder tree (n =", cfg$small_n, ")\n")
+    cat("Subset size:", cfg$subset_small, "\n")
+    cat("Total combinations: choose(", cfg$small_n, ",", cfg$subset_small, ") =", 
+        choose(cfg$small_n, cfg$subset_small), "\n")
+    
+    # Check if exhaustive search is feasible
+    total_combinations <- choose(cfg$small_n, cfg$subset_small)
+    if (total_combinations > 1000000) {
+      cat("Warning: Total combinations (", total_combinations, ") is very large.\n")
+      cat("Exhaustive search may be computationally expensive.\n")
+      cat("Consider using a smaller tree or subset size.\n")
+    }
+    
+    # Run analysis
+    result <- run_result4_for_tree(
+      dist_obj,
+      subset_size = cfg$subset_small,
+      maximize = TRUE,
+      n_greedy_starts = 1
+    )
+    
+    results$small_ladder <- result
+    
+    # Create summary
+    summary_df <- data.frame(
+      Tree = result$tree_name,
+      N_Tips = result$tree_n_tips,
+      Subset_Size = result$subset_size,
+      Total_Combinations = result$total_combinations,
+      Exact_Match = result$is_exact_match,
+      Heuristic_MinPD = result$heuristic_result$final_metrics$MinPD,
+      Exact_MinPD = result$exact_result$metrics$MinPD,
+      MinPD_Gap = result$comparison$gaps$MinPD,
+      MinPD_Rel_Gap = result$comparison$rel_gaps$MinPD,
+      Heuristic_MeanPD = result$heuristic_result$final_metrics$MeanPD,
+      Exact_MeanPD = result$exact_result$metrics$MeanPD,
+      MeanPD_Gap = result$comparison$gaps$MeanPD,
+      MeanPD_Rel_Gap = result$comparison$rel_gaps$MeanPD,
+      Heuristic_MeanNND = result$heuristic_result$final_metrics$MeanNND,
+      Exact_MeanNND = result$exact_result$metrics$MeanNND,
+      MeanNND_Gap = result$comparison$gaps$MeanNND,
+      MeanNND_Rel_Gap = result$comparison$rel_gaps$MeanNND,
+      stringsAsFactors = FALSE
+    )
+    
+    # Add rank information if available
+    if (!is.null(result$evaluation$rank_analysis)) {
+      summary_df$Rank <- result$evaluation$rank_analysis$rank
+      summary_df$Percentile <- result$evaluation$rank_analysis$percentile
+      summary_df$Evaluated_Subsets <- result$evaluation$rank_analysis$evaluated_count
+    }
+    
+    summary_dfs$small_ladder <- summary_df
+  }
+  
+  # Combine all summaries
+  if (length(summary_dfs) > 0) {
+    combined_summary <- do.call(rbind, summary_dfs)
+    rownames(combined_summary) <- NULL
+    
+    cat(paste0("\n", strrep("=", 70), "\n"))
+    cat("OVERALL SUMMARY\n")
+    cat(paste0(strrep("=", 70), "\n"))
+    print(combined_summary)
+    
+    return(list(
+      results = results,
+      summary = combined_summary
+    ))
+  } else {
+    cat("No small trees found for Result 4 analysis.\n")
+    cat("Result 4 analysis requires small trees for exhaustive search.\n")
     return(NULL)
   }
-  
-  dist_obj <- dist_objs$small_balanced
-  
-  cat("\n>>> Processing small balanced tree (n =", cfg$small_n, ")\n")
-  cat("Subset size:", cfg$subset_small, "\n")
-  cat("Total combinations: choose(", cfg$small_n, ",", cfg$subset_small, ") =", 
-      choose(cfg$small_n, cfg$subset_small), "\n")
-  
-  # Check if exhaustive search is feasible
-  total_combinations <- choose(cfg$small_n, cfg$subset_small)
-  if (total_combinations > 1000000) {
-    cat("Warning: Total combinations (", total_combinations, ") is very large.\n")
-    cat("Exhaustive search may be computationally expensive.\n")
-    cat("Consider using a smaller tree or subset size.\n")
-  }
-  
-  # Run analysis
-  result <- run_result4_for_tree(
-    dist_obj,
-    subset_size = cfg$subset_small,
-    maximize = TRUE,
-    n_greedy_starts = 1
-  )
-  
-  # Create summary
-  summary_df <- data.frame(
-    Tree = result$tree_name,
-    N_Tips = result$tree_n_tips,
-    Subset_Size = result$subset_size,
-    Total_Combinations = result$total_combinations,
-    Exact_Match = result$is_exact_match,
-    Heuristic_MinPD = result$heuristic_result$final_metrics$MinPD,
-    Exact_MinPD = result$exact_result$metrics$MinPD,
-    MinPD_Gap = result$comparison$gaps$MinPD,
-    MinPD_Rel_Gap = result$comparison$rel_gaps$MinPD,
-    Heuristic_MeanPD = result$heuristic_result$final_metrics$MeanPD,
-    Exact_MeanPD = result$exact_result$metrics$MeanPD,
-    MeanPD_Gap = result$comparison$gaps$MeanPD,
-    MeanPD_Rel_Gap = result$comparison$rel_gaps$MeanPD,
-    Heuristic_MeanNND = result$heuristic_result$final_metrics$MeanNND,
-    Exact_MeanNND = result$exact_result$metrics$MeanNND,
-    MeanNND_Gap = result$comparison$gaps$MeanNND,
-    MeanNND_Rel_Gap = result$comparison$rel_gaps$MeanNND,
-    stringsAsFactors = FALSE
-  )
-  
-  # Add rank information if available
-  if (!is.null(result$evaluation$rank_analysis)) {
-    summary_df$Rank <- result$evaluation$rank_analysis$rank
-    summary_df$Percentile <- result$evaluation$rank_analysis$percentile
-    summary_df$Evaluated_Subsets <- result$evaluation$rank_analysis$evaluated_count
-  }
-  
-  cat(paste0("\n", strrep("=", 70), "\n"))
-  cat("OVERALL SUMMARY\n")
-  cat(paste0(strrep("=", 70), "\n"))
-  print(summary_df)
-  
-  return(list(
-    result = result,
-    summary = summary_df
-  ))
 }
 
 #' Save Result 4 results to files
@@ -250,57 +322,59 @@ save_result4 <- function(result4_results, cfg) {
     cat("  Saved summary to:", summary_file, "\n")
   }
   
-  # Save detailed comparison
-  if (!is.null(result4_results$result)) {
-    result <- result4_results$result
-    
-    # Save heuristic result
-    heuristic_file <- file.path(output_dir, "result4_heuristic.csv")
-    heuristic_df <- data.frame(
-      Tree = result$tree_name,
-      Subset_Size = result$subset_size,
-      Tip_Index = result$heuristic_result$final_subset,
-      Tip_Name = result$heuristic_result$final_subset_names,
-      MinPD = result$heuristic_result$final_metrics$MinPD,
-      MeanPD = result$heuristic_result$final_metrics$MeanPD,
-      MeanNND = result$heuristic_result$final_metrics$MeanNND,
-      stringsAsFactors = FALSE
-    )
-    write.csv(heuristic_df, heuristic_file, row.names = FALSE)
-    
-    # Save exact result
-    exact_file <- file.path(output_dir, "result4_exact.csv")
-    exact_df <- data.frame(
-      Tree = result$tree_name,
-      Subset_Size = result$subset_size,
-      Tip_Index = result$exact_result$subset,
-      Tip_Name = result$exact_result$subset_names,
-      MinPD = result$exact_result$metrics$MinPD,
-      MeanPD = result$exact_result$metrics$MeanPD,
-      MeanNND = result$exact_result$metrics$MeanNND,
-      Combination_Index = result$exact_result$combination_index,
-      Total_Combinations = result$exact_result$total_combinations,
-      stringsAsFactors = FALSE
-    )
-    write.csv(exact_df, exact_file, row.names = FALSE)
-    
-    # Save comparison
-    comparison_file <- file.path(output_dir, "result4_comparison.csv")
-    write.csv(result$comparison$comparison_summary, comparison_file, row.names = FALSE)
-    
-    # Save rank analysis if available
-    if (!is.null(result$evaluation$rank_analysis)) {
-      rank_file <- file.path(output_dir, "result4_rank_analysis.csv")
-      rank_df <- data.frame(
+  # Save detailed comparison for each tree
+  if (!is.null(result4_results$results)) {
+    for (tree_name in names(result4_results$results)) {
+      result <- result4_results$results[[tree_name]]
+      
+      # Save heuristic result
+      heuristic_file <- file.path(output_dir, paste0("result4_heuristic_", tree_name, ".csv"))
+      heuristic_df <- data.frame(
         Tree = result$tree_name,
-        Better_Subsets = result$evaluation$rank_analysis$better_count,
-        Equal_Subsets = result$evaluation$rank_analysis$equal_count,
-        Evaluated_Subsets = result$evaluation$rank_analysis$evaluated_count,
-        Rank = result$evaluation$rank_analysis$rank,
-        Percentile = result$evaluation$rank_analysis$percentile,
+        Subset_Size = result$subset_size,
+        Tip_Index = result$heuristic_result$final_subset,
+        Tip_Name = result$heuristic_result$final_subset_names,
+        MinPD = result$heuristic_result$final_metrics$MinPD,
+        MeanPD = result$heuristic_result$final_metrics$MeanPD,
+        MeanNND = result$heuristic_result$final_metrics$MeanNND,
         stringsAsFactors = FALSE
       )
-      write.csv(rank_df, rank_file, row.names = FALSE)
+      write.csv(heuristic_df, heuristic_file, row.names = FALSE)
+      
+      # Save exact result
+      exact_file <- file.path(output_dir, paste0("result4_exact_", tree_name, ".csv"))
+      exact_df <- data.frame(
+        Tree = result$tree_name,
+        Subset_Size = result$subset_size,
+        Tip_Index = result$exact_result$subset,
+        Tip_Name = result$exact_result$subset_names,
+        MinPD = result$exact_result$metrics$MinPD,
+        MeanPD = result$exact_result$metrics$MeanPD,
+        MeanNND = result$exact_result$metrics$MeanNND,
+        Combination_Index = result$exact_result$combination_index,
+        Total_Combinations = result$exact_result$total_combinations,
+        stringsAsFactors = FALSE
+      )
+      write.csv(exact_df, exact_file, row.names = FALSE)
+      
+      # Save comparison
+      comparison_file <- file.path(output_dir, paste0("result4_comparison_", tree_name, ".csv"))
+      write.csv(result$comparison$comparison_summary, comparison_file, row.names = FALSE)
+      
+      # Save rank analysis if available
+      if (!is.null(result$evaluation$rank_analysis)) {
+        rank_file <- file.path(output_dir, paste0("result4_rank_analysis_", tree_name, ".csv"))
+        rank_df <- data.frame(
+          Tree = result$tree_name,
+          Better_Subsets = result$evaluation$rank_analysis$better_count,
+          Equal_Subsets = result$evaluation$rank_analysis$equal_count,
+          Evaluated_Subsets = result$evaluation$rank_analysis$evaluated_count,
+          Rank = result$evaluation$rank_analysis$rank,
+          Percentile = result$evaluation$rank_analysis$percentile,
+          stringsAsFactors = FALSE
+        )
+        write.csv(rank_df, rank_file, row.names = FALSE)
+      }
     }
   }
   

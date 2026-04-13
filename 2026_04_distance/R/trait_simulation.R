@@ -63,6 +63,46 @@ simulate_ou_traits <- function(tree, n_traits = 1, alpha = 1.0, sigma2 = 1.0, th
   return(simulations)
 }
 
+#' Simulate traits under Pagel's lambda model
+#'
+#' @param tree A phylo object
+#' @param n_traits Number of traits to simulate (default: 1)
+#' @param lambda Pagel's lambda parameter (0-1)
+#' @param sigma2 Rate parameter for BM (default: 1.0)
+#' @param n_reps Number of simulation replicates (default: 1)
+#' @return A list of simulated trait matrices
+simulate_lambda_traits <- function(tree, n_traits = 1, lambda = 1.0, sigma2 = 1.0, n_reps = 1) {
+  cat("Simulating", n_reps, "replicates of", n_traits, "lambda trait(s) with lambda =", lambda, 
+      "sigma2 =", sigma2, "\n")
+  
+  simulations <- list()
+  
+  for (i in 1:n_reps) {
+    # Transform tree according to lambda
+    lambda_tree <- tree
+    if (lambda < 1.0) {
+      # Apply lambda transformation to branch lengths
+      lambda_tree$edge.length <- lambda_tree$edge.length * lambda
+      # Add star-like component for the remaining (1-lambda) portion
+      # This is a simplified approach; more sophisticated methods exist
+      # but this approximates the lambda model reasonably well
+      lambda_tree$edge.length <- lambda_tree$edge.length + (1 - lambda) * mean(lambda_tree$edge.length)
+    }
+    
+    # Simulate BM on transformed tree
+    if (n_traits == 1) {
+      trait_values <- fastBM(lambda_tree, sig2 = sigma2)
+    } else {
+      trait_values <- replicate(n_traits, fastBM(lambda_tree, sig2 = sigma2))
+      colnames(trait_values) <- paste0("Trait", 1:n_traits)
+    }
+    
+    simulations[[i]] <- trait_values
+  }
+  
+  return(simulations)
+}
+
 #' Extract trait values for a specific subset
 #'
 #' @param trait_matrix Trait matrix (from simulation)
@@ -84,28 +124,35 @@ extract_subset_traits <- function(trait_matrix, tip_names) {
 #' @param subsets List of subsets (each is vector of tip names)
 #' @param subset_names Names for the subsets
 #' @param n_reps Number of simulation replicates
+#' @param lambda_values Vector of lambda values for Pagel's lambda model
 #' @param ou_alpha_values Vector of alpha values for OU process
 #' @return A comprehensive simulation result
 simulate_traits_for_subsets <- function(tree, subsets, subset_names, n_reps = 100,
+                                        lambda_values = c(1.0, 0.7),
                                         ou_alpha_values = c(0.2, 1, 5)) {
   
   cat("Simulating traits for", length(subsets), "subsets with", n_reps, "replicates\n")
   
   results <- list()
   
-  # BM simulation
-  cat("  Brownian Motion simulation...\n")
-  bm_simulations <- simulate_bm_traits(tree, n_traits = 1, sigma2 = 1.0, n_reps = n_reps)
+  # Lambda simulations for different lambda values
+  results$Lambda <- list()
   
-  # Extract BM traits for each subset
-  bm_results <- list()
-  for (i in seq_along(subsets)) {
-    subset_traits <- sapply(bm_simulations, function(sim) {
-      extract_subset_traits(sim, subsets[[i]])
-    })
-    bm_results[[subset_names[i]]] <- subset_traits
+  for (lambda_val in lambda_values) {
+    cat("  Lambda simulation with lambda =", lambda_val, "...\n")
+    lambda_simulations <- simulate_lambda_traits(tree, n_traits = 1, lambda = lambda_val, 
+                                                 sigma2 = 1.0, n_reps = n_reps)
+    
+    # Extract lambda traits for each subset
+    lambda_results <- list()
+    for (i in seq_along(subsets)) {
+      subset_traits <- sapply(lambda_simulations, function(sim) {
+        extract_subset_traits(sim, subsets[[i]])
+      })
+      lambda_results[[subset_names[i]]] <- subset_traits
+    }
+    results$Lambda[[paste0("Lambda", lambda_val)]] <- lambda_results
   }
-  results$BM <- bm_results
   
   # OU simulations for different alpha values
   results$OU <- list()
@@ -126,147 +173,22 @@ simulate_traits_for_subsets <- function(tree, subsets, subset_names, n_reps = 10
     results$OU[[paste0("OU_alpha", alpha)]] <- ou_results
   }
   
-  # Store metadata
+  # Store metadata including subsets
   results$metadata <- list(
     tree_n_tips = length(tree$tip.label),
     n_reps = n_reps,
     subset_names = subset_names,
+    subsets = subsets,  # Store the actual subsets
     subset_sizes = sapply(subsets, length),
+    lambda_values = lambda_values,
     ou_alpha_values = ou_alpha_values
   )
   
   return(results)
 }
 
-#' Calculate Blomberg's K for a set of trait values
-#'
-#' @param trait_values Vector of trait values
-#' @param tree A phylo object (for the subset)
-#' @param subset_tip_names Tip names in the subset
-#' @return Blomberg's K value
-calc_blombergs_K <- function(trait_values, tree, subset_tip_names) {
-  # Extract subtree for the subset
-  subset_tree <- keep.tip(tree, subset_tip_names)
-  
-  # Ensure trait values are in the same order as tree tips
-  trait_values <- trait_values[subset_tree$tip.label]
-  
-  # Calculate K using picante package if available, otherwise manual calculation
-  if (requireNamespace("picante", quietly = TRUE)) {
-    K <- picante::Kcalc(trait_values, subset_tree)
-  } else {
-    # Manual calculation of K
-    # This is a simplified version - for production use, consider implementing full K calculation
-    warning("picante package not available, using simplified K calculation")
-    
-    # Calculate mean squared contrast
-    contrasts <- pic(trait_values, subset_tree)
-    ms_contrast <- mean(contrasts^2)
-    
-    # Calculate expected under Brownian motion
-    n <- length(trait_values)
-    expected_ms <- var(trait_values) * (n - 1) / n
-    
-    # Calculate K
-    K <- ms_contrast / expected_ms
-  }
-  
-  return(K)
-}
-
-#' Calculate Pagel's lambda for a set of trait values
-#'
-#' @param trait_values Vector of trait values
-#' @param tree A phylo object (for the subset)
-#' @param subset_tip_names Tip names in the subset
-#' @return Pagel's lambda value
-calc_pagels_lambda <- function(trait_values, tree, subset_tip_names) {
-  # Extract subtree for the subset
-  subset_tree <- keep.tip(tree, subset_tip_names)
-  
-  # Ensure trait values are in the same order as tree tips
-  trait_values <- trait_values[subset_tree$tip.label]
-  
-  # Calculate lambda using phytools
-  if (requireNamespace("phytools", quietly = TRUE)) {
-    result <- phytools::phylosig(subset_tree, trait_values, method = "lambda", test = FALSE)
-    lambda <- result$lambda
-  } else {
-    # Simplified lambda calculation
-    warning("phytools package not available, using simplified lambda calculation")
-    
-    # For simplicity, return NA
-    lambda <- NA
-  }
-  
-  return(lambda)
-}
-
-#' Calculate phylogenetic signal metrics for simulated traits
-#'
-#' @param simulation_results Results from simulate_traits_for_subsets
-#' @param tree Full tree
-#' @return A data frame with signal metrics for all simulations
-calculate_signal_metrics <- function(simulation_results, tree) {
-  cat("Calculating phylogenetic signal metrics...\n")
-  
-  results_df <- data.frame()
-  
-  # Process BM simulations
-  bm_results <- simulation_results$BM
-  subset_names <- names(bm_results)
-  
-  for (subset_name in subset_names) {
-    cat("  Processing BM for subset:", subset_name, "\n")
-    
-    # Get subset tip names (assuming they're stored somewhere)
-    # For now, we'll need to pass this information differently
-    # This is a placeholder - actual implementation would need subset tip names
-    
-    # Placeholder: calculate metrics for first few replicates
-    n_reps <- min(10, ncol(bm_results[[subset_name]]))
-    
-    for (rep in 1:n_reps) {
-      # This is a simplified version - actual implementation would need proper subset trees
-      # For now, we'll create a dummy result
-      results_df <- rbind(results_df, data.frame(
-        Model = "BM",
-        Subset = subset_name,
-        Replicate = rep,
-        K = NA,  # Placeholder
-        Lambda = NA,  # Placeholder
-        stringsAsFactors = FALSE
-      ))
-    }
-  }
-  
-  # Process OU simulations
-  ou_models <- names(simulation_results$OU)
-  
-  for (ou_model in ou_models) {
-    ou_results <- simulation_results$OU[[ou_model]]
-    
-    for (subset_name in names(ou_results)) {
-      cat("  Processing", ou_model, "for subset:", subset_name, "\n")
-      
-      # Placeholder: calculate metrics for first few replicates
-      n_reps <- min(10, ncol(ou_results[[subset_name]]))
-      
-      for (rep in 1:n_reps) {
-        results_df <- rbind(results_df, data.frame(
-          Model = ou_model,
-          Subset = subset_name,
-          Replicate = rep,
-          K = NA,  # Placeholder
-          Lambda = NA,  # Placeholder
-          stringsAsFactors = FALSE
-        ))
-      }
-    }
-  }
-  
-  return(results_df)
-}
+# Note: calc_blombergs_K and calc_pagels_lambda functions are defined in signal_metrics.R
+# calculate_signal_metrics is a placeholder function that is not used in the main analysis
 
 #' Test trait simulation functions
 test_trait_simulation <- function() {
@@ -280,26 +202,32 @@ test_trait_simulation <- function() {
   
   cat("Testing trait simulation functions:\n")
   
-  # Test 1: BM simulation
-  cat("\n1. Brownian Motion simulation:\n")
-  bm_sim <- simulate_bm_traits(test_tree, n_traits = 1, sigma2 = 1.0, n_reps = 3)
-  cat("   Simulated", length(bm_sim), "replicates\n")
-  cat("   First replicate values (first 5 tips):", bm_sim[[1]][1:5], "\n")
+  # Test 1: Lambda simulation
+  cat("\n1. Lambda simulation (lambda=1.0):\n")
+  lambda1_sim <- simulate_lambda_traits(test_tree, n_traits = 1, lambda = 1.0, sigma2 = 1.0, n_reps = 3)
+  cat("   Simulated", length(lambda1_sim), "replicates\n")
+  cat("   First replicate values (first 5 tips):", lambda1_sim[[1]][1:5], "\n")
   
-  # Test 2: OU simulation
-  cat("\n2. Ornstein-Uhlenbeck simulation:\n")
+  # Test 2: Lambda simulation with lambda=0.7
+  cat("\n2. Lambda simulation (lambda=0.7):\n")
+  lambda07_sim <- simulate_lambda_traits(test_tree, n_traits = 1, lambda = 0.7, sigma2 = 1.0, n_reps = 3)
+  cat("   Simulated", length(lambda07_sim), "replicates\n")
+  cat("   First replicate values (first 5 tips):", lambda07_sim[[1]][1:5], "\n")
+  
+  # Test 3: OU simulation
+  cat("\n3. Ornstein-Uhlenbeck simulation:\n")
   ou_sim <- simulate_ou_traits(test_tree, n_traits = 1, alpha = 1.0, sigma2 = 1.0, n_reps = 3)
   cat("   Simulated", length(ou_sim), "replicates\n")
   cat("   First replicate values (first 5 tips):", ou_sim[[1]][1:5], "\n")
   
-  # Test 3: Extract subset traits
-  cat("\n3. Extracting subset traits:\n")
+  # Test 4: Extract subset traits
+  cat("\n4. Extracting subset traits:\n")
   subset_tips <- c("sp1", "sp3", "sp5", "sp7", "sp9")
-  subset_traits <- extract_subset_traits(bm_sim[[1]], subset_tips)
+  subset_traits <- extract_subset_traits(lambda1_sim[[1]], subset_tips)
   cat("   Subset traits:", subset_traits, "\n")
   
-  # Test 4: Simulate for multiple subsets
-  cat("\n4. Simulating for multiple subsets:\n")
+  # Test 5: Simulate for multiple subsets
+  cat("\n5. Simulating for multiple subsets:\n")
   subsets <- list(
     c("sp1", "sp3", "sp5", "sp7", "sp9"),
     c("sp2", "sp4", "sp6", "sp8", "sp10"),
@@ -308,21 +236,23 @@ test_trait_simulation <- function() {
   subset_names <- c("subset1", "subset2", "subset3")
   
   sim_results <- simulate_traits_for_subsets(test_tree, subsets, subset_names, 
-                                            n_reps = 5, ou_alpha_values = c(0.2, 1))
+                                            n_reps = 5, lambda_values = c(1.0, 0.7),
+                                            ou_alpha_values = c(0.2, 1))
   
   cat("   Simulation results structure:\n")
-  cat("     BM results for", length(sim_results$BM), "subsets\n")
+  cat("     Lambda results for", length(sim_results$Lambda), "lambda values\n")
   cat("     OU results for", length(sim_results$OU), "alpha values\n")
   
-  # Test 5: Calculate signal metrics (simplified)
-  cat("\n5. Calculating signal metrics (simplified):\n")
-  signal_metrics <- calculate_signal_metrics(sim_results, test_tree)
+  # Test 6: Calculate signal metrics using analyze_simulated_traits_signal
+  cat("\n6. Calculating signal metrics:\n")
+  signal_metrics <- analyze_simulated_traits_signal(sim_results, test_tree, n_reps_to_analyze = 3)
   cat("   Calculated metrics for", nrow(signal_metrics), "simulations\n")
   cat("   First few rows:\n")
   print(head(signal_metrics))
   
   return(list(
-    bm_sim = bm_sim,
+    lambda1_sim = lambda1_sim,
+    lambda07_sim = lambda07_sim,
     ou_sim = ou_sim,
     sim_results = sim_results,
     signal_metrics = signal_metrics

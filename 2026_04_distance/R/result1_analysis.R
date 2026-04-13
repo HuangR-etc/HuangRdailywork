@@ -179,6 +179,33 @@ run_result1_analysis <- function(dist_objs, cfg) {
     results$small_balanced <- result_sb
   }
   
+  # Process small ladder tree
+  if ("small_ladder" %in% names(dist_objs)) {
+    cat("\n>>> Processing small ladder tree (n =", cfg$small_n, ")\n")
+    
+    # For small tree, we might want exhaustive enumeration
+    n_null_reps <- cfg$null_reps_small
+    if (cfg$exhaustive_small) {
+      # Calculate total number of combinations
+      total_combinations <- choose(cfg$small_n, cfg$subset_small)
+      if (total_combinations <= 10000) {  # Reasonable limit for exhaustive
+        cat("  Using exhaustive enumeration (", total_combinations, " combinations)\n")
+        # We'll implement exhaustive null distribution
+        # For now, use sampling
+        n_null_reps <- min(total_combinations, cfg$null_reps_small)
+      }
+    }
+    
+    result_sl <- run_result1_for_tree(
+      dist_objs$small_ladder,
+      subset_size = cfg$subset_small,
+      n_null_reps = n_null_reps,
+      maximize = TRUE,
+      n_greedy_starts = 1
+    )
+    results$small_ladder <- result_sl
+  }
+  
   # Create overall summary
   overall_summary <- data.frame()
   

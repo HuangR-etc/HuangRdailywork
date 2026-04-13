@@ -1,5 +1,5 @@
 Phylogenetic Dispersed Subset Analysis - Summary Report
-Generated: 2026-04-09 13:38:35
+Generated: 2026-04-13 15:33:06
 =
 =
 =
@@ -255,21 +255,27 @@ RESULT 1: Comparison with Random Null Distribution
 -
 -
 Tree: large_balanced
-  MinPD: observed = 11 p = 0.001 z = 7.114
-  MeanPD: observed = 20.389 p = 0.001 z = 5.383
-  MeanNND: observed = 13.25 p = 0.001 z = 7.784
+  MinPD: observed = 11 p = 0.001 z = 7.093
+  MeanPD: observed = 20.389 p = 0.001 z = 5.36
+  MeanNND: observed = 13.25 p = 0.001 z = 7.759
   Significant: TRUE
 
 Tree: large_ladder
-  MinPD: observed = 12.925 p = 0.001 z = 16.105
-  MeanPD: observed = 93.879 p = 0.1898 z = 0.896
-  MeanNND: observed = 14.196 p = 0.001 z = 4.413
+  MinPD: observed = 14.113 p = 0.001 z = 17.973
+  MeanPD: observed = 93.551 p = 0.2038 z = 0.848
+  MeanNND: observed = 14.833 p = 0.001 z = 4.943
   Significant: FALSE
 
 Tree: small_balanced
-  MinPD: observed = 9 p = 0.002 z = 3.273
-  MeanPD: observed = 11.4 p = 0.001 z = 2.852
-  MeanNND: observed = 9.6 p = 0.001 z = 3.231
+  MinPD: observed = 9 p = 0.002 z = 3.26
+  MeanPD: observed = 11.4 p = 0.001 z = 2.826
+  MeanNND: observed = 9.6 p = 0.001 z = 3.223
+  Significant: TRUE
+
+Tree: small_ladder
+  MinPD: observed = 9.584 p = 0.001 z = 5.376
+  MeanPD: observed = 17.21 p = 0.039 z = 1.564
+  MeanNND: observed = 9.699 p = 0.001 z = 2.758
   Significant: TRUE
 
 RESULT 2: Design Component Analysis
@@ -361,15 +367,21 @@ Tree: large_balanced
 
 Tree: large_ladder
   Best algorithm: A_main
-  Best MinPD: 14.113
-  Best MeanPD: 94.581
-  Best MeanNND: 14.812
+  Best MinPD: 11.732
+  Best MeanPD: 98.985
+  Best MeanNND: 13.397
 
 Tree: small_balanced
   Best algorithm: A_main
   Best MinPD: 9
   Best MeanPD: 11.4
   Best MeanNND: 9.6
+
+Tree: small_ladder
+  Best algorithm: A_main
+  Best MinPD: 9.584
+  Best MeanPD: 17.21
+  Best MeanNND: 9.699
 
 RESULT 3: Trait-level Consequences
 -
@@ -452,6 +464,26 @@ RESULT 3: Trait-level Consequences
 -
 -
 -
+Model: Lambda0.7
+  K pattern holds: 0 %
+  Lambda pattern holds: 50 %
+
+Model: Lambda1
+  K pattern holds: 25 %
+  Lambda pattern holds: 50 %
+
+Model: OU_alpha0.2
+  K pattern holds: 50 %
+  Lambda pattern holds: 75 %
+
+Model: OU_alpha1
+  K pattern holds: 0 %
+  Lambda pattern holds: 0 %
+
+Model: OU_alpha5
+  K pattern holds: 0 %
+  Lambda pattern holds: 25 %
+
 RESULT 4: Heuristic vs Exact Optimum
 -
 -
@@ -534,10 +566,16 @@ RESULT 4: Heuristic vs Exact Optimum
 -
 -
 Tree: small_balanced
+Tree: small_ladder
   Exact match: FALSE
+  Exact match: TRUE
+  MinPD gap: 0 ( 0 %)
   MinPD gap: 0 ( 0 %)
   MeanPD gap: 0 ( 0 %)
+  MeanPD gap: 0 ( 0 %)
   MeanNND gap: 0 ( 0 %)
+  MeanNND gap: 0 ( 0 %)
+  Percentile: 100 %
   Percentile: 100 %
 
 OVERALL CONCLUSIONS
@@ -708,4 +746,4 @@ OVERALL CONCLUSIONS
 =
 =
 Report saved to: outputs/reports/analysis_summary.txt
-Analysis completed: 2026-04-09 13:38:35
+Analysis completed: 2026-04-13 15:33:06

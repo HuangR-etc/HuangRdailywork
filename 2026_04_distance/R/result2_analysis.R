@@ -297,6 +297,17 @@ run_result2_analysis <- function(dist_objs, cfg) {
     results$small_balanced <- result_sb
   }
   
+  # Process small ladder tree
+  if ("small_ladder" %in% names(dist_objs)) {
+    cat("\n>>> Processing small ladder tree (n =", cfg$small_n, ")\n")
+    result_sl <- run_result2_for_tree(
+      dist_objs$small_ladder,
+      subset_size = cfg$subset_small,
+      n_greedy_starts = 1
+    )
+    results$small_ladder <- result_sl
+  }
+  
   # Create overall summary
   overall_summary <- data.frame()
   

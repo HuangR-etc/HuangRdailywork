@@ -75,9 +75,9 @@ run_trait_analysis <- function(tree, subset_data, n_reps = 100,
   subset_list$clustered <- subset_data$subsets$clustered
   subset_name_list <- c(subset_name_list, "clustered")
   
-  # Add a sample of random subsets (for performance)
-  n_random_to_use <- min(10, subset_data$n_random_subsets)
-  for (i in 1:n_random_to_use) {
+  # Add ALL random subsets (not just a sample)
+  # This is important for proper empirical p-value calculation
+  for (i in 1:subset_data$n_random_subsets) {
     subset_list[[paste0("random_", i)]] <- subset_data$subsets[[paste0("random_", i)]]
     subset_name_list <- c(subset_name_list, paste0("random_", i))
   }
@@ -118,6 +118,126 @@ run_trait_analysis <- function(tree, subset_data, n_reps = 100,
   ))
 }
 
+#' Calculate empirical p-values for trait signal comparisons
+#'
+#' @param signal_df Data frame with signal metrics
+#' @param model_name Model name to analyze
+#' @param metric_name Metric name ("K", "Lambda", or "MoransI")
+#' @return Data frame with empirical p-values for comparisons
+calculate_empirical_pvalues <- function(signal_df, model_name, metric_name) {
+  # Filter data for this model and metric
+  model_data <- signal_df[signal_df$Model == model_name, ]
+  
+  if (nrow(model_data) == 0) {
+    return(NULL)
+  }
+  
+  # Extract values for each subset type
+  dispersed_vals <- model_data[[metric_name]][model_data$Subset_Type == "dispersed"]
+  clustered_vals <- model_data[[metric_name]][model_data$Subset_Type == "clustered"]
+  random_vals <- model_data[[metric_name]][model_data$Subset_Type == "random"]
+  
+  # Special handling for Moran's I
+  # For Moran's I, larger absolute values (both positive and negative) indicate stronger autocorrelation
+  # So we need to compare absolute values for Moran's I
+  if (metric_name == "MoransI") {
+    # For Moran's I, we want to test if dispersed has weaker autocorrelation than clustered/random
+    # This means we compare absolute values: |dispersed| < |clustered| and |dispersed| < |random|
+    
+    # Convert to absolute values for comparison
+    dispersed_vals_abs <- abs(dispersed_vals)
+    clustered_vals_abs <- abs(clustered_vals)
+    random_vals_abs <- abs(random_vals)
+    
+    # For dispersed vs clustered: test if |dispersed| < |clustered|
+    if (length(dispersed_vals) > 0 && length(clustered_vals) > 0) {
+      # Count how many clustered have stronger autocorrelation (larger absolute value)
+      count_stronger_clustered <- sum(clustered_vals_abs >= dispersed_vals_abs)
+      p_dispersed_vs_clustered <- (count_stronger_clustered + 1) / (length(clustered_vals) + 1)
+    } else {
+      p_dispersed_vs_clustered <- NA
+    }
+    
+    # For dispersed vs random: test if |dispersed| < |random|
+    if (length(dispersed_vals) > 0 && length(random_vals) > 0) {
+      # Count how many random have stronger autocorrelation (larger absolute value)
+      count_stronger_random <- sum(random_vals_abs >= dispersed_vals_abs)
+      p_dispersed_vs_random <- (count_stronger_random + 1) / (length(random_vals) + 1)
+    } else {
+      p_dispersed_vs_random <- NA
+    }
+    
+    # For random vs clustered: test if |random| < |clustered|
+    if (length(random_vals) > 0 && length(clustered_vals) > 0) {
+      # Count how many clustered have stronger autocorrelation than random
+      total_comparisons <- length(random_vals) * length(clustered_vals)
+      count_clustered_stronger <- 0
+      for (i in 1:length(random_vals)) {
+        count_clustered_stronger <- count_clustered_stronger + sum(clustered_vals_abs >= random_vals_abs[i])
+      }
+      p_random_vs_clustered <- (count_clustered_stronger + 1) / (total_comparisons + 1)
+    } else {
+      p_random_vs_clustered <- NA
+    }
+    
+  } else {
+    # For K and Lambda: regular comparison (higher values = stronger signal)
+    
+    # For dispersed vs clustered: test if dispersed < clustered
+    if (length(dispersed_vals) > 0 && length(clustered_vals) > 0) {
+      # One-sided test: dispersed < clustered
+      p_dispersed_vs_clustered <- sum(clustered_vals >= dispersed_vals) / length(clustered_vals)
+      # Adjust for small sample size
+      p_dispersed_vs_clustered <- (sum(clustered_vals >= dispersed_vals) + 1) / (length(clustered_vals) + 1)
+    } else {
+      p_dispersed_vs_clustered <- NA
+    }
+    
+    # For dispersed vs random: test if dispersed < random
+    if (length(dispersed_vals) > 0 && length(random_vals) > 0) {
+      # One-sided test: dispersed < random
+      p_dispersed_vs_random <- sum(random_vals >= dispersed_vals) / length(random_vals)
+      # Adjust for small sample size
+      p_dispersed_vs_random <- (sum(random_vals >= dispersed_vals) + 1) / (length(random_vals) + 1)
+    } else {
+      p_dispersed_vs_random <- NA
+    }
+    
+    # For random vs clustered: test if random < clustered (less important)
+    if (length(random_vals) > 0 && length(clustered_vals) > 0) {
+      # Count how many clustered values are greater than or equal to random values
+      total_comparisons <- length(random_vals) * length(clustered_vals)
+      count_clustered_greater <- 0
+      for (r_val in random_vals) {
+        count_clustered_greater <- count_clustered_greater + sum(clustered_vals >= r_val)
+      }
+      p_random_vs_clustered <- (count_clustered_greater + 1) / (total_comparisons + 1)
+    } else {
+      p_random_vs_clustered <- NA
+    }
+  }
+  
+  # Calculate means (original values, not absolute)
+  mean_dispersed <- mean(dispersed_vals, na.rm = TRUE)
+  mean_clustered <- mean(clustered_vals, na.rm = TRUE)
+  mean_random <- mean(random_vals, na.rm = TRUE)
+  
+  return(data.frame(
+    Model = model_name,
+    Metric = metric_name,
+    Mean_Dispersed = mean_dispersed,
+    Mean_Clustered = mean_clustered,
+    Mean_Random = mean_random,
+    P_Dispersed_vs_Clustered = p_dispersed_vs_clustered,
+    P_Dispersed_vs_Random = p_dispersed_vs_random,
+    P_Random_vs_Clustered = p_random_vs_clustered,
+    N_Dispersed = length(dispersed_vals),
+    N_Clustered = length(clustered_vals),
+    N_Random = length(random_vals),
+    stringsAsFactors = FALSE
+  ))
+}
+
 #' Analyze trait signal results
 #'
 #' @param trait_analysis_results Results from run_trait_analysis
@@ -127,8 +247,8 @@ analyze_trait_signals <- function(trait_analysis_results) {
   
   signal_df <- trait_analysis_results$signal_results
   
-  # Remove rows with NA values
-  signal_df <- signal_df[complete.cases(signal_df$K, signal_df$Lambda), ]
+  # Remove rows with NA values for key metrics
+  signal_df <- signal_df[complete.cases(signal_df$K, signal_df$Lambda, signal_df$MoransI), ]
   
   if (nrow(signal_df) == 0) {
     warning("No complete cases found in signal results")
@@ -158,8 +278,24 @@ analyze_trait_signals <- function(trait_analysis_results) {
           Lambda_sd = sd(subset_data$Lambda, na.rm = TRUE),
           Lambda_min = min(subset_data$Lambda, na.rm = TRUE),
           Lambda_max = max(subset_data$Lambda, na.rm = TRUE),
+          MoransI_mean = mean(subset_data$MoransI, na.rm = TRUE),
+          MoransI_sd = sd(subset_data$MoransI, na.rm = TRUE),
+          MoransI_min = min(subset_data$MoransI, na.rm = TRUE),
+          MoransI_max = max(subset_data$MoransI, na.rm = TRUE),
           stringsAsFactors = FALSE
         ))
+      }
+    }
+  }
+  
+  # Calculate empirical p-values for each model and metric
+  empirical_pvalues <- data.frame()
+  
+  for (model in models) {
+    for (metric in c("K", "Lambda", "MoransI")) {
+      pval_df <- calculate_empirical_pvalues(signal_df, model, metric)
+      if (!is.null(pval_df)) {
+        empirical_pvalues <- rbind(empirical_pvalues, pval_df)
       }
     }
   }
@@ -176,10 +312,12 @@ analyze_trait_signals <- function(trait_analysis_results) {
       if (length(unique(model_data$Subset_Type)) >= 2) {
         kw_test_K <- kruskal.test(K ~ Subset_Type, data = model_data)
         kw_test_Lambda <- kruskal.test(Lambda ~ Subset_Type, data = model_data)
+        kw_test_MoransI <- kruskal.test(MoransI ~ Subset_Type, data = model_data)
         
         statistical_tests[[paste0(model, "_Kruskal_Wallis")]] <- list(
           K = kw_test_K,
-          Lambda = kw_test_Lambda
+          Lambda = kw_test_Lambda,
+          MoransI = kw_test_MoransI
         )
       }
       
@@ -201,13 +339,18 @@ analyze_trait_signals <- function(trait_analysis_results) {
         data1_Lambda <- model_data$Lambda[model_data$Subset_Type == type1]
         data2_Lambda <- model_data$Lambda[model_data$Subset_Type == type2]
         
+        data1_MoransI <- model_data$MoransI[model_data$Subset_Type == type1]
+        data2_MoransI <- model_data$MoransI[model_data$Subset_Type == type2]
+        
         if (length(data1_K) > 1 && length(data2_K) > 1) {
           test_K <- wilcox.test(data1_K, data2_K, alternative = "greater")
           test_Lambda <- wilcox.test(data1_Lambda, data2_Lambda, alternative = "greater")
+          test_MoransI <- wilcox.test(data1_MoransI, data2_MoransI, alternative = "greater")
           
           pairwise_results[[paste0(type1, "_vs_", type2)]] <- list(
             K = test_K,
-            Lambda = test_Lambda
+            Lambda = test_Lambda,
+            MoransI = test_MoransI
           )
         }
       }
@@ -232,20 +375,29 @@ analyze_trait_signals <- function(trait_analysis_results) {
       random_mean_Lambda <- model_summary$Lambda_mean[model_summary$Subset_Type == "random"]
       dispersed_mean_Lambda <- model_summary$Lambda_mean[model_summary$Subset_Type == "dispersed"]
       
+      clustered_mean_MoransI <- model_summary$MoransI_mean[model_summary$Subset_Type == "clustered"]
+      random_mean_MoransI <- model_summary$MoransI_mean[model_summary$Subset_Type == "random"]
+      dispersed_mean_MoransI <- model_summary$MoransI_mean[model_summary$Subset_Type == "dispersed"]
+      
       # Check pattern
       pattern_K <- (clustered_mean_K > random_mean_K) && (random_mean_K > dispersed_mean_K)
       pattern_Lambda <- (clustered_mean_Lambda > random_mean_Lambda) && (random_mean_Lambda > dispersed_mean_Lambda)
+      pattern_MoransI <- (clustered_mean_MoransI > random_mean_MoransI) && (random_mean_MoransI > dispersed_mean_MoransI)
       
       pattern_analysis <- rbind(pattern_analysis, data.frame(
         Model = model,
         Pattern_K = pattern_K,
         Pattern_Lambda = pattern_Lambda,
+        Pattern_MoransI = pattern_MoransI,
         Clustered_Mean_K = clustered_mean_K,
         Random_Mean_K = random_mean_K,
         Dispersed_Mean_K = dispersed_mean_K,
         Clustered_Mean_Lambda = clustered_mean_Lambda,
         Random_Mean_Lambda = random_mean_Lambda,
         Dispersed_Mean_Lambda = dispersed_mean_Lambda,
+        Clustered_Mean_MoransI = clustered_mean_MoransI,
+        Random_Mean_MoransI = random_mean_MoransI,
+        Dispersed_Mean_MoransI = dispersed_mean_MoransI,
         stringsAsFactors = FALSE
       ))
     }
@@ -253,6 +405,7 @@ analyze_trait_signals <- function(trait_analysis_results) {
   
   return(list(
     summary_stats = summary_stats,
+    empirical_pvalues = empirical_pvalues,
     statistical_tests = statistical_tests,
     pattern_analysis = pattern_analysis
   ))
@@ -306,9 +459,10 @@ run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
       
       for (i in 1:nrow(model_stats)) {
         row <- model_stats[i, ]
-        cat(sprintf("  %-10s: K = %.3f ± %.3f, λ = %.3f ± %.3f (n=%d)\n",
+        cat(sprintf("  %-10s: K = %.3f ± %.3f, λ = %.3f ± %.3f, Moran's I = %.3f ± %.3f (n=%d)\n",
                     row$Subset_Type, row$K_mean, row$K_sd, 
-                    row$Lambda_mean, row$Lambda_sd, row$N))
+                    row$Lambda_mean, row$Lambda_sd,
+                    row$MoransI_mean, row$MoransI_sd, row$N))
       }
       cat("\n")
     }
@@ -329,6 +483,31 @@ run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
       cat("    Clustered:", sprintf("%.3f", row$Clustered_Mean_Lambda), 
           "> Random:", sprintf("%.3f", row$Random_Mean_Lambda),
           "> Dispersed:", sprintf("%.3f", row$Dispersed_Mean_Lambda), "\n")
+      cat("  Moran's I pattern holds:", row$Pattern_MoransI, "\n")
+      cat("    Clustered:", sprintf("%.3f", row$Clustered_Mean_MoransI), 
+          "> Random:", sprintf("%.3f", row$Random_Mean_MoransI),
+          "> Dispersed:", sprintf("%.3f", row$Dispersed_Mean_MoransI), "\n")
+      cat("\n")
+    }
+  }
+  
+  # Print empirical p-values
+  if (!is.null(analysis_results$empirical_pvalues) && nrow(analysis_results$empirical_pvalues) > 0) {
+    cat("Empirical p-values (dispersed < clustered/random):\n\n")
+    
+    for (model in unique(analysis_results$empirical_pvalues$Model)) {
+      cat("Model:", model, "\n")
+      model_pvals <- analysis_results$empirical_pvalues[analysis_results$empirical_pvalues$Model == model, ]
+      
+      for (metric in c("K", "Lambda", "MoransI")) {
+        metric_pvals <- model_pvals[model_pvals$Metric == metric, ]
+        if (nrow(metric_pvals) > 0) {
+          row <- metric_pvals[1, ]
+          cat(sprintf("  %-10s: dispersed (%.3f) vs clustered (%.3f): p = %.3f, vs random (%.3f): p = %.3f\n",
+                      metric, row$Mean_Dispersed, row$Mean_Clustered, 
+                      row$P_Dispersed_vs_Clustered, row$Mean_Random, row$P_Dispersed_vs_Random))
+        }
+      }
       cat("\n")
     }
   }
@@ -343,6 +522,7 @@ run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
         cat(test_name, ":\n")
         cat("  K: p =", test$K$p.value, "\n")
         cat("  Lambda: p =", test$Lambda$p.value, "\n")
+        cat("  Moran's I: p =", test$MoransI$p.value, "\n")
         cat("\n")
       }
     }
@@ -357,18 +537,31 @@ run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
   if (!is.null(analysis_results$pattern_analysis) && nrow(analysis_results$pattern_analysis) > 0) {
     pattern_holds_K <- all(analysis_results$pattern_analysis$Pattern_K)
     pattern_holds_Lambda <- all(analysis_results$pattern_analysis$Pattern_Lambda)
+    pattern_holds_MoransI <- all(analysis_results$pattern_analysis$Pattern_MoransI)
     
-    if (pattern_holds_K && pattern_holds_Lambda) {
-      cat("The expected pattern (clustered > random > dispersed) holds for ALL models\n")
-      cat("This supports the hypothesis that phylogenetic dispersion reduces trait phylogenetic signal\n")
+    if (pattern_holds_K && pattern_holds_Lambda && pattern_holds_MoransI) {
+      cat("The expected pattern (clustered > random > dispersed) holds for ALL models and ALL metrics\n")
+      cat("This strongly supports the hypothesis that phylogenetic dispersion reduces trait phylogenetic signal\n")
+    } else if (pattern_holds_K && pattern_holds_Lambda) {
+      cat("The expected pattern holds for K and Lambda but not for Moran's I\n")
+      cat("This provides strong support for the hypothesis from traditional signal metrics\n")
+    } else if (pattern_holds_K && pattern_holds_MoransI) {
+      cat("The expected pattern holds for K and Moran's I but not for Lambda\n")
+      cat("This provides strong support for the hypothesis from K and phylogenetic autocorrelation\n")
+    } else if (pattern_holds_Lambda && pattern_holds_MoransI) {
+      cat("The expected pattern holds for Lambda and Moran's I but not for K\n")
+      cat("This provides strong support for the hypothesis from Lambda and phylogenetic autocorrelation\n")
     } else if (pattern_holds_K) {
-      cat("The expected pattern holds for K but not for Lambda\n")
+      cat("The expected pattern holds for K only\n")
       cat("This provides partial support for the hypothesis\n")
     } else if (pattern_holds_Lambda) {
-      cat("The expected pattern holds for Lambda but not for K\n")
+      cat("The expected pattern holds for Lambda only\n")
       cat("This provides partial support for the hypothesis\n")
+    } else if (pattern_holds_MoransI) {
+      cat("The expected pattern holds for Moran's I only\n")
+      cat("This provides partial support for the hypothesis from phylogenetic autocorrelation perspective\n")
     } else {
-      cat("The expected pattern does NOT hold consistently\n")
+      cat("The expected pattern does NOT hold consistently for any metric\n")
       cat("This does not support the hypothesis that phylogenetic dispersion reduces trait phylogenetic signal\n")
     }
   } else {
@@ -433,6 +626,19 @@ run_result3_analysis <- function(dist_objs, cfg) {
     results$small_balanced <- result_sb
   }
   
+  # Process small ladder tree
+  if ("small_ladder" %in% names(dist_objs)) {
+    cat("\n>>> Processing small ladder tree (n =", cfg$small_n, ")\n")
+    result_sl <- run_result3_for_tree(
+      dist_objs$small_ladder,
+      subset_size = cfg$subset_small,
+      n_reps = min(100, cfg$trait_reps),
+      n_random_subsets = cfg$random_subset_reps_for_trait,
+      ou_alpha_values = cfg$ou_alpha
+    )
+    results$small_ladder <- result_sl
+  }
+  
   # Create overall summary
   overall_summary <- data.frame()
   
@@ -448,12 +654,16 @@ run_result3_analysis <- function(dist_objs, cfg) {
           Model = pattern_df$Model[i],
           Pattern_K = pattern_df$Pattern_K[i],
           Pattern_Lambda = pattern_df$Pattern_Lambda[i],
+          Pattern_MoransI = pattern_df$Pattern_MoransI[i],
           Clustered_Mean_K = pattern_df$Clustered_Mean_K[i],
           Random_Mean_K = pattern_df$Random_Mean_K[i],
           Dispersed_Mean_K = pattern_df$Dispersed_Mean_K[i],
           Clustered_Mean_Lambda = pattern_df$Clustered_Mean_Lambda[i],
           Random_Mean_Lambda = pattern_df$Random_Mean_Lambda[i],
           Dispersed_Mean_Lambda = pattern_df$Dispersed_Mean_Lambda[i],
+          Clustered_Mean_MoransI = pattern_df$Clustered_Mean_MoransI[i],
+          Random_Mean_MoransI = pattern_df$Random_Mean_MoransI[i],
+          Dispersed_Mean_MoransI = pattern_df$Dispersed_Mean_MoransI[i],
           stringsAsFactors = FALSE
         ))
       }
@@ -471,13 +681,22 @@ run_result3_analysis <- function(dist_objs, cfg) {
     n_models <- nrow(overall_summary)
     n_pattern_K <- sum(overall_summary$Pattern_K)
     n_pattern_Lambda <- sum(overall_summary$Pattern_Lambda)
+    n_pattern_MoransI <- sum(overall_summary$Pattern_MoransI)
     
     cat("\nPattern summary:\n")
     cat("  K pattern holds:", n_pattern_K, "out of", n_models, "models (", 
         round(n_pattern_K/n_models*100, 1), "%)\n")
     cat("  Lambda pattern holds:", n_pattern_Lambda, "out of", n_models, "models (", 
         round(n_pattern_Lambda/n_models*100, 1), "%)\n")
-    cat("  Both patterns hold:", sum(overall_summary$Pattern_K & overall_summary$Pattern_Lambda), 
+    cat("  Moran's I pattern holds:", n_pattern_MoransI, "out of", n_models, "models (", 
+        round(n_pattern_MoransI/n_models*100, 1), "%)\n")
+    cat("  All three patterns hold:", sum(overall_summary$Pattern_K & overall_summary$Pattern_Lambda & overall_summary$Pattern_MoransI), 
+        "out of", n_models, "models\n")
+    cat("  K and Lambda patterns hold:", sum(overall_summary$Pattern_K & overall_summary$Pattern_Lambda), 
+        "out of", n_models, "models\n")
+    cat("  K and Moran's I patterns hold:", sum(overall_summary$Pattern_K & overall_summary$Pattern_MoransI), 
+        "out of", n_models, "models\n")
+    cat("  Lambda and Moran's I patterns hold:", sum(overall_summary$Pattern_Lambda & overall_summary$Pattern_MoransI), 
         "out of", n_models, "models\n")
   } else {
     cat("No pattern analysis results available\n")
@@ -530,6 +749,13 @@ save_result3 <- function(result3_results, cfg) {
       pattern_file <- file.path(output_dir, paste0("result3_pattern_", tree_name, ".csv"))
       write.csv(result$analysis_results$pattern_analysis, pattern_file, row.names = FALSE)
     }
+    
+    # Save empirical p-values
+    if (!is.null(result$analysis_results$empirical_pvalues)) {
+      pvalues_file <- file.path(output_dir, paste0("result3_pvalues_", tree_name, ".csv"))
+      write.csv(result$analysis_results$empirical_pvalues, pvalues_file, row.names = FALSE)
+      cat("  Saved empirical p-values to:", pvalues_file, "\n")
+    }
   }
   
   cat("Result 3 results saved to:", output_dir, "\n")
@@ -540,13 +766,13 @@ test_result3 <- function() {
   # Load required libraries and functions
   library(ape)
   source("config/analysis_config.R")
-  source("distance_metrics.R")
-  source("objective_compare.R")
-  source("subset_greedy.R")
-  source("subset_exchange.R")
-  source("subset_random.R")
-  source("trait_simulation.R")
-  source("signal_metrics.R")
+  source("R/distance_metrics.R")
+  source("R/objective_compare.R")
+  source("R/subset_greedy.R")
+  source("R/subset_exchange.R")
+  source("R/subset_random.R")
+  source("R/trait_simulation.R")
+  source("R/signal_metrics.R")
   
   # Create a test configuration
   test_cfg <- list(
