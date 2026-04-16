@@ -20,8 +20,8 @@ cfg <- list(
   exhaustive_small = TRUE, # Use exhaustive enumeration for small tree if TRUE
   
   # Trait simulation parameters
-  trait_reps = 500,        # Number of trait simulation replicates
-  random_subset_reps_for_trait = 100, # Number of random subsets for trait analysis
+  trait_reps = 1,          # Number of trait simulation replicates (now 1 per tree)
+  random_subset_reps_for_trait = 1000, # Number of random subsets for trait analysis (now 1000)
   
   # OU process parameters (alpha values for weak, moderate, strong)
   ou_alpha = c(0.2, 1, 5),

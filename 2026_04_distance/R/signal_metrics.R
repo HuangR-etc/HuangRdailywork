@@ -92,6 +92,169 @@ calc_morans_I <- function(trait_values, tree) {
   return(moran_result)
 }
 
+#' Calculate Mean Phylogenetic Nearest-Neighbor Similarity (mpnns)
+#'
+#' @param species Vector of species names in the subset
+#' @param trait_values Vector of trait values aligned with species
+#' @param phylo_dist_matrix Phylogenetic distance matrix for all species
+#' @return mpnns value (NA if subset size < 2 or insufficient valid data)
+calc_mpnns <- function(species, trait_values, phylo_dist_matrix) {
+  # species: current subset species name vector
+  # trait_values: numeric vector aligned with species
+  # phylo_dist_matrix: phylogenetic distance matrix for all species
+  
+  # Check if subset size is less than 2
+  if (length(species) < 2) {
+    return(NA)
+  }
+  
+  # 1. Extract distance submatrix for the subset
+  dsub <- phylo_dist_matrix[species, species]
+  
+  # 2. Set diagonal to Inf to avoid self as nearest neighbor
+  diag(dsub) <- Inf
+  
+  # 3. For each species, find the nearest neighbor index
+  nn_idx <- apply(dsub, 1, which.min)
+  
+  # 4. Calculate similarity for each species with its nearest neighbor
+  sims <- numeric(length(species))
+  for (i in seq_along(species)) {
+    j <- nn_idx[i]
+    # Check for NA trait values
+    if (is.na(trait_values[i]) || is.na(trait_values[j])) {
+      sims[i] <- NA
+    } else {
+      sims[i] <- 1 / (1 + abs(trait_values[i] - trait_values[j]))
+    }
+  }
+  
+  # 5. Return mean similarity, handling NA values
+  # If there are less than 2 valid similarities, return NA
+  valid_sims <- sims[!is.na(sims)]
+  if (length(valid_sims) < 2) {
+    return(NA)
+  }
+  
+  return(mean(valid_sims, na.rm = TRUE))
+}
+
+#' Build a model-specific covariance matrix for a subtree
+#'
+#' @param tree A subtree as a phylo object
+#' @param model_name Model name (e.g. "Lambda1.0", "Lambda0.7", "OU_alpha1")
+#' @return Covariance matrix induced by the tree and model
+build_model_covariance_matrix <- function(tree, model_name) {
+  n_tips <- length(tree$tip.label)
+  if (n_tips < 2) {
+    return(matrix(NA_real_, nrow = n_tips, ncol = n_tips,
+                  dimnames = list(tree$tip.label, tree$tip.label)))
+  }
+
+  # Lambda models: reuse the same branch-length transformation used in simulation,
+  # then compute the BM covariance matrix on the transformed subtree.
+  if (grepl("^Lambda", model_name)) {
+    lambda_value <- suppressWarnings(as.numeric(sub("^Lambda", "", model_name)))
+    if (is.na(lambda_value) || lambda_value < 0) {
+      stop(paste("Cannot parse a valid lambda value from model name:", model_name))
+    }
+
+    lambda_tree <- tree
+    if (lambda_value < 1.0) {
+      lambda_tree$edge.length <- lambda_tree$edge.length * lambda_value
+      lambda_tree$edge.length <- lambda_tree$edge.length + (1 - lambda_value) * mean(lambda_tree$edge.length)
+    }
+
+    return(ape::vcv.phylo(lambda_tree))
+  }
+
+  # OU models: use the OU covariance function based on root-to-tip times,
+  # pairwise patristic distances, and shared ancestry times.
+  if (grepl("^OU_alpha", model_name)) {
+    alpha_value <- suppressWarnings(as.numeric(sub("^OU_alpha", "", model_name)))
+    if (is.na(alpha_value) || alpha_value <= 0) {
+      stop(paste("Cannot parse a valid positive OU alpha from model name:", model_name))
+    }
+
+    node_depths <- ape::node.depth.edgelength(tree)
+    tip_depths <- node_depths[seq_len(n_tips)]
+    names(tip_depths) <- tree$tip.label
+
+    mrca_matrix <- ape::mrca(tree)
+    mrca_tips <- mrca_matrix[tree$tip.label, tree$tip.label, drop = FALSE]
+    shared_times <- matrix(node_depths[mrca_tips],
+                           nrow = n_tips,
+                           ncol = n_tips,
+                           dimnames = list(tree$tip.label, tree$tip.label))
+
+    dist_matrix <- cophenetic.phylo(tree)
+    cov_matrix <- (1 / (2 * alpha_value)) * exp(-alpha_value * dist_matrix) *
+      (1 - exp(-2 * alpha_value * shared_times))
+    diag(cov_matrix) <- (1 / (2 * alpha_value)) * (1 - exp(-2 * alpha_value * tip_depths))
+
+    return(cov_matrix)
+  }
+
+  # Fallback: standard BM covariance.
+  ape::vcv.phylo(tree)
+}
+
+#' Convert a covariance matrix to a correlation matrix
+#'
+#' @param cov_matrix Covariance matrix
+#' @return Correlation matrix
+cov_to_cor_matrix <- function(cov_matrix) {
+  if (is.null(cov_matrix) || length(cov_matrix) == 0) {
+    return(cov_matrix)
+  }
+
+  sd_vec <- sqrt(diag(cov_matrix))
+  if (any(!is.finite(sd_vec)) || any(sd_vec <= 0)) {
+    stop("Covariance matrix has non-positive or non-finite diagonal values")
+  }
+
+  cor_matrix <- cov_matrix / outer(sd_vec, sd_vec)
+  diag(cor_matrix) <- 1
+  return(cor_matrix)
+}
+
+#' Calculate tree-induced dependence metrics for a subtree
+#'
+#' @param tree A subtree as a phylo object
+#' @param model_name Model name (e.g. "Lambda1.0", "OU_alpha1")
+#' @return Named list with dependence diagnostics
+calc_tree_dependence_metrics <- function(tree, model_name) {
+  n_tips <- length(tree$tip.label)
+  empty_result <- list(
+    mean_offdiag_cor = NA_real_,
+    max_offdiag_cor = NA_real_,
+    ess_1 = NA_real_,
+    ess_2 = NA_real_
+  )
+
+  if (n_tips < 2) {
+    return(empty_result)
+  }
+
+  cov_matrix <- build_model_covariance_matrix(tree, model_name)
+  cor_matrix <- cov_to_cor_matrix(cov_matrix)
+  offdiag_vals <- cor_matrix[upper.tri(cor_matrix, diag = FALSE)]
+
+  if (length(offdiag_vals) == 0 || any(!is.finite(offdiag_vals))) {
+    return(empty_result)
+  }
+
+  ess1_denom <- sum(cor_matrix)
+  ess2_denom <- sum(cor_matrix * cor_matrix)
+
+  list(
+    mean_offdiag_cor = mean(offdiag_vals),
+    max_offdiag_cor = max(offdiag_vals),
+    ess_1 = if (is.finite(ess1_denom) && ess1_denom > 0) (n_tips^2) / ess1_denom else NA_real_,
+    ess_2 = if (is.finite(ess2_denom) && ess2_denom > 0) (n_tips^2) / ess2_denom else NA_real_
+  )
+}
+
 #' Calculate phylogenetic signal for multiple subsets
 #'
 #' @param tree Full tree
@@ -174,75 +337,85 @@ calculate_subsets_signal <- function(tree, subsets, subset_names, trait_values,
 #' @return A comprehensive data frame with signal metrics
 analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_analyze = 100) {
   cat("Analyzing phylogenetic signal in simulated traits...\n")
-  
+
   all_results <- data.frame()
-  
+
   # Get subset information from metadata
   subset_names <- simulation_results$metadata$subset_names
   subsets <- simulation_results$metadata$subsets
-  
+
   if (is.null(subsets)) {
     warning("No subsets found in simulation results metadata. Cannot calculate signal metrics.")
     return(all_results)
   }
-  
-  # Process Lambda simulations
-  lambda_models <- names(simulation_results$Lambda)
-  
-  for (lambda_model in lambda_models) {
-    lambda_results <- simulation_results$Lambda[[lambda_model]]
-    
-    for (subset_name in names(lambda_results)) {
-      cat("  Processing", lambda_model, "for subset:", subset_name, "\n")
-      
-      # Find the index of this subset
+
+  # Precompute phylogenetic distance matrix for the full tree
+  # This will be used for mpnns calculation
+  full_dist_matrix <- cophenetic.phylo(tree)
+
+  process_model_results <- function(model_results, model_name) {
+    model_df <- data.frame()
+
+    for (subset_name in names(model_results)) {
+      cat("  Processing", model_name, "for subset:", subset_name, "\n")
+
       subset_idx <- which(subset_names == subset_name)
       if (length(subset_idx) == 0) {
         warning(paste("Subset", subset_name, "not found in metadata"))
         next
       }
-      
-      # Get the tip names for this subset
+
       subset_tips <- subsets[[subset_idx]]
-      
-      # Get trait values for this subset
-      subset_traits <- lambda_results[[subset_name]]
+      subset_traits <- model_results[[subset_name]]
       n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
-      
+      subset_tree <- keep.tip(tree, subset_tips)
+
+      dependence_metrics <- tryCatch({
+        calc_tree_dependence_metrics(subset_tree, model_name)
+      }, error = function(e) {
+        cat("    Error calculating dependence metrics for", model_name, "subset", subset_name, ":", e$message, "\n")
+        list(
+          mean_offdiag_cor = NA_real_,
+          max_offdiag_cor = NA_real_,
+          ess_1 = NA_real_,
+          ess_2 = NA_real_
+        )
+      })
+
       for (rep in 1:n_reps) {
-        # Extract trait values for this replicate
         trait_values <- subset_traits[, rep]
         names(trait_values) <- subset_tips
-        
-        # Extract subtree for this subset
-        subset_tree <- keep.tip(tree, subset_tips)
-        
-        # Calculate K
+
         K_value <- tryCatch({
           calc_blombergs_K(trait_values, subset_tree)
         }, error = function(e) {
           cat("    Error calculating K for replicate", rep, ":", e$message, "\n")
           NA
         })
-        
-        # Calculate Lambda
+
         lambda_value <- tryCatch({
           calc_pagels_lambda(trait_values, subset_tree)
         }, error = function(e) {
           cat("    Error calculating Lambda for replicate", rep, ":", e$message, "\n")
           NA
         })
-        
-        # Calculate Moran's I
+
         moran_result <- tryCatch({
           calc_morans_I(trait_values, subset_tree)
         }, error = function(e) {
           cat("    Error calculating Moran's I for replicate", rep, ":", e$message, "\n")
           list(observed = NA, expected = NA, sd = NA, p.value = NA)
         })
-        
-        all_results <- rbind(all_results, data.frame(
-          Model = lambda_model,
+
+        mpnns_value <- tryCatch({
+          calc_mpnns(subset_tips, trait_values, full_dist_matrix)
+        }, error = function(e) {
+          cat("    Error calculating mpnns for replicate", rep, ":", e$message, "\n")
+          NA
+        })
+
+        model_df <- rbind(model_df, data.frame(
+          Model = model_name,
           Subset = subset_name,
           Replicate = rep,
           K = K_value,
@@ -251,83 +424,33 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
           MoransI_expected = moran_result$expected,
           MoransI_sd = moran_result$sd,
           MoransI_p = moran_result$p.value,
+          mpnns = mpnns_value,
+          mean_offdiag_cor = dependence_metrics$mean_offdiag_cor,
+          max_offdiag_cor = dependence_metrics$max_offdiag_cor,
+          ess_1 = dependence_metrics$ess_1,
+          ess_2 = dependence_metrics$ess_2,
           stringsAsFactors = FALSE
         ))
       }
     }
+
+    model_df
   }
-  
-  # Process OU simulations
-  ou_models <- names(simulation_results$OU)
-  
-  for (ou_model in ou_models) {
-    ou_results <- simulation_results$OU[[ou_model]]
-    
-    for (subset_name in names(ou_results)) {
-      cat("  Processing", ou_model, "for subset:", subset_name, "\n")
-      
-      # Find the index of this subset
-      subset_idx <- which(subset_names == subset_name)
-      if (length(subset_idx) == 0) {
-        warning(paste("Subset", subset_name, "not found in metadata"))
-        next
-      }
-      
-      # Get the tip names for this subset
-      subset_tips <- subsets[[subset_idx]]
-      
-      # Get trait values for this subset
-      subset_traits <- ou_results[[subset_name]]
-      n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
-      
-      for (rep in 1:n_reps) {
-        # Extract trait values for this replicate
-        trait_values <- subset_traits[, rep]
-        names(trait_values) <- subset_tips
-        
-        # Extract subtree for this subset
-        subset_tree <- keep.tip(tree, subset_tips)
-        
-        # Calculate K
-        K_value <- tryCatch({
-          calc_blombergs_K(trait_values, subset_tree)
-        }, error = function(e) {
-          cat("    Error calculating K for replicate", rep, ":", e$message, "\n")
-          NA
-        })
-        
-        # Calculate Lambda
-        lambda_value <- tryCatch({
-          calc_pagels_lambda(trait_values, subset_tree)
-        }, error = function(e) {
-          cat("    Error calculating Lambda for replicate", rep, ":", e$message, "\n")
-          NA
-        })
-        
-        # Calculate Moran's I
-        moran_result <- tryCatch({
-          calc_morans_I(trait_values, subset_tree)
-        }, error = function(e) {
-          cat("    Error calculating Moran's I for replicate", rep, ":", e$message, "\n")
-          list(observed = NA, expected = NA, sd = NA, p.value = NA)
-        })
-        
-        all_results <- rbind(all_results, data.frame(
-          Model = ou_model,
-          Subset = subset_name,
-          Replicate = rep,
-          K = K_value,
-          Lambda = lambda_value,
-          MoransI = moran_result$observed,
-          MoransI_expected = moran_result$expected,
-          MoransI_sd = moran_result$sd,
-          MoransI_p = moran_result$p.value,
-          stringsAsFactors = FALSE
-        ))
-      }
+
+  if (!is.null(simulation_results$Lambda)) {
+    lambda_models <- names(simulation_results$Lambda)
+    for (lambda_model in lambda_models) {
+      all_results <- rbind(all_results, process_model_results(simulation_results$Lambda[[lambda_model]], lambda_model))
     }
   }
-  
+
+  if (!is.null(simulation_results$OU)) {
+    ou_models <- names(simulation_results$OU)
+    for (ou_model in ou_models) {
+      all_results <- rbind(all_results, process_model_results(simulation_results$OU[[ou_model]], ou_model))
+    }
+  }
+
   return(all_results)
 }
 

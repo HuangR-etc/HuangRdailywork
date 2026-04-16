@@ -1,5 +1,5 @@
 Phylogenetic Dispersed Subset Analysis - Summary Report
-Generated: 2026-04-13 15:33:06
+Generated: 2026-04-16 16:04:56
 =
 =
 =
@@ -170,7 +170,7 @@ Large subset size: 20
 Small subset size: 5
 Null reps (large): 1000
 Null reps (small): 1000
-Trait reps: 500
+Trait reps: 1
 Exhaustive small: TRUE
 
 RESULT 1: Comparison with Random Null Distribution
@@ -465,23 +465,23 @@ RESULT 3: Trait-level Consequences
 -
 -
 Model: Lambda0.7
-  K pattern holds: 0 %
+  K pattern holds: 50 %
   Lambda pattern holds: 50 %
 
 Model: Lambda1
-  K pattern holds: 25 %
-  Lambda pattern holds: 50 %
-
-Model: OU_alpha0.2
-  K pattern holds: 50 %
-  Lambda pattern holds: 75 %
-
-Model: OU_alpha1
   K pattern holds: 0 %
   Lambda pattern holds: 0 %
 
+Model: OU_alpha0.2
+  K pattern holds: 50 %
+  Lambda pattern holds: 50 %
+
+Model: OU_alpha1
+  K pattern holds: 50 %
+  Lambda pattern holds: 25 %
+
 Model: OU_alpha5
-  K pattern holds: 0 %
+  K pattern holds: 25 %
   Lambda pattern holds: 25 %
 
 RESULT 4: Heuristic vs Exact Optimum
@@ -746,4 +746,4 @@ OVERALL CONCLUSIONS
 =
 =
 Report saved to: outputs/reports/analysis_summary.txt
-Analysis completed: 2026-04-13 15:33:06
+Analysis completed: 2026-04-16 16:04:56
