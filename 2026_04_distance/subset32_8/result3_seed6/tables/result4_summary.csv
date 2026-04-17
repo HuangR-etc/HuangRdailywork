@@ -1,0 +1,3 @@
+"Tree","N_Tips","Subset_Size","Total_Combinations","Exact_Match","Heuristic_MinPD","Exact_MinPD","MinPD_Gap","MinPD_Rel_Gap","Heuristic_MeanPD","Exact_MeanPD","MeanPD_Gap","MeanPD_Rel_Gap","Heuristic_MeanNND","Exact_MeanNND","MeanNND_Gap","MeanNND_Rel_Gap","Rank","Percentile","Evaluated_Subsets"
+"small_balanced",32,8,10518300,TRUE,6,6,0,0,9.96428571428571,9.96428571428571,0,0,7.25,7.25,0,0,1,100,10000
+"small_ladder",32,8,10518300,TRUE,6.11327701409318,6.11327701409318,0,0,15.6150486386141,15.6150486386141,0,0,6.30430353011834,6.30430353011834,0,0,2,99.99,10000

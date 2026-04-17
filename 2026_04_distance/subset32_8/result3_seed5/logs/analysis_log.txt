@@ -1,0 +1,186 @@
+Analysis Log - 2026-04-16 18:57:09
+R version: R version 4.2.0 (2022-04-22)
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+2026-04-16 18:57:09 - Analysis started
+2026-04-16 18:57:09 - Configuration: seed, tree_reps, large_n, small_n, subset_large, subset_small, null_reps_large, null_reps_small, exhaustive_small, trait_reps, random_subset_reps_for_trait, ou_alpha, bm_lambda, run_result1, run_result2, run_result3, run_result4, output_dir, tables_dir, figures_dir, rds_dir, logs_dir, file_prefix, parallel_cores, save_intermediate
+2026-04-16 18:57:09 - Loading required packages...
+2026-04-16 18:57:12 - Loading analysis modules...
+2026-04-16 18:57:12 - Generating phylogenetic trees...
+2026-04-16 18:57:12 - Creating distance objects...
+2026-04-16 18:57:12 - Saving distance objects...
+2026-04-16 18:57:12 - Starting Result 1 analysis...
+2026-04-16 18:57:47 - Creating Result 1 figures...
+2026-04-16 18:57:51 - Result 1 analysis completed
+2026-04-16 18:57:51 - Starting Result 2 analysis...
+2026-04-16 18:59:18 - Creating Result 2 figures...
+2026-04-16 18:59:21 - Result 2 analysis completed
+2026-04-16 18:59:21 - Starting Result 4 analysis...
+2026-04-16 20:21:00 - Creating Result 4 figures...
+2026-04-16 20:21:00 - Result 4 analysis completed
+2026-04-16 20:21:00 - Starting Result 3 analysis...
+2026-04-16 20:32:19 - Creating Result 3 figures...
+2026-04-16 20:32:28 - Result 3 analysis completed
+2026-04-16 20:32:28 - Creating summary figures...
+2026-04-16 20:32:32 - Creating summary report...
+2026-04-16 20:32:33 - Saving all results...
+2026-04-16 20:32:33 - Analysis completed successfully
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+Log closed - 2026-04-16 20:32:33
