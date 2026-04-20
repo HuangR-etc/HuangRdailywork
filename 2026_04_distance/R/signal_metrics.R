@@ -228,8 +228,8 @@ calc_tree_dependence_metrics <- function(tree, model_name) {
   empty_result <- list(
     mean_offdiag_cor = NA_real_,
     max_offdiag_cor = NA_real_,
-    ess_1 = NA_real_,
-    ess_2 = NA_real_
+    ess_1 = NA_real_,   # mean-estimation ESS: 1' R^{-1} 1
+    ess_2 = NA_real_    # spectral ESS
   )
 
   if (n_tips < 2) {
@@ -238,20 +238,49 @@ calc_tree_dependence_metrics <- function(tree, model_name) {
 
   cov_matrix <- build_model_covariance_matrix(tree, model_name)
   cor_matrix <- cov_to_cor_matrix(cov_matrix)
+
+  # Force exact symmetry to reduce numerical noise
+  cor_matrix <- (cor_matrix + t(cor_matrix)) / 2
+
   offdiag_vals <- cor_matrix[upper.tri(cor_matrix, diag = FALSE)]
 
   if (length(offdiag_vals) == 0 || any(!is.finite(offdiag_vals))) {
     return(empty_result)
   }
 
-  ess1_denom <- sum(cor_matrix)
+  # ---- ESS 1: mean-estimation ESS ----
+  # n_eff,mean = 1' R^{-1} 1
+  one_vec <- rep(1, n_tips)
+
+  ess_1_value <- tryCatch({
+    # Prefer Cholesky when possible
+    chol_R <- chol(cor_matrix)
+    inv_R <- chol2inv(chol_R)
+    as.numeric(t(one_vec) %*% inv_R %*% one_vec)
+  }, error = function(e) {
+    # Fall back to a more general solver if Cholesky fails
+    tryCatch({
+      x <- qr.solve(cor_matrix, one_vec)
+      as.numeric(crossprod(one_vec, x))
+    }, error = function(e2) {
+      NA_real_
+    })
+  })
+
+  # ---- ESS 2: spectral ESS ----
+  # n_eff,spec = n^2 / sum_{i,j} R_ij^2
   ess2_denom <- sum(cor_matrix * cor_matrix)
+  ess_2_value <- if (is.finite(ess2_denom) && ess2_denom > 0) {
+    (n_tips^2) / ess2_denom
+  } else {
+    NA_real_
+  }
 
   list(
     mean_offdiag_cor = mean(offdiag_vals),
     max_offdiag_cor = max(offdiag_vals),
-    ess_1 = if (is.finite(ess1_denom) && ess1_denom > 0) (n_tips^2) / ess1_denom else NA_real_,
-    ess_2 = if (is.finite(ess2_denom) && ess2_denom > 0) (n_tips^2) / ess2_denom else NA_real_
+    ess_1 = ess_1_value,
+    ess_2 = ess_2_value
   )
 }
 
@@ -329,16 +358,35 @@ calculate_subsets_signal <- function(tree, subsets, subset_names, trait_values,
   return(results)
 }
 
-#' Calculate signal metrics for simulated traits
+#' Calculate signal metrics for simulated traits with timing
 #'
 #' @param simulation_results Results from simulate_traits_for_subsets
 #' @param tree Full tree
 #' @param n_reps_to_analyze Number of replicates to analyze (for performance)
-#' @return A comprehensive data frame with signal metrics
-analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_analyze = 100) {
+#' @param record_timing Whether to record computation time for each metric (default: TRUE)
+#' @return A list containing:
+#'   - signal_metrics: A comprehensive data frame with signal metrics
+#'   - timing_stats: A data frame with timing statistics for each metric (if record_timing = TRUE)
+analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_analyze = 100, record_timing = TRUE) {
   cat("Analyzing phylogenetic signal in simulated traits...\n")
+  
+  if (record_timing) {
+    cat("  Timing recording is ENABLED\n")
+  }
 
   all_results <- data.frame()
+  
+  # Initialize timing data structure if recording is enabled
+  timing_data <- list()
+  if (record_timing) {
+    timing_data <- list(
+      K = numeric(0),
+      Lambda = numeric(0),
+      MoransI = numeric(0),
+      mpnns = numeric(0),
+      dependence_metrics = numeric(0)
+    )
+  }
 
   # Get subset information from metadata
   subset_names <- simulation_results$metadata$subset_names
@@ -346,7 +394,7 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
 
   if (is.null(subsets)) {
     warning("No subsets found in simulation results metadata. Cannot calculate signal metrics.")
-    return(all_results)
+    return(list(signal_metrics = all_results, timing_stats = NULL))
   }
 
   # Precompute phylogenetic distance matrix for the full tree
@@ -370,8 +418,17 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
       n_reps <- min(n_reps_to_analyze, ncol(subset_traits))
       subset_tree <- keep.tip(tree, subset_tips)
 
+      # Time dependence metrics calculation
       dependence_metrics <- tryCatch({
-        calc_tree_dependence_metrics(subset_tree, model_name)
+        if (record_timing) {
+          start_time <- proc.time()[3]
+          result <- calc_tree_dependence_metrics(subset_tree, model_name)
+          end_time <- proc.time()[3]
+          timing_data$dependence_metrics <<- c(timing_data$dependence_metrics, end_time - start_time)
+          result
+        } else {
+          calc_tree_dependence_metrics(subset_tree, model_name)
+        }
       }, error = function(e) {
         cat("    Error calculating dependence metrics for", model_name, "subset", subset_name, ":", e$message, "\n")
         list(
@@ -386,29 +443,65 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
         trait_values <- subset_traits[, rep]
         names(trait_values) <- subset_tips
 
+        # Time K calculation
         K_value <- tryCatch({
-          calc_blombergs_K(trait_values, subset_tree)
+          if (record_timing) {
+            start_time <- proc.time()[3]
+            result <- calc_blombergs_K(trait_values, subset_tree)
+            end_time <- proc.time()[3]
+            timing_data$K <<- c(timing_data$K, end_time - start_time)
+            result
+          } else {
+            calc_blombergs_K(trait_values, subset_tree)
+          }
         }, error = function(e) {
           cat("    Error calculating K for replicate", rep, ":", e$message, "\n")
           NA
         })
 
+        # Time Lambda calculation
         lambda_value <- tryCatch({
-          calc_pagels_lambda(trait_values, subset_tree)
+          if (record_timing) {
+            start_time <- proc.time()[3]
+            result <- calc_pagels_lambda(trait_values, subset_tree)
+            end_time <- proc.time()[3]
+            timing_data$Lambda <<- c(timing_data$Lambda, end_time - start_time)
+            result
+          } else {
+            calc_pagels_lambda(trait_values, subset_tree)
+          }
         }, error = function(e) {
           cat("    Error calculating Lambda for replicate", rep, ":", e$message, "\n")
           NA
         })
 
+        # Time Moran's I calculation
         moran_result <- tryCatch({
-          calc_morans_I(trait_values, subset_tree)
+          if (record_timing) {
+            start_time <- proc.time()[3]
+            result <- calc_morans_I(trait_values, subset_tree)
+            end_time <- proc.time()[3]
+            timing_data$MoransI <<- c(timing_data$MoransI, end_time - start_time)
+            result
+          } else {
+            calc_morans_I(trait_values, subset_tree)
+          }
         }, error = function(e) {
           cat("    Error calculating Moran's I for replicate", rep, ":", e$message, "\n")
           list(observed = NA, expected = NA, sd = NA, p.value = NA)
         })
 
+        # Time mpnns calculation
         mpnns_value <- tryCatch({
-          calc_mpnns(subset_tips, trait_values, full_dist_matrix)
+          if (record_timing) {
+            start_time <- proc.time()[3]
+            result <- calc_mpnns(subset_tips, trait_values, full_dist_matrix)
+            end_time <- proc.time()[3]
+            timing_data$mpnns <<- c(timing_data$mpnns, end_time - start_time)
+            result
+          } else {
+            calc_mpnns(subset_tips, trait_values, full_dist_matrix)
+          }
         }, error = function(e) {
           cat("    Error calculating mpnns for replicate", rep, ":", e$message, "\n")
           NA
@@ -451,7 +544,56 @@ analyze_simulated_traits_signal <- function(simulation_results, tree, n_reps_to_
     }
   }
 
-  return(all_results)
+  # Calculate timing statistics if recording was enabled
+  timing_stats <- NULL
+  if (record_timing && length(timing_data) > 0) {
+    cat("\nCalculating timing statistics...\n")
+    
+    timing_stats <- data.frame()
+    
+    for (metric_name in names(timing_data)) {
+      times <- timing_data[[metric_name]]
+      if (length(times) > 0) {
+        timing_stats <- rbind(timing_stats, data.frame(
+          Metric = metric_name,
+          N = length(times),
+          Total_Time = sum(times),
+          Mean_Time = mean(times),
+          SD_Time = sd(times),
+          Min_Time = min(times),
+          Max_Time = max(times),
+          Median_Time = median(times),
+          Q1_Time = quantile(times, 0.25),
+          Q3_Time = quantile(times, 0.75),
+          stringsAsFactors = FALSE
+        ))
+      }
+    }
+    
+    # Print summary
+    cat("\nTiming Summary (seconds):\n")
+    cat(strrep("=", 60), "\n")
+    for (i in 1:nrow(timing_stats)) {
+      row <- timing_stats[i, ]
+      cat(sprintf("%-20s: N=%d, Total=%.3fs, Mean=%.3fs ± %.3fs, Min=%.3fs, Max=%.3fs\n",
+                  row$Metric, row$N, row$Total_Time, row$Mean_Time, row$SD_Time,
+                  row$Min_Time, row$Max_Time))
+    }
+    cat(strrep("=", 60), "\n")
+    
+    # Calculate overall statistics
+    if (nrow(timing_stats) > 0) {
+      total_calculations <- sum(timing_stats$N)
+      total_time <- sum(timing_stats$Total_Time)
+      cat(sprintf("\nOverall: %d calculations, Total time: %.3fs, Average per calculation: %.3fs\n",
+                  total_calculations, total_time, total_time/total_calculations))
+    }
+  }
+
+  return(list(
+    signal_metrics = all_results,
+    timing_stats = timing_stats
+  ))
 }
 
 #' Test signal metrics functions

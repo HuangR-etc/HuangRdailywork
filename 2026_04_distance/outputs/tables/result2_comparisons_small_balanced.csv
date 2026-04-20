@@ -1,8 +1,8 @@
 "Comparison","MinPD_diff","MeanPD_diff","MeanNND_diff","A_better"
 "A_vs_B",0,0,0,FALSE
-"A_vs_C_meanpd_only",0,0,0,FALSE
-"A_vs_D_minpd_only",0,0.6,0.4,TRUE
+"A_vs_C_meanpd_only",2,-0.464285714285715,1.25,TRUE
+"A_vs_D_minpd_only",0,0.5,0.5,TRUE
 "A_vs_E_meannnd_only",0,0,0,FALSE
-"C_vs_D",0,0.6,0.4,NA
-"C_vs_E",0,0,0,NA
-"D_vs_E",0,-0.6,-0.4,NA
+"C_vs_D",-2,0.964285714285715,-0.75,NA
+"C_vs_E",-2,0.464285714285715,-1.25,NA
+"D_vs_E",0,-0.5,-0.5,NA

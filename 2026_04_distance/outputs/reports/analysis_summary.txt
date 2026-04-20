@@ -1,5 +1,5 @@
 Phylogenetic Dispersed Subset Analysis - Summary Report
-Generated: 2026-04-16 16:04:56
+Generated: 2026-04-16 20:32:33
 =
 =
 =
@@ -162,12 +162,12 @@ CONFIGURATION
 -
 -
 -
-Seed: 123
+Seed: 12
 Tree repetitions: 1
 Large tree size: 256
 Small tree size: 32
-Large subset size: 20
-Small subset size: 5
+Large subset size: 32
+Small subset size: 8
 Null reps (large): 1000
 Null reps (small): 1000
 Trait reps: 1
@@ -255,28 +255,28 @@ RESULT 1: Comparison with Random Null Distribution
 -
 -
 Tree: large_balanced
-  MinPD: observed = 11 p = 0.001 z = 7.093
-  MeanPD: observed = 20.389 p = 0.001 z = 5.36
-  MeanNND: observed = 13.25 p = 0.001 z = 7.759
+  MinPD: observed = 10 p = 0.001 z = 15.063
+  MeanPD: observed = 18.917 p = 0.001 z = 4.048
+  MeanNND: observed = 11.344 p = 0.001 z = 9.451
   Significant: TRUE
 
 Tree: large_ladder
-  MinPD: observed = 14.113 p = 0.001 z = 17.973
-  MeanPD: observed = 93.551 p = 0.2038 z = 0.848
-  MeanNND: observed = 14.833 p = 0.001 z = 4.943
+  MinPD: observed = 8.313 p = 0.001 z = 20.735
+  MeanPD: observed = 92.963 p = 0.1888 z = 0.897
+  MeanNND: observed = 9.474 p = 0.001 z = 5.469
   Significant: FALSE
 
 Tree: small_balanced
-  MinPD: observed = 9 p = 0.002 z = 3.26
-  MeanPD: observed = 11.4 p = 0.001 z = 2.826
-  MeanNND: observed = 9.6 p = 0.001 z = 3.223
+  MinPD: observed = 6 p = 0.006 z = 4.209
+  MeanPD: observed = 9.964 p = 0.007 z = 2.274
+  MeanNND: observed = 7.25 p = 0.001 z = 3.447
   Significant: TRUE
 
 Tree: small_ladder
-  MinPD: observed = 9.584 p = 0.001 z = 5.376
-  MeanPD: observed = 17.21 p = 0.039 z = 1.564
-  MeanNND: observed = 9.699 p = 0.001 z = 2.758
-  Significant: TRUE
+  MinPD: observed = 6.113 p = 0.001 z = 6.229
+  MeanPD: observed = 15.615 p = 0.1159 z = 1.209
+  MeanNND: observed = 6.304 p = 0.001 z = 2.943
+  Significant: FALSE
 
 RESULT 2: Design Component Analysis
 -
@@ -361,27 +361,27 @@ RESULT 2: Design Component Analysis
 -
 Tree: large_balanced
   Best algorithm: A_main
-  Best MinPD: 11
-  Best MeanPD: 20.389
-  Best MeanNND: 13.25
+  Best MinPD: 10
+  Best MeanPD: 18.917
+  Best MeanNND: 11.344
 
 Tree: large_ladder
   Best algorithm: A_main
-  Best MinPD: 11.732
-  Best MeanPD: 98.985
-  Best MeanNND: 13.397
+  Best MinPD: 8.832
+  Best MeanPD: 92.107
+  Best MeanNND: 9.271
 
 Tree: small_balanced
   Best algorithm: A_main
-  Best MinPD: 9
-  Best MeanPD: 11.4
-  Best MeanNND: 9.6
+  Best MinPD: 6
+  Best MeanPD: 9.964
+  Best MeanNND: 7.25
 
 Tree: small_ladder
   Best algorithm: A_main
-  Best MinPD: 9.584
-  Best MeanPD: 17.21
-  Best MeanNND: 9.699
+  Best MinPD: 6.113
+  Best MeanPD: 15.615
+  Best MeanNND: 6.304
 
 RESULT 3: Trait-level Consequences
 -
@@ -464,25 +464,29 @@ RESULT 3: Trait-level Consequences
 -
 -
 -
+Model: Lambda0.5
+  K pattern holds: 75 %
+  Lambda pattern holds: 25 %
+
 Model: Lambda0.7
   K pattern holds: 50 %
-  Lambda pattern holds: 50 %
+  Lambda pattern holds: 100 %
 
 Model: Lambda1
-  K pattern holds: 0 %
-  Lambda pattern holds: 0 %
+  K pattern holds: 75 %
+  Lambda pattern holds: 25 %
 
 Model: OU_alpha0.2
   K pattern holds: 50 %
-  Lambda pattern holds: 50 %
+  Lambda pattern holds: 75 %
 
 Model: OU_alpha1
-  K pattern holds: 50 %
+  K pattern holds: 0 %
   Lambda pattern holds: 25 %
 
 Model: OU_alpha5
   K pattern holds: 25 %
-  Lambda pattern holds: 25 %
+  Lambda pattern holds: 0 %
 
 RESULT 4: Heuristic vs Exact Optimum
 -
@@ -567,7 +571,7 @@ RESULT 4: Heuristic vs Exact Optimum
 -
 Tree: small_balanced
 Tree: small_ladder
-  Exact match: FALSE
+  Exact match: TRUE
   Exact match: TRUE
   MinPD gap: 0 ( 0 %)
   MinPD gap: 0 ( 0 %)
@@ -576,7 +580,7 @@ Tree: small_ladder
   MeanNND gap: 0 ( 0 %)
   MeanNND gap: 0 ( 0 %)
   Percentile: 100 %
-  Percentile: 100 %
+  Percentile: 99.99 %
 
 OVERALL CONCLUSIONS
 -
@@ -746,4 +750,4 @@ OVERALL CONCLUSIONS
 =
 =
 Report saved to: outputs/reports/analysis_summary.txt
-Analysis completed: 2026-04-16 16:04:56
+Analysis completed: 2026-04-16 20:32:33

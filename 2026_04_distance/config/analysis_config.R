@@ -3,16 +3,16 @@
 
 cfg <- list(
   # Random seed for reproducibility
-  seed = 123,
+  seed = 1,
   
   # Tree generation parameters
   tree_reps = 1,           # Number of tree replicates (default 1)
-  large_n = 256,           # Number of species in large trees
-  small_n = 32,            # Number of species in small tree
+  large_n = 4096,           # Number of species in large trees
+  small_n = 16,            # Number of species in small tree
   
   # Subset size parameters
-  subset_large = 20,       # Subset size for large trees (256 species)
-  subset_small = 5,        # Subset size for small tree (32 species)
+  subset_large = 64,       # Subset size for large trees (256 species)
+  subset_small = 4,        # Subset size for small tree (32 species)
   
   # Null distribution parameters
   null_reps_large = 1000,  # Number of random subsets for large trees
@@ -25,6 +25,9 @@ cfg <- list(
   
   # OU process parameters (alpha values for weak, moderate, strong)
   ou_alpha = c(0.2, 1, 5),
+  
+  # Lambda model parameters (lambda values for Pagel's lambda model)
+  bm_lambda = c(1.0, 0.75,0.5),
   
   # Which results to run
   run_result1 = TRUE,      # Compare with random null
@@ -62,7 +65,7 @@ create_dirs <- function() {
 create_dirs()
 
 # Set seed for reproducibility
-set.seed(cfg$seed)
+set.seed(1)
 
 # Print configuration summary
 cat("Configuration loaded:\n")

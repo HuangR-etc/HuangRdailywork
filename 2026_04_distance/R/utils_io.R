@@ -391,14 +391,22 @@ create_summary_report <- function(results, cfg, output_dir = "outputs") {
     result3 <- results$result3
     
     if (!is.null(result3$overall_summary) && nrow(result3$overall_summary) > 0) {
-      # Calculate pattern consistency
-      pattern_summary <- result3$overall_summary %>%
-        group_by(Model) %>%
-        summarise(
-          Pattern_K_Pct = mean(Pattern_K) * 100,
-          Pattern_Lambda_Pct = mean(Pattern_Lambda) * 100,
-          .groups = "drop"
-        )
+      # Calculate pattern consistency without dplyr
+      models <- unique(result3$overall_summary$Model)
+      pattern_summary <- data.frame(
+        Model = models,
+        Pattern_K_Pct = numeric(length(models)),
+        Pattern_Lambda_Pct = numeric(length(models)),
+        stringsAsFactors = FALSE
+      )
+      
+      for (i in seq_along(models)) {
+        model <- models[i]
+        model_data <- result3$overall_summary[result3$overall_summary$Model == model, ]
+        
+        pattern_summary$Pattern_K_Pct[i] <- mean(model_data$Pattern_K) * 100
+        pattern_summary$Pattern_Lambda_Pct[i] <- mean(model_data$Pattern_Lambda) * 100
+      }
       
       for (i in 1:nrow(pattern_summary)) {
         row <- pattern_summary[i, ]

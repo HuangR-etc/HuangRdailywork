@@ -1,4 +1,4 @@
 "Metric","Heuristic","Exact","Gap","Rel_Gap_Pct"
-"MinPD",9,9,0,0
-"MeanPD",11.4,11.4,0,0
-"MeanNND",9.6,9.6,0,0
+"MinPD",6,6,0,0
+"MeanPD",9.96428571428571,9.96428571428571,0,0
+"MeanNND",7.25,7.25,0,0

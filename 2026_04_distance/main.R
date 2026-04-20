@@ -298,6 +298,12 @@ run_single_result <- function(result_number, cfg = NULL) {
   cfg$tables_dir <- dirs$tables
   cfg$figures_dir <- dirs$figures
   
+  # Load required packages
+  load_required_packages(install_missing = TRUE)
+  
+  # Load all analysis modules
+  source_modules()
+  
   # Generate trees and distance objects
   trees <- generate_all_trees(cfg)
   dist_objs <- create_distance_objects(trees)

@@ -58,9 +58,11 @@ prepare_subsets_for_trait_analysis <- function(dist_obj, subset_size, n_random_s
 #' @param tree Full tree
 #' @param subset_data Result from prepare_subsets_for_trait_analysis
 #' @param n_reps Number of simulation replicates
+#' @param lambda_values Vector of lambda values for Pagel's lambda model
 #' @param ou_alpha_values Vector of alpha values for OU process
 #' @return Comprehensive trait analysis results
 run_trait_analysis <- function(tree, subset_data, n_reps = 100, 
+                               lambda_values = c(1.0, 0.7),
                                ou_alpha_values = c(0.2, 1, 5)) {
   cat("Running trait simulation and analysis...\n")
   
@@ -89,12 +91,16 @@ run_trait_analysis <- function(tree, subset_data, n_reps = 100,
     subset_list, 
     subset_name_list, 
     n_reps = n_reps,
+    lambda_values = lambda_values,
     ou_alpha_values = ou_alpha_values
   )
   
-  # Calculate phylogenetic signal metrics
+  # Calculate phylogenetic signal metrics with timing
   cat("  Calculating phylogenetic signal metrics...\n")
-  signal_results <- analyze_simulated_traits_signal(sim_results, tree, n_reps_to_analyze = n_reps)
+  signal_analysis <- analyze_simulated_traits_signal(sim_results, tree, n_reps_to_analyze = n_reps, record_timing = TRUE)
+  
+  signal_results <- signal_analysis$signal_metrics
+  timing_stats <- signal_analysis$timing_stats
   
   # Add subset type information
   signal_results$Subset_Type <- NA
@@ -113,7 +119,9 @@ run_trait_analysis <- function(tree, subset_data, n_reps = 100,
     subset_data = subset_data,
     sim_results = sim_results,
     signal_results = signal_results,
+    timing_stats = timing_stats,
     n_reps = n_reps,
+    lambda_values = lambda_values,
     ou_alpha_values = ou_alpha_values
   ))
 }
@@ -445,10 +453,13 @@ analyze_trait_signals <- function(trait_analysis_results) {
 #' @param subset_size Subset size
 #' @param n_reps Number of simulation replicates
 #' @param n_random_subsets Number of random subsets
+#' @param lambda_values Vector of lambda values for Pagel's lambda model
 #' @param ou_alpha_values Vector of alpha values for OU process
 #' @return Comprehensive Result 3 analysis results
 run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
-                                 n_random_subsets = 100, ou_alpha_values = c(0.2, 1, 5)) {
+                                 n_random_subsets = 100, 
+                                 lambda_values = c(1.0, 0.7),
+                                 ou_alpha_values = c(0.2, 1, 5)) {
 
   tree_name <- ifelse("tree_name" %in% names(dist_obj),
                      dist_obj$tree_name,
@@ -465,7 +476,7 @@ run_result3_for_tree <- function(dist_obj, subset_size, n_reps = 100,
   subset_data <- prepare_subsets_for_trait_analysis(dist_obj, subset_size, n_random_subsets)
 
   cat("\nStep 2: Running trait simulation and analysis...\n")
-  trait_analysis <- run_trait_analysis(dist_obj$tree, subset_data, n_reps, ou_alpha_values)
+  trait_analysis <- run_trait_analysis(dist_obj$tree, subset_data, n_reps, lambda_values, ou_alpha_values)
 
   cat("\nStep 3: Analyzing trait signals...\n")
   analysis_results <- analyze_trait_signals(trait_analysis)
@@ -617,6 +628,7 @@ run_result3_analysis <- function(dist_objs, cfg) {
       subset_size = cfg$subset_large,
       n_reps = cfg$trait_reps,
       n_random_subsets = cfg$random_subset_reps_for_trait,
+      lambda_values = cfg$bm_lambda,
       ou_alpha_values = cfg$ou_alpha
     )
   }
@@ -628,6 +640,7 @@ run_result3_analysis <- function(dist_objs, cfg) {
       subset_size = cfg$subset_large,
       n_reps = cfg$trait_reps,
       n_random_subsets = cfg$random_subset_reps_for_trait,
+      lambda_values = cfg$bm_lambda,
       ou_alpha_values = cfg$ou_alpha
     )
   }
@@ -639,6 +652,7 @@ run_result3_analysis <- function(dist_objs, cfg) {
       subset_size = cfg$subset_small,
       n_reps = cfg$trait_reps,
       n_random_subsets = cfg$random_subset_reps_for_trait,
+      lambda_values = cfg$bm_lambda,
       ou_alpha_values = cfg$ou_alpha
     )
   }
@@ -650,6 +664,7 @@ run_result3_analysis <- function(dist_objs, cfg) {
       subset_size = cfg$subset_small,
       n_reps = cfg$trait_reps,
       n_random_subsets = cfg$random_subset_reps_for_trait,
+      lambda_values = cfg$bm_lambda,
       ou_alpha_values = cfg$ou_alpha
     )
   }
@@ -754,6 +769,13 @@ save_result3 <- function(result3_results, cfg) {
     if (!is.null(result$trait_analysis$signal_results)) {
       signal_file <- file.path(output_dir, paste0("result3_signal_", tree_name, ".csv"))
       write.csv(result$trait_analysis$signal_results, signal_file, row.names = FALSE)
+    }
+    
+    # Save timing statistics
+    if (!is.null(result$trait_analysis$timing_stats)) {
+      timing_file <- file.path(output_dir, paste0("result3_timing_", tree_name, ".csv"))
+      write.csv(result$trait_analysis$timing_stats, timing_file, row.names = FALSE)
+      cat("  Saved timing statistics to:", timing_file, "\n")
     }
     
     # Save summary statistics
