@@ -148,6 +148,7 @@ random_subsets_idx <- sample_random_subsets(
 length(random_subsets_idx)
 length(random_subsets_idx[[1]])
 
+
 # ============================================================
 # 11. 计算 random baseline 的距离指标
 # ============================================================
@@ -500,178 +501,456 @@ title("Phylogenetically clustered subset, s = 20")
 dev.off()
 
 
-
-#临时测试
-
 # ============================================================
-# TEMPORARY TEST:
-# 多个随机种子重复构造 clustered subset
-# 并与固定 random baseline 比较 p 值
+# TEMP analysis:
+# 从 1000 个 random subsets 中找出 4 个目标子集
 # ============================================================
 
-# 这部分是临时测试代码，正式分析完成后可以删除
+# 给 random metrics 加一个 Subset_ID，便于回溯
+random_summary <- data.frame(
+  Subset_ID = seq_len(nrow(random_dist_metrics)),
+  random_dist_metrics,
+  stringsAsFactors = FALSE
+)
 
-# ------------------------------------------------------------
-# 0. 确认前面已经存在这些对象
-# ------------------------------------------------------------
+head(random_summary)
 
-exists("dist_obj")
-exists("subset_size")
-exists("n_greedy_starts")
-exists("random_dist_metrics")
+# ============================================================
+# 1. 三个单指标最小子集
+# ============================================================
 
-dim(random_dist_metrics)
-head(random_dist_metrics)
+min_MinPD_id   <- which.min(random_summary$MinPD)
+min_MeanPD_id  <- which.min(random_summary$MeanPD)
+min_MeanNND_id <- which.min(random_summary$MeanNND)
 
+min_MinPD_id
+min_MeanPD_id
+min_MeanNND_id
 
-# ------------------------------------------------------------
-# 2. 设置测试参数
-# ------------------------------------------------------------
+# ============================================================
+# 2. 字典序最优子集（clustered 方向：越小越好）
+# 先比 MinPD，再比 MeanPD，再比 MeanNND
+# ============================================================
 
-# 你可以改成 1:50、1:100，或者自定义一组种子
-cluster_test_seeds <- 1:100
+lexico_order_ids <- order(
+  random_summary$MinPD,
+  random_summary$MeanPD,
+  random_summary$MeanNND
+)
 
-n_cluster_tests <- length(cluster_test_seeds)
+# 字典序最优的 random subset
+lexico_best_id <- lexico_order_ids[1]
 
-alpha <- 0.05
+lexico_best_id
 
-# 用于保存每次 clustered 结果的总表
-cluster_test_summary <- data.frame()
+# 看一下字典序前 10 名
+random_summary[lexico_order_ids[1:10], ]
 
-# 用于保存每次选中的物种
-cluster_test_species_list <- vector("list", n_cluster_tests)
+# ============================================================
+# 3. 提取子集信息的辅助函数
+# ============================================================
 
-# ------------------------------------------------------------
-# 3. 多个 seed 重复运行 clustered subset construction
-# ------------------------------------------------------------
-
-for (i in seq_along(cluster_test_seeds)) {
+extract_random_subset_info <- function(subset_id, label) {
   
-  seed_now <- cluster_test_seeds[i]
+  subset_idx <- random_subsets_idx[[subset_id]]
+  subset_names <- dist_obj$tip_labels[subset_idx]
+  subset_metrics <- random_summary[random_summary$Subset_ID == subset_id, ]
   
-  cat("\n========================================\n")
-  cat("Clustered test", i, "of", n_cluster_tests, "\n")
-  cat("Seed:", seed_now, "\n")
-  cat("========================================\n")
+  list(
+    Label = label,
+    Subset_ID = subset_id,
+    subset_idx = subset_idx,
+    subset_names = subset_names,
+    metrics = subset_metrics
+  )
+}
+
+# ============================================================
+# 4. 提取四个目标子集
+# ============================================================
+
+subset_min_MinPD <- extract_random_subset_info(
+  subset_id = min_MinPD_id,
+  label = "Random subset with minimum MinPD"
+)
+
+subset_min_MeanPD <- extract_random_subset_info(
+  subset_id = min_MeanPD_id,
+  label = "Random subset with minimum MeanPD"
+)
+
+subset_min_MeanNND <- extract_random_subset_info(
+  subset_id = min_MeanNND_id,
+  label = "Random subset with minimum MeanNND"
+)
+
+subset_lexico_best <- extract_random_subset_info(
+  subset_id = lexico_best_id,
+  label = "Random subset with lexicographic optimum"
+)
+
+# ============================================================
+# 5. 汇总成总表
+# ============================================================
+
+selected_random_subsets_summary <- rbind(
+  data.frame(
+    Type = subset_min_MinPD$Label,
+    subset_min_MinPD$metrics,
+    stringsAsFactors = FALSE
+  ),
+  data.frame(
+    Type = subset_min_MeanPD$Label,
+    subset_min_MeanPD$metrics,
+    stringsAsFactors = FALSE
+  ),
+  data.frame(
+    Type = subset_min_MeanNND$Label,
+    subset_min_MeanNND$metrics,
+    stringsAsFactors = FALSE
+  ),
+  data.frame(
+    Type = subset_lexico_best$Label,
+    subset_lexico_best$metrics,
+    stringsAsFactors = FALSE
+  )
+)
+
+selected_random_subsets_summary
+
+# ============================================================
+# 8. 画图函数
+# ============================================================
+
+plot_subset_on_tree <- function(tree, subset_names, file_name, main_title) {
   
-  set.seed(seed_now)
+  svg(file_name, width = 9, height = 9)
   
-  test_clust_result <- run_complete_algorithm(
+  par(mar = c(1, 1, 3, 1))
+  
+  plot.phylo(tree,
+             type = "fan",
+             show.tip.label = FALSE,
+             no.margin = FALSE,
+             cex = 0.3)
+  
+  tiplabels(
+    pch = 21,
+    bg = "black",
+    cex = 0.9,
+    tip = which(tree$tip.label %in% subset_names)
+  )
+  
+  title(main_title, line = 1)
+  
+  dev.off()
+}
+
+# ============================================================
+# 9. 分别画四个子集
+# ============================================================
+
+plot_subset_on_tree(
+  tree = carn_tree,
+  subset_names = subset_min_MinPD$subset_names,
+  file_name = "TEMP_random_subset_min_MinPD_s20.svg",
+  main_title = "Random subset with minimum MinPD, s = 20"
+)
+
+plot_subset_on_tree(
+  tree = carn_tree,
+  subset_names = subset_min_MeanPD$subset_names,
+  file_name = "TEMP_random_subset_min_MeanPD_s20.svg",
+  main_title = "Random subset with minimum MeanPD, s = 20"
+)
+
+plot_subset_on_tree(
+  tree = carn_tree,
+  subset_names = subset_min_MeanNND$subset_names,
+  file_name = "TEMP_random_subset_min_MeanNND_s20.svg",
+  main_title = "Random subset with minimum MeanNND, s = 20"
+)
+
+plot_subset_on_tree(
+  tree = carn_tree,
+  subset_names = subset_lexico_best$subset_names,
+  file_name = "TEMP_random_subset_lexico_best_s20.svg",
+  main_title = "Random subset with lexicographic optimum, s = 20"
+)
+
+
+# ============================================================
+# TEMP function 1:
+# 找出全树中 patristic distance 最小的一对物种
+# ============================================================
+
+find_closest_pair <- function(dist_obj) {
+  
+  d <- dist_obj$dist_mat
+  
+  # 排除自己到自己的距离
+  diag(d) <- Inf
+  
+  # 只看上三角，避免 i-j 和 j-i 重复
+  d_upper <- d
+  d_upper[lower.tri(d_upper)] <- Inf
+  
+  min_dist <- min(d_upper, na.rm = TRUE)
+  
+  pair_pos <- which(d_upper == min_dist, arr.ind = TRUE)
+  
+  # 如果有并列最近 pair，默认取第一对
+  pair_pos_first <- pair_pos[1, ]
+  
+  pair_idx <- as.integer(pair_pos_first)
+  pair_names <- dist_obj$tip_labels[pair_idx]
+  
+  return(list(
+    pair_idx = pair_idx,
+    pair_names = pair_names,
+    distance = min_dist,
+    n_ties = nrow(pair_pos),
+    all_tied_pairs = pair_pos
+  ))
+}
+
+# ============================================================
+# TEMP function 2:
+# 从固定初始 subset 开始 greedy 添加物种
+# 后续比较逻辑与 build_subset_greedy() 保持一致
+# ============================================================
+
+build_subset_greedy_from_initial <- function(dist_obj,
+                                             subset_size,
+                                             initial_subset,
+                                             maximize = FALSE,
+                                             single_objective = NULL) {
+  
+  all_tips <- seq_along(dist_obj$tip_labels)
+  
+  # 允许 initial_subset 是物种名或 index
+  if (is.character(initial_subset)) {
+    current_subset <- match(initial_subset, dist_obj$tip_labels)
+  } else {
+    current_subset <- initial_subset
+  }
+  
+  current_subset <- unique(as.integer(current_subset))
+  
+  if (any(is.na(current_subset))) {
+    stop("Some initial species are not found in dist_obj$tip_labels.")
+  }
+  
+  if (length(current_subset) > subset_size) {
+    stop("Initial subset is larger than target subset_size.")
+  }
+  
+  if (subset_size > length(all_tips)) {
+    stop("subset_size cannot be larger than total number of tips.")
+  }
+  
+  available <- setdiff(all_tips, current_subset)
+  
+  while (length(current_subset) < subset_size && length(available) > 0) {
+    
+    best_candidate <- NULL
+    best_metrics <- NULL
+    best_value <- NULL
+    
+    for (candidate in available) {
+      
+      temp_subset <- c(current_subset, candidate)
+      temp_metrics <- calc_subset_metrics(dist_obj$dist_mat, temp_subset)
+      
+      if (is.null(single_objective)) {
+        
+        if (is.null(best_candidate)) {
+          best_candidate <- candidate
+          best_metrics <- temp_metrics
+        } else {
+          if (maximize) {
+            if (is_better_lexico_max(temp_metrics, best_metrics)) {
+              best_candidate <- candidate
+              best_metrics <- temp_metrics
+            }
+          } else {
+            if (is_better_lexico_min(temp_metrics, best_metrics)) {
+              best_candidate <- candidate
+              best_metrics <- temp_metrics
+            }
+          }
+        }
+        
+      } else {
+        
+        temp_value <- temp_metrics[[single_objective]]
+        
+        if (is.null(best_candidate)) {
+          best_candidate <- candidate
+          best_value <- temp_value
+          best_metrics <- temp_metrics
+        } else {
+          if (maximize) {
+            if (temp_value > best_value) {
+              best_candidate <- candidate
+              best_value <- temp_value
+              best_metrics <- temp_metrics
+            }
+          } else {
+            if (temp_value < best_value) {
+              best_candidate <- candidate
+              best_value <- temp_value
+              best_metrics <- temp_metrics
+            }
+          }
+        }
+      }
+    }
+    
+    current_subset <- c(current_subset, best_candidate)
+    available <- setdiff(all_tips, current_subset)
+  }
+  
+  final_metrics <- calc_subset_metrics(dist_obj$dist_mat, current_subset)
+  
+  return(list(
+    subset = current_subset,
+    subset_names = dist_obj$tip_labels[current_subset],
+    metrics = final_metrics,
+    initial_subset = initial_subset,
+    algorithm = ifelse(
+      maximize,
+      "greedy_fixed_initial_max",
+      "greedy_fixed_initial_min"
+    )
+  ))
+}
+
+# ============================================================
+# TEMP function 3:
+# 固定最近 pair 起始的 clustered complete algorithm
+# ============================================================
+
+run_complete_algorithm_fixed_closest_pair <- function(dist_obj,
+                                                      subset_size,
+                                                      single_objective = NULL) {
+  
+  if (subset_size < 2) {
+    stop("subset_size must be at least 2 for closest-pair initialization.")
+  }
+  
+  cat("Running fixed-closest-pair clustered algorithm...\n")
+  
+  # Phase 0: 找全树最近 pair
+  cat("  Phase 0: Finding closest pair\n")
+  
+  closest_pair <- find_closest_pair(dist_obj)
+  
+  cat("    Closest pair:\n")
+  cat("      ", closest_pair$pair_names[1], "\n")
+  cat("      ", closest_pair$pair_names[2], "\n")
+  cat("    Distance =", closest_pair$distance, "\n")
+  cat("    Number of tied closest pairs =", closest_pair$n_ties, "\n")
+  
+  # Phase 1: 从最近 pair 开始 greedy construction
+  cat("  Phase 1: Greedy construction from fixed closest pair\n")
+  
+  greedy_result <- build_subset_greedy_from_initial(
     dist_obj = dist_obj,
     subset_size = subset_size,
+    initial_subset = closest_pair$pair_idx,
     maximize = FALSE,
-    n_greedy_starts = n_greedy_starts
+    single_objective = single_objective
   )
   
-  test_clust_idx <- test_clust_result$final_subset
-  test_clust_names <- test_clust_result$final_subset_names
+  cat("    Greedy result: MinPD =", greedy_result$metrics$MinPD,
+      "MeanPD =", greedy_result$metrics$MeanPD,
+      "MeanNND =", greedy_result$metrics$MeanNND, "\n")
   
-  # 重新计算一次 metrics，避免直接依赖 result 内部字段
-  test_clust_metrics <- calc_subset_metrics(
-    dist_mat = dist_obj$dist_mat,
-    subset = test_clust_idx
+  # Phase 2: exchange refinement，沿用原来的函数
+  cat("  Phase 2: Exchange refinement\n")
+  
+  exchange_result <- refine_subset_exchange(
+    dist_obj = dist_obj,
+    current_subset = greedy_result$subset,
+    maximize = FALSE,
+    single_objective = single_objective
   )
   
-  # clustered subset 是 lower-tail comparison:
-  # p = P(random <= observed)
-  p_MinPD <- calc_p_low(
-    obs = test_clust_metrics$MinPD,
-    null_values = random_dist_metrics$MinPD
+  cat("    Exchange result: MinPD =", exchange_result$metrics$MinPD,
+      "MeanPD =", exchange_result$metrics$MeanPD,
+      "MeanNND =", exchange_result$metrics$MeanNND, "\n")
+  cat("    Iterations:", exchange_result$iterations, "\n")
+  cat("    Improvements:", length(exchange_result$improvements), "\n")
+  
+  improvement <- list(
+    MinPD = greedy_result$metrics$MinPD - exchange_result$metrics$MinPD,
+    MeanPD = greedy_result$metrics$MeanPD - exchange_result$metrics$MeanPD,
+    MeanNND = greedy_result$metrics$MeanNND - exchange_result$metrics$MeanNND
   )
   
-  p_MeanPD <- calc_p_low(
-    obs = test_clust_metrics$MeanPD,
-    null_values = random_dist_metrics$MeanPD
-  )
-  
-  p_MeanNND <- calc_p_low(
-    obs = test_clust_metrics$MeanNND,
-    null_values = random_dist_metrics$MeanNND
-  )
-  
-  # 三个距离指标是否都显著
-  all_three_significant <- all(
-    c(p_MinPD, p_MeanPD, p_MeanNND) < alpha
-  )
-  
-  # 至少一个不显著
-  any_not_significant <- any(
-    c(p_MinPD, p_MeanPD, p_MeanNND) >= alpha
-  )
-  
-  # 记录该次结果
-  temp_summary <- data.frame(
-    Test_ID = i,
-    Seed = seed_now,
-    Subset_Size = length(test_clust_idx),
-    
-    MinPD = test_clust_metrics$MinPD,
-    MeanPD = test_clust_metrics$MeanPD,
-    MeanNND = test_clust_metrics$MeanNND,
-    
-    P_MinPD_low = p_MinPD,
-    P_MeanPD_low = p_MeanPD,
-    P_MeanNND_low = p_MeanNND,
-    
-    Sig_MinPD = p_MinPD < alpha,
-    Sig_MeanPD = p_MeanPD < alpha,
-    Sig_MeanNND = p_MeanNND < alpha,
-    
-    All_Three_Significant = all_three_significant,
-    Any_Not_Significant = any_not_significant,
-    
-    stringsAsFactors = FALSE
-  )
-  
-  cluster_test_summary <- rbind(cluster_test_summary, temp_summary)
-  
-  # 保存该次选中的物种
-  cluster_test_species_list[[i]] <- data.frame(
-    Test_ID = i,
-    Seed = seed_now,
-    Rank_In_Subset = seq_along(test_clust_names),
-    tiplabel = test_clust_names,
-    stringsAsFactors = FALSE
-  )
-  
-  # 简单打印当前结果，方便你边跑边看
-  print(temp_summary)
+  return(list(
+    closest_pair = closest_pair,
+    greedy_result = greedy_result,
+    exchange_result = exchange_result,
+    final_subset = exchange_result$subset,
+    final_subset_names = exchange_result$subset_names,
+    final_metrics = exchange_result$metrics,
+    improvement = improvement,
+    algorithm = "fixed_closest_pair_greedy_exchange_min"
+  ))
 }
+
 # ============================================================
-# 4. 查看多次 clustered 测试结果
+# TEMP analysis:
+# 固定最近 pair 起始的 clustered subset
 # ============================================================
 
-cluster_test_summary
+fixed_clust_result <- run_complete_algorithm_fixed_closest_pair(
+  dist_obj = dist_obj,
+  subset_size = subset_size,
+  single_objective = NULL
+)
 
-summary(cluster_test_summary[, c(
-  "MinPD", "MeanPD", "MeanNND",
-  "P_MinPD_low", "P_MeanPD_low", "P_MeanNND_low"
-)])
+fixed_clust_subset_idx <- fixed_clust_result$final_subset
+fixed_clust_subset_names <- fixed_clust_result$final_subset_names
+fixed_clust_metrics <- fixed_clust_result$final_metrics
 
-# 三个 p 值是否每次都显著
-table(cluster_test_summary$All_Three_Significant)
+length(fixed_clust_subset_idx)
+fixed_clust_metrics
+fixed_clust_subset_names
 
-# 哪些 seed 没有三个都显著
-cluster_test_summary[
-  cluster_test_summary$All_Three_Significant == FALSE,
-]
+# ============================================================
+# TEMP plot:
+# 固定最近 pair 起始 clustered subset
+# ============================================================
 
-# 分别看每个指标的显著次数
-colSums(cluster_test_summary[, c(
-  "Sig_MinPD",
-  "Sig_MeanPD",
-  "Sig_MeanNND"
-)])
+svg("TEMP_Carnivora_tree_fixed_closest_pair_clustered_s20.svg",
+    width = 9, height = 9)
 
-# p 值最大的是哪几次
-cluster_test_summary[
-  order(cluster_test_summary$P_MinPD_low, decreasing = TRUE),
-][1:10, ]
+par(mar = c(1, 1, 3, 1))
 
-cluster_test_summary[
-  order(cluster_test_summary$P_MeanPD_low, decreasing = TRUE),
-][1:10, ]
+plot.phylo(carn_tree,
+           type = "fan",
+           show.tip.label = FALSE,
+           no.margin = FALSE,
+           cex = 0.3)
 
-cluster_test_summary[
-  order(cluster_test_summary$P_MeanNND_low, decreasing = TRUE),
-][1:10, ]
+# 所有 clustered subset 物种
+tiplabels(
+  pch = 21,
+  bg = "black",
+  cex = 0.9,
+  tip = which(carn_tree$tip.label %in% fixed_clust_subset_names)
+)
+
+
+title("Fixed closest-pair clustered subset, s = 20",
+      line = 1)
+
+dev.off()
+
+# clustered: low-tail p-values
+clust_2_MinPD <- calc_p_low(fixed_clust_metrics$MinPD, random_dist_metrics$MinPD)
+clust_2_MeanPD <- calc_p_low(fixed_clust_metrics$MeanPD, random_dist_metrics$MeanPD)
+clust_2_MeanNND <- calc_p_low(fixed_clust_metrics$MeanNND, random_dist_metrics$MeanNND)
