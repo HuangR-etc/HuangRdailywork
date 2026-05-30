@@ -36,17 +36,31 @@ disp_bal <- run_dispersed_algorithm(dist_bal, S)
 
 # Balanced clustered
 cat("  Balanced tree clustered...\n")
-clust_bal <- select_best_clustered_neighborhood(dist_bal, S)
+clust_bal <- select_clustered_greedy_exchange(
+  dist_obj = dist_bal,
+  subset_size = S,
+  max_iterations = CLUSTERED_MAX_EXCHANGE_ITERATIONS,
+  tol = CLUSTERED_EXCHANGE_TOL
+)
 
 # Ladder clustered
 cat("  Ladder tree clustered...\n")
 dist_lad <- create_distance_object(ladder_tree)
-clust_lad <- select_best_clustered_neighborhood(dist_lad, S)
+clust_lad <- select_clustered_greedy_exchange(
+  dist_obj = dist_lad,
+  subset_size = S,
+  max_iterations = CLUSTERED_MAX_EXCHANGE_ITERATIONS,
+  tol = CLUSTERED_EXCHANGE_TOL
+)
 
-# Random baseline (on balanced tree, same for all)
+# Random baseline (balanced and ladder trees separately)
 set.seed(GLOBAL_SEED)
-random_idx <- sample_random_subsets(dist_bal, S, N_NULL, replace = FALSE)
-random_dist <- calc_multiple_subsets_metrics_extended(dist_bal$dist_mat, random_idx)
+random_idx_bal <- sample_random_subsets(dist_bal, S, N_NULL, replace = FALSE)
+random_dist_bal <- calc_multiple_subsets_metrics_extended(dist_bal$dist_mat, random_idx_bal)
+
+set.seed(GLOBAL_SEED)
+random_idx_lad <- sample_random_subsets(dist_lad, S, N_NULL, replace = FALSE)
+random_dist_lad <- calc_multiple_subsets_metrics_extended(dist_lad$dist_mat, random_idx_lad)
 
 # ---- Distance metrics ----
 disp_bal_metrics <- calc_subset_metrics_extended(dist_bal$dist_mat, disp_bal$final_subset)
@@ -61,6 +75,13 @@ for (case_name in c("Balanced_Dispersed", "Balanced_Clustered", "Ladder_Clustere
     "Balanced_Dispersed" = disp_bal_metrics,
     "Balanced_Clustered" = clust_bal_metrics,
     "Ladder_Clustered" = clust_lad_metrics
+  )
+  
+  # Use appropriate random baseline for each case
+  random_dist <- switch(case_name,
+    "Balanced_Dispersed" = random_dist_bal,
+    "Balanced_Clustered" = random_dist_bal,
+    "Ladder_Clustered" = random_dist_lad
   )
   
   for (mname in c("MinPD", "MeanPD", "MeanNND", "MaxPD")) {

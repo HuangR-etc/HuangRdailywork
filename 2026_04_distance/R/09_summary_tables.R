@@ -219,7 +219,13 @@ run_empirical_case <- function(pool_tree,
   
   # Selected subsets
   disp_result <- run_dispersed_algorithm(dist_obj, subset_size)
-  clust_result <- select_best_clustered_neighborhood(dist_obj, subset_size)
+  clust_result <- select_clustered_greedy_exchange(
+    dist_obj = dist_obj,
+    subset_size = subset_size,
+    max_iterations = CLUSTERED_MAX_EXCHANGE_ITERATIONS,
+    tol = CLUSTERED_EXCHANGE_TOL,
+    verbose = FALSE
+  )
   
   # Random baseline
   set.seed(seed)

@@ -33,3 +33,7 @@ COV_SENSITIVITY_GRID <- data.frame(
 
 LAMBDA_VALUES <- c(1.00, 0.75, 0.50, 0.25, 0.10, 0)
 OU_HALF_LIFE_FRACS <- c(0.05, 0.10, 0.25, 0.50, 1.00)
+
+# Clustered subset exchange refinement parameters
+CLUSTERED_MAX_EXCHANGE_ITERATIONS <- 100
+CLUSTERED_EXCHANGE_TOL <- 1e-10
