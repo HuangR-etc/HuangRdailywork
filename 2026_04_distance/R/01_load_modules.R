@@ -17,4 +17,5 @@ load_project_modules <- function() {
   source("R/09_summary_tables.R")
   source("R/10_plotting_trees.R")
   source("R/11_sanity_tree_helpers.R")
+  source("R/12_prediction_metric_ess.R")
 }

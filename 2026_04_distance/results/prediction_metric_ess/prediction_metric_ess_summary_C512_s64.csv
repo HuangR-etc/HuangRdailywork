@@ -1,0 +1,7 @@
+"Subset_Type","Metric","Lambda_Target","Nominal_N","Target_Interval_Width_95","Prediction_Metric_ESS","Prediction_Metric_ESS_Label","Benchmark_N_Min","Benchmark_N_Max","Match_Status"
+"dispersed","RMSE",1,64,0.754952551648903,13.1992293670937,"13.20",4,32,"interpolated"
+"dispersed","MAE",1,64,0.679079371357984,11.7137990249793,"11.71",4,32,"interpolated"
+"dispersed","R2",1,64,2.82112125405713,15.1042973308769,"15.10",4,32,"interpolated"
+"clustered","RMSE",1,64,1.64298439696619,NA,"<4",4,32,"below_benchmark_range"
+"clustered","MAE",1,64,1.66913066241105,NA,"<4",4,32,"below_benchmark_range"
+"clustered","R2",1,64,21.7004637424605,NA,"<4",4,32,"below_benchmark_range"

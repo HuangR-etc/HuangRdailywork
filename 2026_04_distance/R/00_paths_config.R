@@ -35,5 +35,39 @@ LAMBDA_VALUES <- c(1.00, 0.75, 0.50, 0.25, 0.10, 0)
 OU_HALF_LIFE_FRACS <- c(0.05, 0.10, 0.25, 0.50, 1.00)
 
 # Clustered subset exchange refinement parameters
-CLUSTERED_MAX_EXCHANGE_ITERATIONS <- 100
+CLUSTERED_MAX_EXCHANGE_ITERATIONS <- 10
 CLUSTERED_EXCHANGE_TOL <- 1e-10
+
+# ============================================================
+# Prediction-metric-based effective sample size simulation
+# ============================================================
+
+PRED_ESS_POOL_NAME <- "C512"
+PRED_ESS_N <- 512
+PRED_ESS_S <- 64
+
+# Main target subsets for prediction-metric ESS
+# Main text should focus on dispersed and clustered.
+PRED_ESS_TARGET_TYPES <- c("dispersed", "clustered")
+
+# Optional random subsets may be summarized separately, but are not
+# required for the main prediction-metric ESS table.
+PRED_ESS_INCLUDE_RANDOM <- FALSE
+PRED_ESS_RANDOM_N_SUMMARY <- 100
+
+# Simulation settings
+PRED_ESS_N_SIM <- 10000
+PRED_ESS_BENCHMARK_N <- 4:32
+
+# Two-scenario comparison only
+PRED_ESS_LAMBDA_INDEPENDENT <- 0
+PRED_ESS_LAMBDA_PHYLO <- 1
+
+# Trait and prediction-error scale
+PRED_ESS_TRAIT_SD <- 1
+PRED_ESS_ERROR_SD <- 1
+
+# Numerical settings
+PRED_ESS_SEED <- GLOBAL_SEED + 900000
+PRED_ESS_MONOTONE_BENCHMARK <- TRUE
+PRED_ESS_EIGEN_TOL <- 1e-10
