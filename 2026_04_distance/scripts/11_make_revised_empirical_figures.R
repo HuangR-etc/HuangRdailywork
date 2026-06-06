@@ -52,6 +52,10 @@ pool_tree <- case$pool_tree
 subset_size <- case$s
 pool_size <- case$N
 
+# Canonical plotting tree: affects visualization only.
+plot_tree <- ape::ladderize(pool_tree, right = TRUE)
+plot_tree <- ape::reorder.phylo(plot_tree, order = "cladewise")
+
 if (pool_size != 512 || subset_size != 64) {
   warning(
     "Expected N = 512 and s = 64, but raw case has N = ", pool_size,
@@ -251,6 +255,12 @@ figure2_3_summary <- do.call(rbind, list(
     favorable_direction_disp = "high", favorable_direction_clust = "low"
   ),
   make_one_panel_summary(
+    figure_set = "Figure2_distance", panel = "2d", metric = "MaxPD",
+    null_values = random_dist_metrics$MaxPD,
+    obs_disp = disp_metrics$MaxPD, obs_clust = clust_metrics$MaxPD,
+    favorable_direction_disp = "high", favorable_direction_clust = "low"
+  ),
+  make_one_panel_summary(
     figure_set = "Figure3_dependence", panel = "3a", metric = "MeanOffCor",
     null_values = random_dep_metrics$off_mean,
     obs_disp = disp_dep$off_mean, obs_clust = clust_dep$off_mean,
@@ -302,6 +312,7 @@ figure2_3_raw_values <- do.call(rbind, list(
   make_raw_plot_values("Figure2_distance", "2a", "MinPD", random_dist_metrics$MinPD, disp_metrics$MinPD, clust_metrics$MinPD),
   make_raw_plot_values("Figure2_distance", "2b", "MeanPD", random_dist_metrics$MeanPD, disp_metrics$MeanPD, clust_metrics$MeanPD),
   make_raw_plot_values("Figure2_distance", "2c", "MeanNND", random_dist_metrics$MeanNND, disp_metrics$MeanNND, clust_metrics$MeanNND),
+  make_raw_plot_values("Figure2_distance", "2d", "MaxPD", random_dist_metrics$MaxPD, disp_metrics$MaxPD, clust_metrics$MaxPD),
   make_raw_plot_values("Figure3_dependence", "3a", "MeanOffCor", random_dep_metrics$off_mean, disp_dep$off_mean, clust_dep$off_mean),
   make_raw_plot_values("Figure3_dependence", "3b", "MaxOffCor", random_dep_metrics$rmax, disp_dep$rmax, clust_dep$rmax),
   make_raw_plot_values("Figure3_dependence", "3c", "MeanESS", random_dep_metrics$neff_mean, disp_dep$neff_mean, clust_dep$neff_mean)
@@ -387,7 +398,7 @@ plot_null_density_panel <- function(null_values,
     plot(
       den_x,
       den_y,
-      type = "l",
+      type = "n",
       xlim = xlim_use,
       ylim = ylim_use,
       main = "",
@@ -396,6 +407,13 @@ plot_null_density_panel <- function(null_values,
       lwd = 1.2,
       axes = FALSE
     )
+    polygon(
+      c(den_x[1], den_x, den_x[length(den_x)]),
+      c(0, den_y, 0),
+      col = "grey85",
+      border = NA
+    )
+    lines(den_x, den_y, lwd = 1.2)
     axis(1, cex.axis = 0.9)
     axis(2, las = 1, cex.axis = 0.9)
     box()
@@ -450,6 +468,9 @@ plot_subset_on_full_tree <- function(tree,
     type = "fan",
     show.tip.label = FALSE,
     no.margin = TRUE,
+    use.edge.length = TRUE,
+    open.angle = 0,
+    rotate.tree = 0,
     edge.color = "grey35",
     edge.width = 0.35
   )
@@ -493,18 +514,121 @@ plot_subset_on_full_tree <- function(tree,
   mtext(main_title, side = 3, line = 0.2, font = 2, cex = 1.1)
 }
 
+plot_two_subsets_on_full_tree <- function(tree,
+                                          dispersed_names,
+                                          clustered_names,
+                                          file_name,
+                                          main_title,
+                                          dispersed_cex = 0.62,
+                                          clustered_cex = 0.82,
+                                          dispersed_offset_frac = 0.005,
+                                          clustered_offset_frac = 0.018,
+                                          page_width = 8.27,
+                                          page_height = 11.69) {
+  pdf(file_name, width = page_width, height = page_height, pointsize = 9)
+  on.exit(dev.off(), add = TRUE)
+
+  par(mar = c(0.2, 0.2, 1.0, 0.2), xpd = NA)
+
+  plot.phylo(
+    tree,
+    type = "fan",
+    show.tip.label = FALSE,
+    no.margin = TRUE,
+    use.edge.length = TRUE,
+    open.angle = 0,
+    rotate.tree = 0,
+    edge.color = "grey35",
+    edge.width = 0.35
+  )
+
+  pp <- get("last_plot.phylo", envir = .PlotPhyloEnv)
+  n_tip <- ape::Ntip(tree)
+
+  root_x <- pp$xx[n_tip + 1]
+  root_y <- pp$yy[n_tip + 1]
+
+  all_tip_x <- pp$xx[seq_len(n_tip)]
+  all_tip_y <- pp$yy[seq_len(n_tip)]
+  all_r <- sqrt((all_tip_x - root_x)^2 + (all_tip_y - root_y)^2)
+  max_r <- max(all_r, na.rm = TRUE)
+
+  marker_xy <- function(subset_names, offset_frac) {
+    tip_idx <- match(subset_names, tree$tip.label)
+    tip_idx <- tip_idx[is.finite(tip_idx)]
+
+    tip_x <- pp$xx[tip_idx]
+    tip_y <- pp$yy[tip_idx]
+
+    dx <- tip_x - root_x
+    dy <- tip_y - root_y
+    r <- sqrt(dx^2 + dy^2)
+    r[r == 0] <- 1
+
+    offset <- max_r * offset_frac
+    data.frame(
+      x = tip_x + offset * dx / r,
+      y = tip_y + offset * dy / r
+    )
+  }
+
+  dispersed_xy <- marker_xy(dispersed_names, dispersed_offset_frac)
+  clustered_xy <- marker_xy(clustered_names, clustered_offset_frac)
+
+  points(
+    dispersed_xy$x,
+    dispersed_xy$y,
+    pch = 21,
+    bg = "#E69F00",
+    col = "#E69F00",
+    cex = dispersed_cex,
+    lwd = 0.35
+  )
+
+  points(
+    clustered_xy$x,
+    clustered_xy$y,
+    pch = 21,
+    bg = "white",
+    col = "#0072B2",
+    cex = clustered_cex,
+    lwd = 0.75
+  )
+
+  legend(
+    "topleft",
+    legend = c("Dispersed", "Clustered"),
+    pch = c(21, 21),
+    pt.bg = c("#E69F00", "white"),
+    col = c("#E69F00", "#0072B2"),
+    pt.cex = c(dispersed_cex, clustered_cex),
+    bty = "n",
+    cex = 0.85
+  )
+
+  mtext(main_title, side = 3, line = 0.2, font = 2, cex = 1.1)
+}
+
 plot_subset_on_full_tree(
-  tree = pool_tree,
+  tree = plot_tree,
   subset_names = disp_subset_names,
   file_name = file.path(out_dir, "Supplement_Fig_Cricetidae_C512_s64_dispersed_tree_fullpage.pdf"),
   main_title = paste0("Cricetidae C512: phylogenetically dispersed subset (s = ", subset_size, ")")
 )
 
 plot_subset_on_full_tree(
-  tree = pool_tree,
+  tree = plot_tree,
   subset_names = clust_subset_names,
   file_name = file.path(out_dir, "Supplement_Fig_Cricetidae_C512_s64_clustered_tree_fullpage.pdf"),
   main_title = paste0("Cricetidae C512: phylogenetically clustered subset (s = ", subset_size, ")")
+)
+
+plot_two_subsets_on_full_tree(
+  tree = plot_tree,
+  dispersed_names = disp_subset_names,
+  clustered_names = clust_subset_names,
+  file_name = file.path(out_dir, "Supplement_Fig_Cricetidae_C512_s64_combined_tree_fullpage.pdf"),
+  main_title = paste0("Cricetidae C512: dispersed and clustered subsets (s = ", subset_size, ")")
 )
 
 # ------------------------------------------------------------
@@ -548,6 +672,18 @@ draw_fig2c_panel <- function() {
   )
 }
 
+draw_fig2d_panel <- function() {
+  plot_null_density_panel(
+    null_values = random_dist_metrics$MaxPD,
+    obs_disp = disp_metrics$MaxPD,
+    obs_clust = clust_metrics$MaxPD,
+    xlab = "MaxPD",
+    panel_label = "d",
+    show_legend = TRUE,
+    favorable_direction_disp = "high"
+  )
+}
+
 pdf(
   file.path(out_dir, "Figure2abc_Cricetidae_C512_s64_distance_densities.pdf"),
   width = 12,
@@ -570,6 +706,9 @@ set_panel_par(); draw_fig2b_panel(); dev.off()
 
 pdf(file.path(out_dir, "Figure2c_MeanNND_density_C512_s64.pdf"), width = 3.8, height = 4.4, pointsize = 9)
 set_panel_par(); draw_fig2c_panel(); dev.off()
+
+pdf(file.path(out_dir, "Figure2d_MaxPD_density_C512_s64.pdf"), width = 3.8, height = 4.4, pointsize = 9)
+set_panel_par(); draw_fig2d_panel(); dev.off()
 
 # ------------------------------------------------------------
 # 4. Revised Figure 3abcd: dependence diagnostics + lambda MeanESS
@@ -697,7 +836,9 @@ cat(out_dir, "\n\n")
 cat("Main outputs:\n")
 cat("  Supplement_Fig_Cricetidae_C512_s64_dispersed_tree_fullpage.pdf\n")
 cat("  Supplement_Fig_Cricetidae_C512_s64_clustered_tree_fullpage.pdf\n")
+cat("  Supplement_Fig_Cricetidae_C512_s64_combined_tree_fullpage.pdf\n")
 cat("  Figure2abc_Cricetidae_C512_s64_distance_densities.pdf\n")
+cat("  Figure2d_MaxPD_density_C512_s64.pdf\n")
 cat("  Figure3abcd_Cricetidae_C512_s64_dependence_densities_lambda.pdf\n")
 cat("\nTraceability tables:\n")
 cat("  Revised_empirical_C512_s64_plot_input_summary.csv\n")
