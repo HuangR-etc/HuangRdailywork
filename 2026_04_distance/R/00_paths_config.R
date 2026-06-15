@@ -33,6 +33,7 @@ COV_SENSITIVITY_GRID <- data.frame(
 
 LAMBDA_VALUES <- c(1.00, 0.75, 0.50, 0.25, 0.10, 0)
 OU_HALF_LIFE_FRACS <- c(0.05, 0.10, 0.25, 0.50, 1.00)
+EB_RATE_VALUES <- c(-0.1, -0.5, -1.0)
 
 # Clustered subset exchange refinement parameters
 CLUSTERED_MAX_EXCHANGE_ITERATIONS <- 10
@@ -54,6 +55,21 @@ PRED_ESS_TARGET_TYPES <- c("dispersed", "clustered")
 # required for the main prediction-metric ESS table.
 PRED_ESS_INCLUDE_RANDOM <- FALSE
 PRED_ESS_RANDOM_N_SUMMARY <- 100
+
+# Number of random subsets used for PIESS empirical significance.
+# Use 100 for development / smoke tests; use 1000 for final manuscript
+# if the table notes say "1000 random subsets".
+PRED_ESS_RANDOM_N_FINAL <- 1000
+PRED_ESS_RANDOM_N_DEV <- 100
+
+# Default used by long-running PIESS scripts unless overridden by CLI.
+PRED_ESS_RANDOM_N_DEFAULT <- PRED_ESS_RANDOM_N_SUMMARY
+
+# Direct predictive-metric comparison:
+# Percent change is calculated as:
+#   100 * (scenario_mean - independent_mean) / abs(independent_mean)
+# This avoids sign instability when predictive R2 is negative.
+PRED_METRIC_SHIFT_DENOMINATOR <- "abs_independent_mean"
 
 # Simulation settings
 PRED_ESS_N_SIM <- 10000

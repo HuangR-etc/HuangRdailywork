@@ -2,11 +2,15 @@
 # Covariance sensitivity analysis
 # Reads 4 representative Cricetidae raw case RDS files (already computed by
 # 04_run_cricetidae_sensitivity_grid.R), and re-computes dependence diagnostics
-# under lambda-transformed BM and OU covariance models.
+# under lambda-transformed BM, OU, and EB covariance models.
 # Does NOT re-select subsets or re-sample random baselines.
 #
 # Usage: Rscript scripts/05_run_covariance_sensitivity.R
-setwd("/home/huangr/projects/2026_04_distance")
+args <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args[grepl("^--file=", args)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 source("R/01_load_modules.R")
 load_project_modules()
 
@@ -40,6 +44,11 @@ for (row_idx in seq_len(nrow(cov_grid))) {
   result <- readRDS(rds_file)
   
   pool_tree <- result$pool_tree
+  V_eb_check <- make_eb_covariance(pool_tree, EB_RATE_VALUES[1])
+  stopifnot(all(rownames(V_eb_check) == pool_tree$tip.label))
+  stopifnot(all(colnames(V_eb_check) == pool_tree$tip.label))
+  stopifnot(all(is.finite(diag(V_eb_check))))
+  
   disp_names <- result$dispersed$final_subset_names
   clust_names <- result$clustered$final_subset_names
   random_names <- result$random_names
@@ -109,6 +118,29 @@ for (row_idx in seq_len(nrow(cov_grid))) {
       covariance_param_label = paste0("half_life_frac=", hlf)
     )
     all_summaries[[length(all_summaries) + 1]] <- ou_summary
+  }
+  
+  # ---- EB covariance sensitivity ----
+  for (r in EB_RATE_VALUES) {
+    cat("  EB (r =", r, ")...\n")
+    V_eb <- make_eb_covariance_simple(pool_tree, r)
+    
+    disp_dep <- calc_dependence_from_V(V_eb, disp_names)
+    clust_dep <- calc_dependence_from_V(V_eb, clust_names)
+    random_dep <- calc_multiple_dependence_from_V(V_eb, random_names)
+    
+    eb_summary <- summarize_dependence_observed_vs_random(
+      pool_label = pool_label,
+      N = N_i,
+      subset_size = s_i,
+      disp_dep = disp_dep,
+      clust_dep = clust_dep,
+      random_dep_metrics = random_dep,
+      covariance_model = "EB",
+      covariance_param = r,
+      covariance_param_label = paste0("EB_r_", r)
+    )
+    all_summaries[[length(all_summaries) + 1]] <- eb_summary
   }
 }
 

@@ -4,7 +4,11 @@
 # Usage:
 #   Rscript scripts/07_make_metric_tables.R
 
-setwd("/home/huangr/projects/2026_04_distance")
+args <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args[grepl("^--file=", args)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 
 source("R/01_load_modules.R")
 load_project_modules()
@@ -544,6 +548,22 @@ for (metric_i in dependence_metrics) {
     row.names = FALSE
   )
   
+  tab_eb_value_p <- make_covariance_panel_table(
+    cov_df = cov_sens,
+    metric_name = metric_i,
+    model_name = "EB",
+    value_digits = digits_i
+  )
+  
+  write.csv(
+    tab_eb_value_p,
+    file.path(
+      table_dir,
+      paste0("Table_covariance_", metric_i, "_PanelC_EB_value_p.csv")
+    ),
+    row.names = FALSE
+  )
+  
   # ----------------------------------------------------------
   # 8.2 Manuscript compact value + star tables
   # Format: dispersed_value* / clustered_value***
@@ -578,6 +598,22 @@ for (metric_i in dependence_metrics) {
     file.path(
       table_dir,
       paste0("Table_covariance_", metric_i, "_PanelB_OU_value_stars.csv")
+    ),
+    row.names = FALSE
+  )
+  
+  tab_eb_value_stars <- make_covariance_panel_value_star_table(
+    cov_df = cov_sens,
+    metric_name = metric_i,
+    model_name = "EB",
+    value_digits = digits_i
+  )
+  
+  write.csv(
+    tab_eb_value_stars,
+    file.path(
+      table_dir,
+      paste0("Table_covariance_", metric_i, "_PanelC_EB_value_stars.csv")
     ),
     row.names = FALSE
   )
@@ -806,9 +842,10 @@ for (metric_i in dependence_metrics) {
 for (metric_i in dependence_metrics) {
   cat("Building p-value-only covariance panel tables:", metric_i, "\n")
   
-  for (model_i in c("lambda_BM", "OU")) {
+  for (model_i in c("lambda_BM", "OU", "EB")) {
     
-    panel_label <- ifelse(model_i == "lambda_BM", "PanelA_lambdaBM", "PanelB_OU")
+    panel_label <- ifelse(model_i == "lambda_BM", "PanelA_lambdaBM",
+                          ifelse(model_i == "OU", "PanelB_OU", "PanelC_EB"))
     
     for (stype_i in subset_types) {
       

@@ -1,4 +1,5 @@
-"Case","MinPD","MeanPD","MeanNND","MaxPD"
-"Balanced_Dispersed",1.2,1.77142857142857,1.2,2
-"Balanced_Clustered",0.4,0.971428571428571,0.4,1.2
-"Ladder_Clustered",0.0645161290322581,0.32258064516129,0.233870967741935,0.451612903225806
+"Case","Tree_Type","Subset_Type","N","s","MinPD","MeanPD","MeanNND","MaxPD"
+"Balanced_Dispersed","balanced","dispersed",32,8,1.2,1.77142857142857,1.2,2
+"Balanced_Clustered","balanced","clustered",32,8,0.4,0.971428571428571,0.4,1.2
+"Ladder_Dispersed","ladder","dispersed",32,8,1.61290322580645,1.87096774193548,1.78225806451613,2
+"Ladder_Clustered","ladder","clustered",32,8,0.0645161290322581,0.32258064516129,0.233870967741935,0.451612903225806

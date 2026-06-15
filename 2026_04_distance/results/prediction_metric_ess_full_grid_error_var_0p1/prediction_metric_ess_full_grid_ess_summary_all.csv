@@ -1,0 +1,7 @@
+"Subset_Type","Metric","Lambda_Target","Nominal_N","Target_Interval_Width_95","Interval_Width_95","Prediction_Metric_ESS","Prediction_Metric_ESS_Label","Benchmark_N_Min","Benchmark_N_Max","Match_Status","ESS_Status","N","s","Covariance_Model","Covariance_Param","Covariance_Param_Label","Condition","Random_ID"
+"clustered","MAE",NA,64,0.532255176906987,0.532255176906987,NA,"<4",4,32,"below_benchmark_range","<4",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA
+"clustered","R2",NA,64,2.18650209740528,2.18650209740528,NA,"<4",4,32,"below_benchmark_range","<4",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA
+"clustered","RMSE",NA,64,0.523129270883842,0.523129270883842,NA,"<4",4,32,"below_benchmark_range","<4",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA
+"dispersed","MAE",NA,64,0.217068709986679,0.217068709986679,11.543758869053,"11.54",4,32,"interpolated","interpolated",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA
+"dispersed","R2",NA,64,0.289371326586211,0.289371326586211,14.3631878089284,"14.36",4,32,"interpolated","interpolated",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA
+"dispersed","RMSE",NA,64,0.241002954506417,0.241002954506417,12.9556802601405,"12.96",4,32,"interpolated","interpolated",512,64,"BM",1,"lambda=1","BM_lambda1_target",NA

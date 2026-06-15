@@ -1,9 +1,13 @@
 # 01_prepare_empirical_trees.R
-# Prepare empirical trees: read mammal tree, extract Carnivora and Cricetidae,
-# build nested Cricetidae pools.
+# Prepare empirical trees: read mammal tree, extract Cricetidae,
+# and build nested Cricetidae pools.
 #
 # Usage: Rscript scripts/01_prepare_empirical_trees.R
-setwd("/home/huangr/projects/2026_04_distance")
+args <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args[grepl("^--file=", args)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 source("R/01_load_modules.R")
 load_project_modules()
 
@@ -19,18 +23,6 @@ mammal_tree <- read_clean_mammal_tree(TREE_FILE)
 cat("  Cleaned tree has", ape::Ntip(mammal_tree), "tips\n")
 
 saveRDS(mammal_tree, file.path(PROCESSED_DIR, "mammal_4098_clean.rds"))
-
-# ---- Extract Carnivora ----
-cat("Extracting Carnivora...\n")
-carnivora_tree <- extract_taxonomic_pool_tree(
-  tree = mammal_tree,
-  tax = tax,
-  rank_col = "ord",
-  rank_value = "Carnivora"
-)
-cat("  Carnivora tree has", ape::Ntip(carnivora_tree), "tips\n")
-
-saveRDS(carnivora_tree, file.path(PROCESSED_DIR, "carnivora_tree.rds"))
 
 # ---- Extract Cricetidae ----
 cat("Extracting Cricetidae...\n")
@@ -65,4 +57,4 @@ for (pool_name in names(nested_pools$pools)) {
   cat("  Saved:", csv_path, "\n")
 }
 
-cat("Done. All empirical trees prepared.\n")
+cat("Done. Cricetidae empirical trees prepared.\n")

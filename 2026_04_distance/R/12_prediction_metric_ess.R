@@ -270,6 +270,77 @@ run_prediction_metric_target_subset <- function(R_bm_full,
   )
 }
 
+
+#' Run prediction-metric simulation for a target subset from any correlation matrix
+#'
+#' @param R_full Full named correlation matrix
+#' @param subset_names Character vector of tip names in the subset
+#' @param subset_type Character label
+#' @param condition Character condition label
+#' @param covariance_model Covariance model label
+#' @param covariance_param Numeric covariance parameter
+#' @param covariance_param_label Human-readable covariance parameter label
+#' @param N Candidate pool size metadata
+#' @param s Subset size metadata
+#' @param n_sim Number of simulation replicates
+#' @param trait_sd Standard deviation of the true trait
+#' @param error_sd Standard deviation of the prediction error
+#' @param seed Random seed
+#' @return List with subset metadata, R, metrics, and summary
+run_prediction_metric_target_subset_from_R <- function(R_full,
+                                                       subset_names,
+                                                       subset_type,
+                                                       condition,
+                                                       covariance_model,
+                                                       covariance_param,
+                                                       covariance_param_label,
+                                                       N = NA_integer_,
+                                                       s = length(subset_names),
+                                                       n_sim = PRED_ESS_N_SIM,
+                                                       trait_sd = PRED_ESS_TRAIT_SD,
+                                                       error_sd = PRED_ESS_ERROR_SD,
+                                                       seed = PRED_ESS_SEED) {
+  R_sub <- R_full[subset_names, subset_names, drop = FALSE]
+  R_sub <- (R_sub + t(R_sub)) / 2
+  diag(R_sub) <- 1
+  
+  sim <- simulate_prediction_task(
+    R = R_sub,
+    n_sim = n_sim,
+    trait_sd = trait_sd,
+    error_sd = error_sd,
+    seed = seed
+  )
+  
+  metrics <- calc_prediction_metrics_matrix(sim$y, sim$y_hat)
+  
+  summary <- summarize_metric_uncertainty(
+    metric_df = metrics,
+    subset_type = subset_type,
+    lambda = NA_real_,
+    benchmark_n = length(subset_names),
+    condition = condition
+  )
+  
+  summary$N <- N
+  summary$s <- s
+  summary$Covariance_Model <- covariance_model
+  summary$Covariance_Param <- covariance_param
+  summary$Covariance_Param_Label <- covariance_param_label
+  
+  list(
+    subset_type = subset_type,
+    subset_names = subset_names,
+    condition = condition,
+    covariance_model = covariance_model,
+    covariance_param = covariance_param,
+    covariance_param_label = covariance_param_label,
+    R = R_sub,
+    metrics = metrics,
+    summary = summary
+  )
+}
+
 # ============================================================
 # 4.7 Build lambda = 0 independent benchmark curve
 # ============================================================
@@ -400,10 +471,12 @@ estimate_prediction_metric_ess <- function(target_summary,
       ess <- NA_real_
       ess_label <- paste0("<", min(n_values))
       match_status <- "below_benchmark_range"
+      ess_status <- paste0("<", min(n_values))
     } else if (w_target < min_width) {
       ess <- NA_real_
       ess_label <- paste0(">", max(n_values))
       match_status <- "above_benchmark_range"
+      ess_status <- paste0(">", max(n_values))
     } else {
       # widths decrease as n increases. Reverse for approx x increasing.
       approx_df <- data.frame(width = widths, n = n_values)
@@ -421,22 +494,212 @@ estimate_prediction_metric_ess <- function(target_summary,
       
       ess_label <- sprintf("%.2f", ess)
       match_status <- "interpolated"
+      ess_status <- "interpolated"
     }
     
-    out[[i]] <- data.frame(
+    base_row <- data.frame(
       Subset_Type = row_i$Subset_Type,
       Metric = metric_i,
       Lambda_Target = row_i$Lambda,
       Nominal_N = row_i$Benchmark_N,
       Target_Interval_Width_95 = w_target,
+      Interval_Width_95 = w_target,
       Prediction_Metric_ESS = ess,
       Prediction_Metric_ESS_Label = ess_label,
       Benchmark_N_Min = min(n_values),
       Benchmark_N_Max = max(n_values),
       Match_Status = match_status,
+      ESS_Status = ess_status,
+      stringsAsFactors = FALSE
+    )
+    
+    metadata_cols <- c("N", "s", "Covariance_Model", "Covariance_Param", "Covariance_Param_Label", "Condition")
+    for (col_i in metadata_cols) {
+      if (col_i %in% names(row_i)) {
+        base_row[[col_i]] <- row_i[[col_i]]
+      }
+    }
+    
+    out[[i]] <- base_row
+  }
+  
+  do.call(rbind, out)
+}
+
+
+# ============================================================
+# 4.10 PIESS significance, display, and direct-shift helpers
+# ============================================================
+
+p_to_stars_prediction <- function(p) {
+  if (length(p) == 0 || is.na(p)) return("")
+  if (p < 0.001) return("***")
+  if (p < 0.01) return("**")
+  if (p < 0.05) return("*")
+  ""
+}
+
+format_prediction_ess_display <- function(value,
+                                          label = NA_character_,
+                                          status = NA_character_) {
+  if (!is.na(label) && nzchar(label)) return(label)
+  if (!is.na(status) && status %in% c("<4", ">32")) return(status)
+  if (is.finite(value)) return(sprintf("%.2f", value))
+  "NA"
+}
+
+score_prediction_metric_ess <- function(ess_value,
+                                        ess_label = NA_character_,
+                                        benchmark_n_min = min(PRED_ESS_BENCHMARK_N),
+                                        benchmark_n_max = max(PRED_ESS_BENCHMARK_N)) {
+  if (is.finite(ess_value)) return(ess_value)
+
+  if (!is.na(ess_label)) {
+    if (grepl("^<", ess_label)) return(benchmark_n_min - 1e-6)
+    if (grepl("^>", ess_label)) return(benchmark_n_max + 1e-6)
+  }
+
+  NA_real_
+}
+
+summarize_piess_observed_vs_random <- function(ess_summary,
+                                               observed_subset_types = c("dispersed", "clustered"),
+                                               random_subset_type = "random") {
+  required_cols <- c(
+    "N", "s", "Subset_Type", "Metric",
+    "Interval_Width_95", "Prediction_Metric_ESS",
+    "Prediction_Metric_ESS_Label"
+  )
+  missing_cols <- setdiff(required_cols, names(ess_summary))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns in ess_summary: ", paste(missing_cols, collapse = ", "))
+  }
+
+  group_cols <- intersect(
+    c("N", "s", "Covariance_Model", "Covariance_Param", "Covariance_Param_Label", "Metric"),
+    names(ess_summary)
+  )
+
+  ess_summary$PIESS_Score <- mapply(
+    score_prediction_metric_ess,
+    ess_summary$Prediction_Metric_ESS,
+    ess_summary$Prediction_Metric_ESS_Label
+  )
+
+  observed <- ess_summary[ess_summary$Subset_Type %in% observed_subset_types, , drop = FALSE]
+  random <- ess_summary[ess_summary$Subset_Type == random_subset_type, , drop = FALSE]
+
+  out <- list()
+
+  for (i in seq_len(nrow(observed))) {
+    obs <- observed[i, , drop = FALSE]
+
+    hit <- random
+    for (g in group_cols) {
+      hit <- hit[hit[[g]] == obs[[g]][1] | (is.na(hit[[g]]) & is.na(obs[[g]][1])), , drop = FALSE]
+    }
+
+    rand_scores <- hit$PIESS_Score
+    rand_scores <- rand_scores[is.finite(rand_scores)]
+    obs_score <- obs$PIESS_Score[1]
+
+    if (length(rand_scores) == 0 || !is.finite(obs_score)) {
+      p_val <- NA_real_
+    } else if (obs$Subset_Type[1] == "dispersed") {
+      p_val <- (1 + sum(rand_scores >= obs_score)) / (1 + length(rand_scores))
+    } else if (obs$Subset_Type[1] == "clustered") {
+      p_val <- (1 + sum(rand_scores <= obs_score)) / (1 + length(rand_scores))
+    } else {
+      p_val <- NA_real_
+    }
+
+    row_out <- obs
+    row_out$Random_N <- length(rand_scores)
+    row_out$Random_PIESS_Mean <- ifelse(length(rand_scores) > 0, mean(rand_scores), NA_real_)
+    row_out$Random_PIESS_SD <- ifelse(length(rand_scores) > 1, sd(rand_scores), NA_real_)
+    row_out$Random_PIESS_Q025 <- ifelse(length(rand_scores) > 0, as.numeric(quantile(rand_scores, 0.025)), NA_real_)
+    row_out$Random_PIESS_Q975 <- ifelse(length(rand_scores) > 0, as.numeric(quantile(rand_scores, 0.975)), NA_real_)
+    row_out$P_value <- p_val
+    row_out$Stars <- p_to_stars_prediction(p_val)
+    status_i <- if ("ESS_Status" %in% names(row_out)) row_out$ESS_Status else NA_character_
+    row_out$PIESS_Display <- mapply(
+      format_prediction_ess_display,
+      row_out$Prediction_Metric_ESS,
+      row_out$Prediction_Metric_ESS_Label,
+      status_i
+    )
+    row_out$PIESS_Display_Stars <- paste0(row_out$PIESS_Display, row_out$Stars)
+
+    out[[length(out) + 1]] <- row_out
+  }
+
+  if (length(out) == 0) return(data.frame())
+  do.call(rbind, out)
+}
+
+calc_prediction_metric_shift <- function(target_summary,
+                                         reference_condition = "lambda0_independent_target",
+                                         scenario_condition = NULL,
+                                         subset_type_filter = NULL) {
+  required_cols <- c("N", "s", "Subset_Type", "Metric", "Mean", "Condition")
+  missing_cols <- setdiff(required_cols, names(target_summary))
+  if (length(missing_cols) > 0) {
+    stop("Missing required columns in target_summary: ", paste(missing_cols, collapse = ", "))
+  }
+
+  df <- target_summary
+  if (!is.null(subset_type_filter)) {
+    df <- df[df$Subset_Type %in% subset_type_filter, , drop = FALSE]
+  }
+
+  ref <- df[df$Condition == reference_condition, , drop = FALSE]
+  scn <- df[df$Condition != reference_condition, , drop = FALSE]
+  if (!is.null(scenario_condition)) {
+    scn <- scn[scn$Condition %in% scenario_condition, , drop = FALSE]
+  }
+
+  group_cols <- intersect(c("N", "s", "Subset_Type", "Metric"), names(df))
+  meta_cols <- intersect(
+    c("Covariance_Model", "Covariance_Param", "Covariance_Param_Label", "Condition"),
+    names(scn)
+  )
+
+  out <- list()
+
+  for (i in seq_len(nrow(scn))) {
+    row_i <- scn[i, , drop = FALSE]
+    ref_i <- ref
+
+    for (g in group_cols) {
+      ref_i <- ref_i[ref_i[[g]] == row_i[[g]][1], , drop = FALSE]
+    }
+
+    if (nrow(ref_i) == 0) next
+
+    independent_mean <- ref_i$Mean[1]
+    scenario_mean <- row_i$Mean[1]
+
+    denom <- abs(independent_mean)
+    if (!is.finite(denom) || denom == 0) {
+      percent_change <- NA_real_
+    } else {
+      percent_change <- 100 * (scenario_mean - independent_mean) / denom
+    }
+
+    out[[length(out) + 1]] <- data.frame(
+      N = row_i$N[1],
+      s = row_i$s[1],
+      Subset_Type = row_i$Subset_Type[1],
+      Metric = row_i$Metric[1],
+      Independent_Mean = independent_mean,
+      Scenario_Mean = scenario_mean,
+      Absolute_Change = scenario_mean - independent_mean,
+      Percent_Change = percent_change,
+      row_i[, meta_cols, drop = FALSE],
       stringsAsFactors = FALSE
     )
   }
-  
+
+  if (length(out) == 0) return(data.frame())
   do.call(rbind, out)
 }

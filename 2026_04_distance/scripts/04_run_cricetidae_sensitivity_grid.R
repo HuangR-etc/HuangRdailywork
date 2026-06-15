@@ -6,7 +6,11 @@
 #
 # Usage: Rscript scripts/04_run_cricetidae_sensitivity_grid.R
 #        Rscript scripts/04_run_cricetidae_sensitivity_grid.R --N 128 --s 64 --n_null 100
-setwd("/home/huangr/projects/2026_04_distance")
+args_file <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args_file[grepl("^--file=", args_file)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 source("R/01_load_modules.R")
 load_project_modules()
 
@@ -36,9 +40,6 @@ while (i <= length(args)) {
     i <- i + 1
   }
 }
-
-source("R/01_load_modules.R")
-load_project_modules()
 
 cat("=== 04_run_cricetidae_sensitivity_grid ===\n")
 cat("N_NULL_REPS =", N_NULL_REPS, "\n")

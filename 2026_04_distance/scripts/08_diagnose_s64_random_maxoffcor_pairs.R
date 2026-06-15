@@ -2,7 +2,11 @@
 # Diagnose random MaxOffCor distribution and the species pair producing rmax
 # for Cricetidae s = 64 cases.
 
-setwd("/home/huangr/projects/2026_04_distance")
+args_file <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args_file[grepl("^--file=", args_file)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 
 source("R/01_load_modules.R")
 load_project_modules()

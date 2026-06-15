@@ -1,0 +1,7 @@
+"N","s","Subset_Type","Metric","Independent_Mean","Scenario_Mean","Absolute_Change","Percent_Change","Covariance_Model","Covariance_Param","Covariance_Param_Label","Condition"
+512,64,"dispersed","RMSE",0.314905149664234,0.310233192250831,-0.00467195741340309,-1.48360781599937,"BM",1,"lambda=1","BM_lambda1_target"
+512,64,"dispersed","MAE",0.252193719794407,0.25248836425658,0.000294644462173033,0.116832592981789,"BM",1,"lambda=1","BM_lambda1_target"
+512,64,"dispersed","R2",0.895273866481948,0.863481530059999,-0.0317923364219495,-3.55112972825623,"BM",1,"lambda=1","BM_lambda1_target"
+512,64,"clustered","RMSE",0.314575466794199,0.283824796271408,-0.0307506705227905,-9.77529202647839,"BM",1,"lambda=1","BM_lambda1_target"
+512,64,"clustered","MAE",0.251980058387456,0.2535562404219,0.00157618203444465,0.625518560687467,"BM",1,"lambda=1","BM_lambda1_target"
+512,64,"clustered","R2",0.895297602637172,0.480983261326965,-0.414314341310207,-46.2767173831148,"BM",1,"lambda=1","BM_lambda1_target"

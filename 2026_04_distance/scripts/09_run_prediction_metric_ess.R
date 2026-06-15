@@ -10,7 +10,11 @@
 # 5. Saves results as RDS and CSV files
 #
 # Usage: Rscript scripts/09_run_prediction_metric_ess.R
-setwd("/home/huangr/projects/2026_04_distance")
+args <- commandArgs(trailingOnly = FALSE)
+file_arg <- sub("^--file=", "", args[grepl("^--file=", args)])
+if (length(file_arg) > 0) {
+  setwd(normalizePath(file.path(dirname(file_arg[1]), "..")))
+}
 source("R/01_load_modules.R")
 load_project_modules()
 
