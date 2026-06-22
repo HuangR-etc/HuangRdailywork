@@ -1,10 +1,10 @@
 # 15_run_prediction_metric_ess_full_grid.R
-# BM full-grid PIESS and direct lambda=0 vs lambda=1 predictive metric shifts.
+# BM full-grid PIESS.
 #
 # Usage examples:
 # Rscript scripts/15_run_prediction_metric_ess_full_grid.R --N 512 --s 8 --include_random --n_random 5 --n_sim 100 --overwrite
 # Rscript scripts/15_run_prediction_metric_ess_full_grid.R --include_random --n_random 1000 --n_sim 10000 --overwrite
-# Rscript scripts/15_run_prediction_metric_ess_full_grid.R --N 512 --s 64 --no_random --error_var 0.1 --output_suffix _error_var_0p1 --overwrite
+# Rscript scripts/15_run_prediction_metric_ess_full_grid.R --N 512 --s 64 --no_random --overwrite
 args0 <- commandArgs(trailingOnly = FALSE)
 file_arg <- sub("^--file=", "", args0[grepl("^--file=", args0)])
 if (length(file_arg) > 0) {
@@ -25,7 +25,7 @@ parse_cli_args <- function(args) {
     error_var = PRED_ESS_ERROR_SD^2,
     include_random = FALSE,
     overwrite = FALSE,
-    output_suffix = ""
+    output_suffix = "_error_var_0p1"
   )
   i <- 1
   while (i <= length(args)) {
@@ -238,12 +238,6 @@ ess_summary_observed <- ess_summary_all[ess_summary_all$Subset_Type %in% c("disp
 ess_summary_random <- ess_summary_all[ess_summary_all$Subset_Type == "random", , drop = FALSE]
 ess_summary_vs_random <- summarize_piess_observed_vs_random(ess_summary_all)
 
-metric_shift <- calc_prediction_metric_shift(
-  target_summary = target_summary[target_summary$Subset_Type %in% c("dispersed", "clustered"), , drop = FALSE],
-  reference_condition = "lambda0_independent_target",
-  scenario_condition = "BM_lambda1_target"
-)
-
 ord <- c("N", "s", "Subset_Type", "Covariance_Model", "Covariance_Param", "Metric")
 ess_summary_all <- ess_summary_all[do.call(order, ess_summary_all[intersect(ord, names(ess_summary_all))]), ]
 ess_summary_observed <- ess_summary_observed[do.call(order, ess_summary_observed[intersect(ord, names(ess_summary_observed))]), ]
@@ -266,8 +260,7 @@ result <- list(
   ess_summary_all = ess_summary_all,
   ess_summary_observed = ess_summary_observed,
   ess_summary_random = ess_summary_random,
-  ess_summary_vs_random = ess_summary_vs_random,
-  metric_shift = metric_shift
+  ess_summary_vs_random = ess_summary_vs_random
 )
 
 cat("Saving results...\n")
@@ -278,5 +271,4 @@ write.csv(ess_summary_all, file.path(out_dir, "prediction_metric_ess_full_grid_e
 write.csv(ess_summary_observed, file.path(out_dir, "prediction_metric_ess_full_grid_ess_summary_observed.csv"), row.names = FALSE)
 write.csv(ess_summary_random, file.path(out_dir, "prediction_metric_ess_full_grid_ess_summary_random.csv"), row.names = FALSE)
 write.csv(ess_summary_vs_random, file.path(out_dir, "prediction_metric_ess_full_grid_ess_summary_vs_random.csv"), row.names = FALSE)
-write.csv(metric_shift, file.path(out_dir, "prediction_metric_direct_shift_full_grid.csv"), row.names = FALSE)
 cat("Done. Full-grid PIESS results saved to:", out_dir, "\n")

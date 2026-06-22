@@ -59,6 +59,11 @@ set.seed(PRED_ESS_SEED)
 
 target_results <- list()
 
+# Keep the standalone C512/s64 run aligned with the full-grid pipeline so
+# Figure 3 and the nested-table entries come from the same simulation setup.
+disp_seed_base <- PRED_ESS_SEED + PRED_ESS_N * 1000 + PRED_ESS_S * 10
+clust_seed_base <- disp_seed_base + 50000
+
 target_results[["dispersed"]] <- run_prediction_metric_target_subset(
   R_bm_full = R_bm,
   subset_names = disp_names,
@@ -67,7 +72,7 @@ target_results[["dispersed"]] <- run_prediction_metric_target_subset(
   n_sim = PRED_ESS_N_SIM,
   trait_sd = PRED_ESS_TRAIT_SD,
   error_sd = PRED_ESS_ERROR_SD,
-  seed = PRED_ESS_SEED + 1
+  seed = disp_seed_base + 1
 )
 
 target_results[["clustered"]] <- run_prediction_metric_target_subset(
@@ -78,7 +83,7 @@ target_results[["clustered"]] <- run_prediction_metric_target_subset(
   n_sim = PRED_ESS_N_SIM,
   trait_sd = PRED_ESS_TRAIT_SD,
   error_sd = PRED_ESS_ERROR_SD,
-  seed = PRED_ESS_SEED + 2
+  seed = clust_seed_base + 1
 )
 
 target_summary <- do.call(rbind, lapply(target_results, `[[`, "summary"))
@@ -94,7 +99,7 @@ benchmark_summary <- run_independent_benchmark_curve(
   n_sim = PRED_ESS_N_SIM,
   trait_sd = PRED_ESS_TRAIT_SD,
   error_sd = PRED_ESS_ERROR_SD,
-  seed = PRED_ESS_SEED + 1000
+  seed = PRED_ESS_SEED + 2000
 )
 
 cat("Benchmark summary (first few rows):\n")

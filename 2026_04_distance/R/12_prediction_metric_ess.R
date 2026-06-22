@@ -528,7 +528,7 @@ estimate_prediction_metric_ess <- function(target_summary,
 
 
 # ============================================================
-# 4.10 PIESS significance, display, and direct-shift helpers
+# 4.10 PIESS significance and display helpers
 # ============================================================
 
 p_to_stars_prediction <- function(p) {
@@ -631,73 +631,6 @@ summarize_piess_observed_vs_random <- function(ess_summary,
     row_out$PIESS_Display_Stars <- paste0(row_out$PIESS_Display, row_out$Stars)
 
     out[[length(out) + 1]] <- row_out
-  }
-
-  if (length(out) == 0) return(data.frame())
-  do.call(rbind, out)
-}
-
-calc_prediction_metric_shift <- function(target_summary,
-                                         reference_condition = "lambda0_independent_target",
-                                         scenario_condition = NULL,
-                                         subset_type_filter = NULL) {
-  required_cols <- c("N", "s", "Subset_Type", "Metric", "Mean", "Condition")
-  missing_cols <- setdiff(required_cols, names(target_summary))
-  if (length(missing_cols) > 0) {
-    stop("Missing required columns in target_summary: ", paste(missing_cols, collapse = ", "))
-  }
-
-  df <- target_summary
-  if (!is.null(subset_type_filter)) {
-    df <- df[df$Subset_Type %in% subset_type_filter, , drop = FALSE]
-  }
-
-  ref <- df[df$Condition == reference_condition, , drop = FALSE]
-  scn <- df[df$Condition != reference_condition, , drop = FALSE]
-  if (!is.null(scenario_condition)) {
-    scn <- scn[scn$Condition %in% scenario_condition, , drop = FALSE]
-  }
-
-  group_cols <- intersect(c("N", "s", "Subset_Type", "Metric"), names(df))
-  meta_cols <- intersect(
-    c("Covariance_Model", "Covariance_Param", "Covariance_Param_Label", "Condition"),
-    names(scn)
-  )
-
-  out <- list()
-
-  for (i in seq_len(nrow(scn))) {
-    row_i <- scn[i, , drop = FALSE]
-    ref_i <- ref
-
-    for (g in group_cols) {
-      ref_i <- ref_i[ref_i[[g]] == row_i[[g]][1], , drop = FALSE]
-    }
-
-    if (nrow(ref_i) == 0) next
-
-    independent_mean <- ref_i$Mean[1]
-    scenario_mean <- row_i$Mean[1]
-
-    denom <- abs(independent_mean)
-    if (!is.finite(denom) || denom == 0) {
-      percent_change <- NA_real_
-    } else {
-      percent_change <- 100 * (scenario_mean - independent_mean) / denom
-    }
-
-    out[[length(out) + 1]] <- data.frame(
-      N = row_i$N[1],
-      s = row_i$s[1],
-      Subset_Type = row_i$Subset_Type[1],
-      Metric = row_i$Metric[1],
-      Independent_Mean = independent_mean,
-      Scenario_Mean = scenario_mean,
-      Absolute_Change = scenario_mean - independent_mean,
-      Percent_Change = percent_change,
-      row_i[, meta_cols, drop = FALSE],
-      stringsAsFactors = FALSE
-    )
   }
 
   if (length(out) == 0) return(data.frame())

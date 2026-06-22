@@ -65,12 +65,6 @@ PRED_ESS_RANDOM_N_DEV <- 100
 # Default used by long-running PIESS scripts unless overridden by CLI.
 PRED_ESS_RANDOM_N_DEFAULT <- PRED_ESS_RANDOM_N_SUMMARY
 
-# Direct predictive-metric comparison:
-# Percent change is calculated as:
-#   100 * (scenario_mean - independent_mean) / abs(independent_mean)
-# This avoids sign instability when predictive R2 is negative.
-PRED_METRIC_SHIFT_DENOMINATOR <- "abs_independent_mean"
-
 # Simulation settings
 PRED_ESS_N_SIM <- 10000
 PRED_ESS_BENCHMARK_N <- 4:32
@@ -81,7 +75,8 @@ PRED_ESS_LAMBDA_PHYLO <- 1
 
 # Trait and prediction-error scale
 PRED_ESS_TRAIT_SD <- 1
-PRED_ESS_ERROR_SD <- 1
+PRED_ESS_ERROR_VAR <- 0.1
+PRED_ESS_ERROR_SD <- sqrt(PRED_ESS_ERROR_VAR)
 
 # Numerical settings
 PRED_ESS_SEED <- GLOBAL_SEED + 900000

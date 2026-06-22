@@ -179,8 +179,7 @@ for (metric_i in dependence_metrics) {
 # ============================================================
 # 5b. Manuscript-style N–s metric tables: observed value + stars
 # ============================================================
-# These tables use the same N–s layout as Table 1 and the
-# corresponding supplementary N–s tables.
+# These process tables use the same N–s layout as the manuscript tables.
 #
 # Cell format:
 #   observed_value*
@@ -265,8 +264,7 @@ make_ns_metric_value_star_table <- function(df,
 # ------------------------------------------------------------
 # 5b.3 Output distance metric tables in value + stars format
 # ------------------------------------------------------------
-# MeanNND corresponds to manuscript Table 1.
-# MinPD, MeanPD, and MaxPD can be used as same-format supplementary tables.
+# Distance metrics are used as same-format supplementary/process tables.
 
 for (metric_i in distance_metrics) {
   cat("Building value-star N-s distance table:", metric_i, "\n")
@@ -617,19 +615,37 @@ for (metric_i in dependence_metrics) {
     ),
     row.names = FALSE
   )
+
+  if (metric_i == "neff_mean") {
+    write.csv(
+      tab_lambda_value_stars,
+      file.path(table_dir, "Table3_MIESS_covariance_PanelA_lambdaBM_value_stars.csv"),
+      row.names = FALSE
+    )
+    write.csv(
+      tab_ou_value_stars,
+      file.path(table_dir, "Table3_MIESS_covariance_PanelB_OU_value_stars.csv"),
+      row.names = FALSE
+    )
+    write.csv(
+      tab_eb_value_stars,
+      file.path(table_dir, "Table3_MIESS_covariance_PanelC_EB_value_stars.csv"),
+      row.names = FALSE
+    )
+  }
 }
 # ============================================================
 # 8b. P-value-only transparency tables
 # ============================================================
 # These tables are intended as supplementary process data.
 #
-# For Table 1 and its supplementary N–s tables:
+# For supplementary/process N–s tables:
 #   Keep the same row/column structure as make_ns_metric_table().
 #   Rows: subset type × subset size s
 #   Columns: candidate-pool size N
 #   Cells: empirical one-sided p-values only.
 #
-# For Table 2 and its supplementary covariance panel tables:
+# For covariance-panel supplementary/process tables:
 #   Because dispersed and clustered values are combined in one cell
 #   in the manuscript-style tables, p-value-only versions are split
 #   into separate dispersed and clustered tables.
@@ -651,7 +667,7 @@ format_p_raw <- function(p) {
 # ------------------------------------------------------------
 # 8b.2 N–s p-value-only table function
 # ------------------------------------------------------------
-# Used for Table 1 and N–s supplementary tables.
+# Used for N–s supplementary/process tables.
 # Keeps dispersed and clustered in the same table as separate row blocks.
 
 make_ns_metric_pvalue_table <- function(df,
@@ -708,7 +724,7 @@ make_ns_metric_pvalue_table <- function(df,
 # ------------------------------------------------------------
 # 8b.3 Covariance p-value-only panel table function
 # ------------------------------------------------------------
-# Used for Table 2 and covariance supplementary tables.
+# Used for covariance supplementary/process tables.
 # Dispersed and clustered are generated as separate tables.
 
 make_covariance_panel_pvalue_table <- function(cov_df,
@@ -775,14 +791,13 @@ make_covariance_panel_pvalue_table <- function(cov_df,
 }
 
 # ------------------------------------------------------------
-# 8b.4 Output p-value-only tables for Table 1 and its supplements
+# 8b.4 Output p-value-only tables for N–s supplementary/process tables
 # ------------------------------------------------------------
 # These use the same N–s layout as the manuscript/supplementary
 # N–s metric tables.
 #
 # Distance metrics:
-#   MeanNND corresponds to manuscript Table 1.
-#   Other distance metrics correspond to supplementary distance tables.
+#   Distance metrics correspond to supplementary/process distance tables.
 
 for (metric_i in distance_metrics) {
   cat("Building p-value-only N-s distance table:", metric_i, "\n")
@@ -831,13 +846,12 @@ for (metric_i in dependence_metrics) {
 }
 
 # ------------------------------------------------------------
-# 8b.5 Output p-value-only tables for Table 2 and its supplements
+# 8b.5 Output p-value-only tables for covariance supplementary/process tables
 # ------------------------------------------------------------
 # These use the same covariance-panel layout as the manuscript-style
 # covariance tables, but dispersed and clustered are split.
 #
-# neff_mean corresponds to manuscript Table 2.
-# off_mean and rmax correspond to covariance supplementary tables.
+# off_mean, rmax, and neff_mean correspond to covariance supplementary/process tables.
 
 for (metric_i in dependence_metrics) {
   cat("Building p-value-only covariance panel tables:", metric_i, "\n")
@@ -878,12 +892,12 @@ cat("P-value-only transparency tables saved to:\n")
 cat(table_dir, "\n")
 
 # ============================================================
-# 10. Supplementary Tables S5-S7: BM dependence N-s tables
+# 10. Main Table 1 and Supplementary Tables S5-S6: BM dependence N-s tables
 #     Format: observed value + significance stars
 # ============================================================
 # S5: MeanOffCor = off_mean
 # S6: MaxOffCor  = rmax
-# S7: MeanESS    = neff_mean
+# Table 1: MIESS = neff_mean
 #
 # Cell format:
 #   observed_value*
@@ -967,10 +981,27 @@ make_bm_dependence_supp_table <- function(df,
 # ------------------------------------------------------------
 
 bm_supp_tables <- data.frame(
-  Table_ID = c("S5", "S6", "S7"),
+  Filename = c(
+    "Supplementary_Table_S5_BM_MeanOffCor_value_stars.csv",
+    "Supplementary_Table_S6_BM_MaxOffCor_value_stars.csv",
+    "Table1_MIESS_BM_nested_value_stars.csv"
+  ),
   Metric = c("off_mean", "rmax", "neff_mean"),
-  Metric_Label = c("MeanOffCor", "MaxOffCor", "MeanESS"),
-  File_Label = c("MeanOffCor", "MaxOffCor", "MeanESS"),
   Digits = c(3, 3, 2),
   stringsAsFactors = FALSE
 )
+
+for (i in seq_len(nrow(bm_supp_tables))) {
+  tab <- make_bm_dependence_supp_table(
+    df = sens_dep,
+    metric_name = bm_supp_tables$Metric[i],
+    value_digits = bm_supp_tables$Digits[i],
+    N_values = N_values,
+    s_values = s_values,
+    subset_types = subset_types
+  )
+  write.csv(tab, file.path(table_dir, bm_supp_tables$Filename[i]), row.names = FALSE)
+}
+
+cat("BM dependence manuscript tables saved to:\n")
+cat(table_dir, "\n")

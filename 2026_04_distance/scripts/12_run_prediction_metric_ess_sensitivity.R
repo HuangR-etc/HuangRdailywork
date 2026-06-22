@@ -135,13 +135,14 @@ if (file.exists(rds_file) && !opts$overwrite) {
 }
 
 cov_grid <- COV_SENSITIVITY_GRID
+benchmark_n_values <- 4:64
 cat("Settings: n_sim=", opts$n_sim,
     ", include_random=", opts$include_random,
     ", n_random=", opts$n_random, "\n", sep = "")
 
-cat("Building independent benchmark curve (lambda = 0, n = 4:32)...\n")
+cat("Building independent benchmark curve (lambda = 0, n = 4:64)...\n")
 benchmark_summary <- run_independent_benchmark_curve(
-  n_values = PRED_ESS_BENCHMARK_N,
+  n_values = benchmark_n_values,
   n_sim = opts$n_sim,
   trait_sd = PRED_ESS_TRAIT_SD,
   error_sd = PRED_ESS_ERROR_SD,
@@ -234,37 +235,6 @@ ess_summary_observed <- ess_summary_all[ess_summary_all$Subset_Type %in% c("disp
 ess_summary_random <- ess_summary_all[ess_summary_all$Subset_Type == "random", , drop = FALSE]
 ess_summary_vs_random <- summarize_piess_observed_vs_random(ess_summary_all)
 
-cat("Calculating direct covariance metric shifts...\n")
-metric_shift <- calc_prediction_metric_shift(
-  target_summary = target_summary[target_summary$Subset_Type %in% c("dispersed", "clustered"), , drop = FALSE],
-  reference_condition = "lambda0_independent_target"
-)
-
-# Include explicit zero rows for the lambda=0 reference, needed by panel tables.
-ref_rows <- target_summary[
-  target_summary$Subset_Type %in% c("dispersed", "clustered") &
-    target_summary$Condition == "lambda0_independent_target",
-  , drop = FALSE
-]
-if (nrow(ref_rows) > 0) {
-  zero_shift <- data.frame(
-    N = ref_rows$N,
-    s = ref_rows$s,
-    Subset_Type = ref_rows$Subset_Type,
-    Metric = ref_rows$Metric,
-    Independent_Mean = ref_rows$Mean,
-    Scenario_Mean = ref_rows$Mean,
-    Absolute_Change = 0,
-    Percent_Change = 0,
-    Covariance_Model = ref_rows$Covariance_Model,
-    Covariance_Param = ref_rows$Covariance_Param,
-    Covariance_Param_Label = ref_rows$Covariance_Param_Label,
-    Condition = ref_rows$Condition,
-    stringsAsFactors = FALSE
-  )
-  metric_shift <- rbind(zero_shift, metric_shift)
-}
-
 ord <- c("N", "s", "Subset_Type", "Covariance_Model", "Covariance_Param", "Metric")
 ess_summary_all <- ess_summary_all[do.call(order, ess_summary_all[intersect(ord, names(ess_summary_all))]), ]
 ess_summary_observed <- ess_summary_observed[do.call(order, ess_summary_observed[intersect(ord, names(ess_summary_observed))]), ]
@@ -277,7 +247,7 @@ result <- list(
   n_sim = opts$n_sim,
   n_random = opts$n_random,
   include_random = opts$include_random,
-  benchmark_n = PRED_ESS_BENCHMARK_N,
+  benchmark_n = benchmark_n_values,
   trait_sd = PRED_ESS_TRAIT_SD,
   error_sd = PRED_ESS_ERROR_SD,
   target_summary = target_summary,
@@ -286,8 +256,7 @@ result <- list(
   ess_summary_all = ess_summary_all,
   ess_summary_observed = ess_summary_observed,
   ess_summary_random = ess_summary_random,
-  ess_summary_vs_random = ess_summary_vs_random,
-  metric_shift = metric_shift
+  ess_summary_vs_random = ess_summary_vs_random
 )
 
 cat("Saving results...\n")
@@ -298,6 +267,5 @@ write.csv(ess_summary_all, file.path(out_dir, "prediction_metric_ess_sensitivity
 write.csv(ess_summary_observed, file.path(out_dir, "prediction_metric_ess_sensitivity_ess_summary_observed.csv"), row.names = FALSE)
 write.csv(ess_summary_random, file.path(out_dir, "prediction_metric_ess_sensitivity_ess_summary_random.csv"), row.names = FALSE)
 write.csv(ess_summary_vs_random, file.path(out_dir, "prediction_metric_ess_sensitivity_ess_summary_vs_random.csv"), row.names = FALSE)
-write.csv(metric_shift, file.path(out_dir, "prediction_metric_direct_shift_covariance_sensitivity.csv"), row.names = FALSE)
 write.csv(ess_summary_observed, file.path(out_dir, "prediction_metric_ess_sensitivity_ess_summary.csv"), row.names = FALSE)
 cat("Done. PIESS sensitivity results saved to:", out_dir, "\n")
