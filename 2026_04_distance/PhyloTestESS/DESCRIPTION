@@ -1,0 +1,25 @@
+Package: PhyloTestESS
+Title: Phylogenetic Subset Selection and Effective Information Diagnostics
+Version: 0.2.0
+Authors@R: c(
+    person("Rui", "Huang", email = "huangr@example.com", role = c("aut", "cre"))
+  )
+Description: Rebuilds the earlier PhyloSubset workflow as a package aligned
+    to the June 2026 phylogenetic-dispersion manuscript. The package selects
+    phylogenetically dispersed subsets and clustered contrast subsets,
+    quantifies within-subset dependence with MeanOffCor, MaxOffCor, and
+    MIESS, and provides prediction-metric-based ESS utilities for RMSE, MAE,
+    and predictive R-squared under BM, lambda-transformed BM, OU, and
+    early-burst covariance models.
+License: GPL-3
+Depends:
+    R (>= 4.1.0)
+Imports:
+    ape,
+    stats
+Suggests:
+    testthat (>= 3.0.0)
+Encoding: UTF-8
+LazyData: true
+Config/testthat/edition: 3
+RoxygenNote: 7.2.3
