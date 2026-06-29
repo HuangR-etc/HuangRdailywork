@@ -122,8 +122,8 @@ for (row_idx in seq_len(nrow(cov_grid))) {
   
   # ---- EB covariance sensitivity ----
   for (r in EB_RATE_VALUES) {
-    cat("  EB (r =", r, ")...\n")
-    V_eb <- make_eb_covariance_simple(pool_tree, r)
+    cat("  EB (rho =", r, ")...\n")
+    V_eb <- make_eb_covariance(pool_tree, r)
     
     disp_dep <- calc_dependence_from_V(V_eb, disp_names)
     clust_dep <- calc_dependence_from_V(V_eb, clust_names)
@@ -138,7 +138,7 @@ for (row_idx in seq_len(nrow(cov_grid))) {
       random_dep_metrics = random_dep,
       covariance_model = "EB",
       covariance_param = r,
-      covariance_param_label = paste0("EB_r_", r)
+      covariance_param_label = sprintf("EB_rho_%.1f", r)
     )
     all_summaries[[length(all_summaries) + 1]] <- eb_summary
   }

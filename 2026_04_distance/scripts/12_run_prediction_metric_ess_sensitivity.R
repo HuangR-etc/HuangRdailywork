@@ -108,11 +108,11 @@ make_scenario_list <- function(pool_tree) {
   }
 
   for (r in EB_RATE_VALUES) {
-    V_eb <- make_eb_covariance_simple(pool_tree, r)
+    V_eb <- make_eb_covariance(pool_tree, r)
     scenarios[[length(scenarios) + 1]] <- list(
       model = "EB",
       param = r,
-      label = sprintf("EB r=%.2f", r),
+      label = sprintf("rho=%.1f", r),
       condition = "covariance_sensitivity_target",
       R = cov2cor(V_eb)
     )

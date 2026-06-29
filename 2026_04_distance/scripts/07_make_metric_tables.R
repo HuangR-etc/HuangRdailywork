@@ -349,7 +349,7 @@ make_covariance_panel_table <- function(cov_df,
   } else if (model_name == "OU") {
     setting_labels <- paste0("h / H = ", sprintf("%.2f", param_values))
   } else {
-    setting_labels <- as.character(param_values)
+    setting_labels <- paste0("rho = ", sprintf("%.1f", param_values))
   }
   
   out <- data.frame(
@@ -443,7 +443,7 @@ make_covariance_panel_value_star_table <- function(cov_df,
   } else if (model_name == "OU") {
     setting_labels <- paste0("h / H = ", sprintf("%.2f", param_values))
   } else {
-    setting_labels <- as.character(param_values)
+    setting_labels <- paste0("rho = ", sprintf("%.1f", param_values))
   }
   
   out <- data.frame(
@@ -507,6 +507,13 @@ for (metric_i in dependence_metrics) {
   cat("Building covariance panel tables:", metric_i, "\n")
   
   digits_i <- ifelse(metric_i == "neff_mean", 2, 3)
+  metric_prefix <- if (metric_i == "off_mean") {
+    "TableS9_covariance_off_mean"
+  } else if (metric_i == "rmax") {
+    "TableS10_covariance_rmax"
+  } else {
+    "Table_covariance_neff_mean"
+  }
   
   # ----------------------------------------------------------
   # 8.1 Full value + p tables
@@ -525,7 +532,7 @@ for (metric_i in dependence_metrics) {
     tab_lambda_value_p,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelA_lambdaBM_value_p.csv")
+      paste0(metric_prefix, "_PanelA_lambdaBM_value_p.csv")
     ),
     row.names = FALSE
   )
@@ -541,7 +548,7 @@ for (metric_i in dependence_metrics) {
     tab_ou_value_p,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelB_OU_value_p.csv")
+      paste0(metric_prefix, "_PanelB_OU_value_p.csv")
     ),
     row.names = FALSE
   )
@@ -557,7 +564,7 @@ for (metric_i in dependence_metrics) {
     tab_eb_value_p,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelC_EB_value_p.csv")
+      paste0(metric_prefix, "_PanelC_EB_value_p.csv")
     ),
     row.names = FALSE
   )
@@ -579,7 +586,7 @@ for (metric_i in dependence_metrics) {
     tab_lambda_value_stars,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelA_lambdaBM_value_stars.csv")
+      paste0(metric_prefix, "_PanelA_lambdaBM_value_stars.csv")
     ),
     row.names = FALSE
   )
@@ -595,7 +602,7 @@ for (metric_i in dependence_metrics) {
     tab_ou_value_stars,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelB_OU_value_stars.csv")
+      paste0(metric_prefix, "_PanelB_OU_value_stars.csv")
     ),
     row.names = FALSE
   )
@@ -611,7 +618,7 @@ for (metric_i in dependence_metrics) {
     tab_eb_value_stars,
     file.path(
       table_dir,
-      paste0("Table_covariance_", metric_i, "_PanelC_EB_value_stars.csv")
+      paste0(metric_prefix, "_PanelC_EB_value_stars.csv")
     ),
     row.names = FALSE
   )
@@ -751,7 +758,7 @@ make_covariance_panel_pvalue_table <- function(cov_df,
   } else if (model_name == "OU") {
     setting_labels <- paste0("h / H = ", sprintf("%.2f", param_values))
   } else {
-    setting_labels <- as.character(param_values)
+    setting_labels <- paste0("rho = ", sprintf("%.1f", param_values))
   }
   
   out <- data.frame(

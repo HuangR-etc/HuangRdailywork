@@ -30,7 +30,6 @@ phylo_test_ess <- function(tree, candidates, size,
                            half_life = NULL,
                            alpha = NULL,
                            eb_rate = NULL,
-                           eb_method = c("simple", "branch_transform"),
                            compute_piess = FALSE,
                            piess_n_sim = 10000,
                            piess_error_sd = sqrt(0.1),
@@ -38,7 +37,6 @@ phylo_test_ess <- function(tree, candidates, size,
   subset_type <- match.arg(subset_type)
   clustered_method <- match.arg(clustered_method)
   cov_model <- match.arg(cov_model)
-  eb_method <- match.arg(eb_method)
 
   check_phylo_input(tree, candidates)
   if (size >= length(candidates)) {
@@ -73,8 +71,7 @@ phylo_test_ess <- function(tree, candidates, size,
     lambda = lambda,
     half_life = half_life,
     alpha = alpha,
-    eb_rate = eb_rate,
-    eb_method = eb_method
+    eb_rate = eb_rate
   )
 
   R_sub <- cov_to_cor(V[selection$selected, selection$selected, drop = FALSE])
@@ -125,7 +122,6 @@ phylo_subset <- function(tree, candidates, size,
                          half_life = NULL,
                          alpha = NULL,
                          eb_rate = NULL,
-                         eb_method = c("simple", "branch_transform"),
                          compute_piess = FALSE,
                          piess_n_sim = 10000,
                          piess_error_sd = sqrt(0.1),
@@ -133,7 +129,6 @@ phylo_subset <- function(tree, candidates, size,
   type <- match.arg(type)
   clustered_method <- match.arg(clustered_method)
   cov_model <- match.arg(cov_model)
-  eb_method <- match.arg(eb_method)
 
   phylo_test_ess(
     tree = tree,
@@ -147,7 +142,6 @@ phylo_subset <- function(tree, candidates, size,
     half_life = half_life,
     alpha = alpha,
     eb_rate = eb_rate,
-    eb_method = eb_method,
     compute_piess = compute_piess,
     piess_n_sim = piess_n_sim,
     piess_error_sd = piess_error_sd,

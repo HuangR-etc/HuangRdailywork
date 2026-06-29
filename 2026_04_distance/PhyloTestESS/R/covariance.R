@@ -74,10 +74,6 @@ make_ou_covariance_by_half_life_fraction <- function(tree, half_life_frac) {
   )
 }
 
-# Main manuscript analyses used the EB-style shared-history rescaling below.
-# Keep the branch-transformation implementation available for backward
-# compatibility and method comparisons, but make the manuscript-matching
-# version the package default through phylo_covariance().
 make_eb_covariance <- function(tree, rate) {
   if (!is.numeric(rate) || length(rate) != 1 || !is.finite(rate)) {
     stop("rate must be a single finite numeric value.")
@@ -88,13 +84,26 @@ make_eb_covariance <- function(tree, rate) {
   if (is.null(tree$edge.length)) {
     stop("tree must have edge lengths.")
   }
+  if (!isTRUE(ape::is.rooted(tree))) {
+    stop("tree must be rooted for EB covariance construction.")
+  }
 
   node_depths <- ape::node.depth.edgelength(tree)
-  parent_times <- node_depths[tree$edge[, 1]]
-  child_times <- node_depths[tree$edge[, 2]]
+  tip_depths <- node_depths[seq_len(ape::Ntip(tree))]
+  ultrametric_tol <- 1e-6 * max(1, max(tip_depths))
+  if ((max(tip_depths) - min(tip_depths)) > ultrametric_tol) {
+    stop("tree must be ultrametric for EB covariance construction.")
+  }
+  tree_height <- mean(tip_depths)
+  if (!is.finite(tree_height) || tree_height <= 0) {
+    stop("tree height must be positive for EB covariance construction.")
+  }
+  parent_times <- node_depths[tree$edge[, 1]] / tree_height
+  child_times <- node_depths[tree$edge[, 2]] / tree_height
 
   eb_tree <- tree
-  eb_tree$edge.length <- (exp(rate * child_times) - exp(rate * parent_times)) / rate
+  eb_tree$edge.length <- tree_height *
+    (exp(rate * child_times) - exp(rate * parent_times)) / rate
   eb_tree$edge.length <- pmax(eb_tree$edge.length, 0)
 
   V_eb <- ape::vcv.phylo(eb_tree, corr = FALSE)
@@ -104,58 +113,13 @@ make_eb_covariance <- function(tree, rate) {
   V_eb
 }
 
-make_eb_covariance_simple <- function(tree, r) {
-  if (!is.numeric(r) || length(r) != 1 || !is.finite(r)) {
-    stop("r must be a single finite numeric value.")
-  }
-
-  V_bm <- make_bm_covariance(tree)
-  node_depths <- ape::node.depth.edgelength(tree)
-  n_tips <- ape::Ntip(tree)
-  tree_height <- max(node_depths[seq_len(n_tips)])
-
-  if (!is.finite(tree_height) || tree_height <= 0) {
-    stop("tree height must be positive and finite.")
-  }
-
-  mrca_mat <- ape::mrca(tree)
-  mrca_tips <- mrca_mat[tree$tip.label, tree$tip.label, drop = FALSE]
-
-  shared_time <- matrix(
-    node_depths[mrca_tips],
-    nrow = n_tips,
-    ncol = n_tips,
-    dimnames = list(tree$tip.label, tree$tip.label)
-  )
-
-  t_scaled <- shared_time / tree_height
-  V_eb <- V_bm * exp(-r * t_scaled)
-  V_eb <- (V_eb + t(V_eb)) / 2
-  rownames(V_eb) <- tree$tip.label
-  colnames(V_eb) <- tree$tip.label
-  V_eb
-}
-
-resolve_eb_covariance <- function(tree, rate,
-                                  eb_method = c("simple", "branch_transform")) {
-  eb_method <- match.arg(eb_method)
-
-  if (eb_method == "simple") {
-    return(make_eb_covariance_simple(tree, r = rate))
-  }
-
-  make_eb_covariance(tree, rate = rate)
-}
-
 #' @export
 phylo_covariance <- function(tree, tips = NULL,
                              model = c("BM", "lambda", "OU", "EB"),
                              lambda = 1, half_life = NULL, alpha = NULL,
-                             eb_rate = NULL,
-                             eb_method = c("simple", "branch_transform")) {
+                             eb_rate = NULL) {
   check_phylo_input(tree)
   model <- match.arg(model)
-  eb_method <- match.arg(eb_method)
 
   V <- switch(
     model,
@@ -169,7 +133,7 @@ phylo_covariance <- function(tree, tips = NULL,
       if (is.null(eb_rate)) {
         stop("eb_rate must be supplied for model = 'EB'.", call. = FALSE)
       }
-      resolve_eb_covariance(tree, rate = eb_rate, eb_method = eb_method)
+      make_eb_covariance(tree, rate = eb_rate)
     }
   )
 

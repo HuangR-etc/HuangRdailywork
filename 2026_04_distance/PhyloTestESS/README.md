@@ -35,9 +35,9 @@ Main features of the package:
   as a fast approximation for exploratory work.
 - Dependence diagnostics follow the paper with `MeanOffCor`, `MaxOffCor`,
   and `MIESS`.
-- `phylo_covariance(..., model = "EB")` now defaults to the manuscript
-  sensitivity implementation based on shared-history rescaling; the older
-  branch-transformation EB remains available via `eb_method = "branch_transform"`.
+- `phylo_covariance(..., model = "EB")` follows the manuscript EB
+  construction on a rooted ultrametric tree by integrating the
+  time-varying branch rate and then mapping the result to correlation space.
 - PIESS helpers are included for RMSE, MAE, and predictive `R2`.
 
 Quick example:
@@ -99,10 +99,9 @@ git clone https://github.com/HuangR-etc/PhyloTestESS.git
   适合耗时敏感的探索性分析。
 - 包中提供与论文一致的依赖性诊断指标：
   `MeanOffCor`、`MaxOffCor` 和 `MIESS`。
-- `phylo_covariance(..., model = "EB")` 默认采用与主分析一致的
-  manuscript 版 shared-history rescaling；
-  旧的 branch-transform EB 仍可通过
-  `eb_method = "branch_transform"` 调用。
+- `phylo_covariance(..., model = "EB")` 采用论文方法学中的
+  rooted ultrametric EB 构造：
+  先对 time-varying branch rate 做积分，再统一映射到 correlation space。
 - 同时包含基于模拟的 PIESS 工具，
   用于 RMSE、MAE 和预测 `R2` 的有效样本量分析。
 

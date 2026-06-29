@@ -1,0 +1,280 @@
+=== EB-only recompute: covariance_sensitivity ===
+  Case: Cricetidae_C128_s8 
+    EB rho = -4 
+    EB rho = -2 
+    EB rho = -1 
+    EB rho = -0.5 
+    EB rho = 0 
+  Case: Cricetidae_C128_s64 
+    EB rho = -4 
+    EB rho = -2 
+    EB rho = -1 
+    EB rho = -0.5 
+    EB rho = 0 
+  Case: Cricetidae_C512_s8 
+    EB rho = -4 
+    EB rho = -2 
+    EB rho = -1 
+    EB rho = -0.5 
+    EB rho = 0 
+  Case: Cricetidae_C512_s64 
+    EB rho = -4 
+    EB rho = -2 
+    EB rho = -1 
+    EB rho = -0.5 
+    EB rho = 0 
+  Updated: /home/galileo-group/galileouser05/huangr/2026_04_distance/results/covariance_sensitivity/cricetidae_covariance_sensitivity_summary.csv 
+  Updated: /home/galileo-group/galileouser05/huangr/2026_04_distance/results/figures/Cricetidae_covariance_sensitivity_summary.csv 
+=== EB-only recompute: prediction_metric_ess_sensitivity ===
+  Case: Cricetidae_C128_s8 
+    EB rho=-4.0 (scenario_idx = 12 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-2.0 (scenario_idx = 13 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-1.0 (scenario_idx = 14 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-0.5 (scenario_idx = 15 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=0.0 (scenario_idx = 16 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+  Case: Cricetidae_C128_s64 
+    EB rho=-4.0 (scenario_idx = 12 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-2.0 (scenario_idx = 13 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-1.0 (scenario_idx = 14 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-0.5 (scenario_idx = 15 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=0.0 (scenario_idx = 16 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+  Case: Cricetidae_C512_s8 
+    EB rho=-4.0 (scenario_idx = 12 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-2.0 (scenario_idx = 13 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-1.0 (scenario_idx = 14 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-0.5 (scenario_idx = 15 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=0.0 (scenario_idx = 16 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+  Case: Cricetidae_C512_s64 
+    EB rho=-4.0 (scenario_idx = 12 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-2.0 (scenario_idx = 13 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-1.0 (scenario_idx = 14 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=-0.5 (scenario_idx = 15 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+    EB rho=0.0 (scenario_idx = 16 )
+      random 1 / 1000 
+      random 101 / 1000 
+      random 201 / 1000 
+      random 301 / 1000 
+      random 401 / 1000 
+      random 501 / 1000 
+      random 601 / 1000 
+      random 701 / 1000 
+      random 801 / 1000 
+      random 901 / 1000 
+      random 1000 / 1000 
+  Updated PIESS sensitivity files in: /home/galileo-group/galileouser05/huangr/2026_04_distance/results/prediction_metric_ess_sensitivity 
+Error in file(filename, "r", encoding = encoding) : 
+  cannot open the connection
+Calls: source -> withVisible -> eval -> eval -> source -> file
+In addition: Warning message:
+In file(filename, "r", encoding = encoding) :
+  cannot open file 'R/01_load_modules.R': No such file or directory
+Execution halted

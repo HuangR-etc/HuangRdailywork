@@ -102,8 +102,11 @@ make_ou_covariance_by_half_life_fraction <- function(tree, half_life_frac) {
 
 #' Make Early-Burst covariance matrix
 #'
-#' Branch lengths are transformed by integrating exp(rate * t) from the
-#' parent node time to the child node time, then passed to ape::vcv.phylo.
+#' Implements the S4.4 EB construction on a fixed ultrametric BM baseline tree.
+#' Branch-specific rates are r(u) = exp(rate * u) on normalized tree time
+#' u = t / H, where H is total tree height. Each branch length is replaced by
+#' the integral of this rate over original time before passing the transformed
+#' tree to ape::vcv.phylo.
 #'
 #' @param tree A phylo object
 #' @param rate Numeric scalar EB rate
@@ -118,13 +121,26 @@ make_eb_covariance <- function(tree, rate) {
   if (is.null(tree$edge.length)) {
     stop("tree must have edge lengths.")
   }
+  if (!isTRUE(ape::is.rooted(tree))) {
+    stop("tree must be rooted for EB covariance construction.")
+  }
   
   node_depths <- ape::node.depth.edgelength(tree)
-  parent_times <- node_depths[tree$edge[, 1]]
-  child_times <- node_depths[tree$edge[, 2]]
+  tip_depths <- node_depths[seq_len(ape::Ntip(tree))]
+  ultrametric_tol <- 1e-6 * max(1, max(tip_depths))
+  if ((max(tip_depths) - min(tip_depths)) > ultrametric_tol) {
+    stop("tree must be ultrametric for EB covariance construction.")
+  }
+  tree_height <- mean(tip_depths)
+  if (!is.finite(tree_height) || tree_height <= 0) {
+    stop("tree height must be positive for EB covariance construction.")
+  }
+  parent_times <- node_depths[tree$edge[, 1]] / tree_height
+  child_times <- node_depths[tree$edge[, 2]] / tree_height
   
   eb_tree <- tree
-  eb_tree$edge.length <- (exp(rate * child_times) - exp(rate * parent_times)) / rate
+  eb_tree$edge.length <- tree_height *
+    (exp(rate * child_times) - exp(rate * parent_times)) / rate
   eb_tree$edge.length <- pmax(eb_tree$edge.length, 0)
   
   V_eb <- ape::vcv.phylo(eb_tree, corr = FALSE)
@@ -133,44 +149,3 @@ make_eb_covariance <- function(tree, rate) {
   colnames(V_eb) <- tree$tip.label
   V_eb
 }
-
-#' Make simple EB-style covariance sensitivity matrix
-#'
-#' Starting from BM covariance, rescale shared-history covariance by
-#' exp(-r * t_scaled), where t_scaled is shared ancestry / tree height.
-#'
-#' @param tree A phylo object
-#' @param r Numeric scalar EB sensitivity rate
-#' @return EB-style covariance matrix
-make_eb_covariance_simple <- function(tree, r) {
-  if (!is.numeric(r) || length(r) != 1 || !is.finite(r)) {
-    stop("r must be a single finite numeric value.")
-  }
-  
-  V_bm <- make_bm_covariance(tree)
-  node_depths <- ape::node.depth.edgelength(tree)
-  n_tips <- ape::Ntip(tree)
-  tree_height <- max(node_depths[seq_len(n_tips)])
-  
-  if (!is.finite(tree_height) || tree_height <= 0) {
-    stop("tree height must be positive and finite.")
-  }
-  
-  mrca_mat <- ape::mrca(tree)
-  mrca_tips <- mrca_mat[tree$tip.label, tree$tip.label, drop = FALSE]
-  
-  shared_time <- matrix(
-    node_depths[mrca_tips],
-    nrow = n_tips,
-    ncol = n_tips,
-    dimnames = list(tree$tip.label, tree$tip.label)
-  )
-  
-  t_scaled <- shared_time / tree_height
-  V_eb <- V_bm * exp(-r * t_scaled)
-  V_eb <- (V_eb + t(V_eb)) / 2
-  rownames(V_eb) <- tree$tip.label
-  colnames(V_eb) <- tree$tip.label
-  V_eb
-}
-
