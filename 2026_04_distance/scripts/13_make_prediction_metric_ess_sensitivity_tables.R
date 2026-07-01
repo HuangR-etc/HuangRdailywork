@@ -61,8 +61,8 @@ panel_spec <- function(model_name) {
   }
   if (model_name == "EB") {
     return(list(panel = "PanelC_EB",
-                labels = sprintf("rho = %.1f", c(-4.0, -2.0, -1.0, -0.5, 0.0)),
-                params = c(-4.0, -2.0, -1.0, -0.5, 0.0)))
+                labels = sprintf("rho = %.1f", EB_RATE_VALUES),
+                params = EB_RATE_VALUES))
   }
   stop("Unknown model_name: ", model_name)
 }
